@@ -2,6 +2,14 @@ import Link from "next/link";
 import Navbar from "~/components/layout/Navbar";
 import Footer from "~/components/layout/Footer";
 
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Services — Cosmos AI",
+  description:
+    "Five integrated AI service lines for Malawian businesses and institutions. Consulting, custom development, product distribution, training, and data analytics.",
+};
+
 const services = [
   {
     number: "01",

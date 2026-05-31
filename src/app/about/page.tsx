@@ -2,6 +2,14 @@ import Link from "next/link";
 import Navbar from "~/components/layout/Navbar";
 import Footer from "~/components/layout/Footer";
 
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "About — Cosmos AI",
+  description:
+    "Cosmos AI is a Malawian artificial intelligence company built to serve this country and grow with it.",
+};
+
 export default function AboutPage() {
   return (
     <main className="bg-cosmos-chalk min-h-screen font-sans">
