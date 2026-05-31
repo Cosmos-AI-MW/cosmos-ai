@@ -1,4 +1,6 @@
 import Link from "next/link";
+import Navbar from "~/components/layout/Navbar";
+import Footer from "~/components/layout/Footer";
 
 const services = [
   {
@@ -102,36 +104,7 @@ export default function ServicesPage() {
   return (
     <main className="bg-cosmos-chalk min-h-screen font-sans">
       {/* ── NAVBAR ─────────────────────────────────────────── */}
-      <nav className="bg-cosmos-forest px-6 py-4">
-        <div className="mx-auto flex max-w-6xl items-center justify-between">
-          <Link
-            href="/"
-            className="font-display text-cosmos-sage text-lg font-semibold tracking-widest"
-          >
-            COSMOS AI
-          </Link>
-          <div className="hidden items-center gap-8 md:flex">
-            <Link
-              href="/services"
-              className="text-base font-medium tracking-wide text-white transition-colors"
-            >
-              Services
-            </Link>
-            <Link
-              href="/about"
-              className="text-cosmos-sage text-base font-medium tracking-wide transition-colors hover:text-white"
-            >
-              About
-            </Link>
-            <Link
-              href="/contact"
-              className="bg-cosmos-accent hover:bg-cosmos-forest-light rounded-full px-6 py-2 text-base font-medium tracking-wide text-white transition-colors"
-            >
-              Get in Touch
-            </Link>
-          </div>
-        </div>
-      </nav>
+      <Navbar active="/services" />
 
       {/* ── HERO ───────────────────────────────────────────── */}
       <section className="bg-cosmos-forest px-6 py-20">
@@ -277,33 +250,7 @@ export default function ServicesPage() {
       </section>
 
       {/* ── FOOTER ─────────────────────────────────────────── */}
-      <footer className="bg-cosmos-forest px-6 py-10">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 md:flex-row">
-          <div className="font-display text-cosmos-sage text-base tracking-widest">
-            COSMOS AI
-          </div>
-          <div className="text-cosmos-sage/60 text-sm">
-            © {new Date().getFullYear()} Cosmos AI · Malawi
-          </div>
-          <div className="text-cosmos-sage flex gap-6 text-base">
-            <Link
-              href="/services"
-              className="transition-colors hover:text-white"
-            >
-              Services
-            </Link>
-            <Link href="/about" className="transition-colors hover:text-white">
-              About
-            </Link>
-            <Link
-              href="/contact"
-              className="transition-colors hover:text-white"
-            >
-              Contact
-            </Link>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </main>
   );
 }
