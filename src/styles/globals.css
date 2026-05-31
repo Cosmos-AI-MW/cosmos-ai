@@ -1,6 +1,19 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  /* ── Fonts ──────────────────────────────────────── */
+  --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-display:
+    var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+
+  /* ── Cosmos AI Brand Colours ────────────────────── */
+  --color-cosmos-forest: #0d4a3a;
+  --color-cosmos-forest-light: #1a6b54;
+  --color-cosmos-teal: #2a8c6e;
+  --color-cosmos-sage: #b8cfc4;
+  --color-cosmos-silver: #c8d0cc;
+  --color-cosmos-mist: #e8edea;
+  --color-cosmos-chalk: #f2f5f3;
+  --color-cosmos-night: #041e17;
+  --color-cosmos-accent: #2e7d5e;
 }

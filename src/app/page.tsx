@@ -1,69 +1,279 @@
+import Image from "next/image";
 import Link from "next/link";
 
-import { LatestPost } from "~/app/_components/post";
-import { auth } from "~/server/auth";
-import { api, HydrateClient } from "~/trpc/server";
-
-export default async function Home() {
-  const hello = await api.post.hello({ text: "from tRPC" });
-  const session = await auth();
-
-  if (session?.user) {
-    void api.post.getLatest.prefetch();
-  }
-
+export default function Home() {
   return (
-    <HydrateClient>
-      <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
-        <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16">
-          <h1 className="text-5xl font-extrabold tracking-tight sm:text-[5rem]">
-            Create <span className="text-[hsl(280,100%,70%)]">T3</span> App
-          </h1>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
-            <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20"
-              href="https://create.t3.gg/en/usage/first-steps"
-              target="_blank"
-            >
-              <h3 className="text-2xl font-bold">First Steps →</h3>
-              <div className="text-lg">
-                Just the basics - Everything you need to know to set up your
-                database and authentication.
+    <main className="bg-cosmos-chalk min-h-screen font-sans">
+      {/* ── NAVBAR ─────────────────────────────────────────── */}
+      <nav className="bg-cosmos-forest px-6 py-4">
+        <div className="mx-auto flex max-w-6xl items-center justify-between">
+          <Link href="/" className="flex items-center gap-3">
+            <Image
+              src="/images/cosmos_logo.png"
+              alt="Cosmos AI"
+              width={48}
+              height={48}
+              className="rounded"
+            />
+            <div>
+              <div className="font-display text-cosmos-sage text-lg font-semibold tracking-widest">
+                COSMOS AI
               </div>
-            </Link>
-            <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20"
-              href="https://create.t3.gg/en/introduction"
-              target="_blank"
-            >
-              <h3 className="text-2xl font-bold">Documentation →</h3>
-              <div className="text-lg">
-                Learn more about Create T3 App, the libraries it uses, and how
-                to deploy it.
+              <div className="text-cosmos-teal text-sm tracking-widest">
+                SHAPING TOMORROW WITH AI
               </div>
-            </Link>
-          </div>
-          <div className="flex flex-col items-center gap-2">
-            <p className="text-2xl text-white">
-              {hello ? hello.greeting : "Loading tRPC query..."}
-            </p>
-
-            <div className="flex flex-col items-center justify-center gap-4">
-              <p className="text-center text-2xl text-white">
-                {session && <span>Logged in as {session.user?.name}</span>}
-              </p>
-              <Link
-                href={session ? "/api/auth/signout" : "/api/auth/signin"}
-                className="rounded-full bg-white/10 px-10 py-3 font-semibold no-underline transition hover:bg-white/20"
-              >
-                {session ? "Sign out" : "Sign in"}
-              </Link>
             </div>
+          </Link>
+          <div className="hidden items-center gap-8 md:flex">
+            <Link
+              href="/services"
+              className="text-cosmos-sage text-base font-medium tracking-wide transition-colors hover:text-white"
+            >
+              Services
+            </Link>
+            <Link
+              href="/about"
+              className="text-cosmos-sage text-base font-medium tracking-wide transition-colors hover:text-white"
+            >
+              About
+            </Link>
+            <Link
+              href="/contact"
+              className="bg-cosmos-accent hover:bg-cosmos-forest-light rounded-full px-6 py-2 text-base font-medium tracking-wide text-white transition-colors"
+            >
+              Get in Touch
+            </Link>
           </div>
-
-          {session?.user && <LatestPost />}
         </div>
-      </main>
-    </HydrateClient>
+      </nav>
+
+      {/* ── HERO ───────────────────────────────────────────── */}
+      <section className="bg-cosmos-forest px-6 py-24">
+        <div className="mx-auto max-w-4xl text-center">
+          <h1 className="font-display mb-6 text-5xl leading-tight font-semibold text-white md:text-7xl">
+            Shaping Tomorrow
+            <span className="text-cosmos-sage block"> With AI</span>
+          </h1>
+          <p className="text-cosmos-mist mx-auto mb-10 max-w-2xl text-xl leading-relaxed font-light">
+            Cosmos AI brings world-class artificial intelligence tools and
+            expertise to Malawi. Helping your organisation make better decisions
+            through strategic consulting, eliminating what slows you down with
+            custom-built solutions, accessing the tools your teams need today,
+            and equipping your people with the skills that matter next.
+          </p>
+          <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+            <Link
+              href="/contact"
+              className="bg-cosmos-accent hover:bg-cosmos-forest-light rounded-full px-8 py-3 text-base font-medium tracking-wide text-white transition-colors"
+            >
+              Start a Conversation
+            </Link>
+            <Link
+              href="/services"
+              className="border-cosmos-sage text-cosmos-sage hover:bg-cosmos-forest-light rounded-full border px-8 py-3 text-base font-medium tracking-wide transition-colors"
+            >
+              Our Services
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ── SERVICES OVERVIEW ──────────────────────────────── */}
+      <section className="px-6 py-20">
+        <div className="mx-auto max-w-6xl">
+          <div className="mb-12 text-center">
+            <div className="text-cosmos-teal mb-3 text-sm font-medium tracking-widest uppercase">
+              What We Do
+            </div>
+            <h2 className="font-display text-cosmos-forest text-4xl font-semibold">
+              Five Ways We Deliver Value
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {[
+              {
+                number: "01",
+                title: "AI Consulting & Advisory",
+                description:
+                  "Strategy, readiness assessments, and AI roadmaps — clarity before commitment.",
+              },
+              {
+                number: "02",
+                title: "Custom AI Development",
+                description:
+                  "Bespoke AI systems built for your specific problem and Malawian infrastructure.",
+              },
+              {
+                number: "03",
+                title: "AI Product Distribution",
+                description:
+                  "World-class AI tools with local support, MWK billing, and onboarding.",
+              },
+              {
+                number: "04",
+                title: "Training & Workshops",
+                description:
+                  "Building AI-capable teams at every level — executive to technical.",
+              },
+              {
+                number: "05",
+                title: "Data Analytics & Automation",
+                description:
+                  "Unlock the value in your existing data and automate repetitive processes.",
+              },
+              {
+                number: "→",
+                title: "View All Services",
+                description:
+                  "See full service descriptions, deliverables, and pricing for every offering.",
+                isLink: true,
+              },
+            ].map((service) =>
+              service.isLink ? (
+                <Link
+                  key={service.number}
+                  href="/services"
+                  className="group border-cosmos-silver hover:border-cosmos-teal hover:bg-cosmos-mist flex flex-col rounded-2xl border-2 border-dashed bg-white p-8 transition-colors"
+                >
+                  <div className="text-cosmos-teal mb-4 text-3xl font-bold">
+                    {service.number}
+                  </div>
+                  <h3 className="font-display text-cosmos-forest mb-3 text-2xl font-semibold">
+                    {service.title}
+                  </h3>
+                  <p className="text-cosmos-forest-light text-base leading-relaxed font-light">
+                    {service.description}
+                  </p>
+                </Link>
+              ) : (
+                <div
+                  key={service.number}
+                  className="border-cosmos-silver hover:border-cosmos-teal flex flex-col rounded-2xl border bg-white p-8 transition-colors hover:shadow-sm"
+                >
+                  <div className="text-cosmos-teal mb-4 text-3xl font-bold">
+                    {service.number}
+                  </div>
+                  <h3 className="font-display text-cosmos-forest mb-3 text-2xl font-semibold">
+                    {service.title}
+                  </h3>
+                  <p className="text-cosmos-forest text-base leading-relaxed font-light">
+                    {service.description}
+                  </p>
+                </div>
+              ),
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* ── WHO WE SERVE ───────────────────────────────────── */}
+      <section className="bg-cosmos-forest px-6 py-20">
+        <div className="mx-auto max-w-6xl">
+          <div className="mb-12 text-center">
+            <div className="text-cosmos-teal mb-3 text-sm font-medium tracking-widest uppercase">
+              Who We Serve
+            </div>
+            <h2 className="font-display text-4xl font-semibold text-white">
+              Built for Every Sector
+            </h2>
+          </div>
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
+            {[
+              "Large Corporates & Banks",
+              "Government & Public Sector",
+              "SMEs & Growing Businesses",
+              "NGOs & Nonprofits",
+              "Individual Professionals",
+            ].map((segment) => (
+              <div
+                key={segment}
+                className="border-cosmos-forest-light bg-cosmos-forest-light/30 text-cosmos-sage rounded-xl border px-4 py-6 text-center text-base font-medium"
+              >
+                {segment}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── ABOUT TEASER ───────────────────────────────────── */}
+      <section className="px-6 py-20">
+        <div className="mx-auto max-w-4xl text-center">
+          <div className="text-cosmos-teal mb-3 text-sm font-medium tracking-widest uppercase">
+            About Cosmos AI
+          </div>
+          <h2 className="font-display text-cosmos-forest mb-6 text-4xl font-semibold">
+            Malawi&apos;s AI Company
+          </h2>
+          <p className="text-cosmos-forest mb-10 text-lg leading-relaxed font-light">
+            At Cosmos AI, we believe Malawi&apos;s future is built on
+            understanding its unique opportunities and strengths. We combine
+            deep local knowledge with access to the world&apos;s most advanced
+            AI solutions, serving as a bridge between global innovation and
+            Malawi&apos;s growing businesses, institutions, and entrepreneurs.
+            We are committed to helping Malawian technology and business thrive
+            on their own terms. If you are building the future, we want to build
+            it with you.
+          </p>
+          <p className="text-cosmos-forest mb-10 text-lg leading-relaxed font-light">
+            Founded and based in Malawi.
+          </p>
+          <Link
+            href="/about"
+            className="border-cosmos-forest text-cosmos-forest hover:bg-cosmos-forest rounded-full border px-8 py-3 text-base font-medium tracking-wide transition-colors hover:text-white"
+          >
+            Our Story
+          </Link>
+        </div>
+      </section>
+
+      {/* ── CTA BANNER ─────────────────────────────────────── */}
+      <section className="bg-cosmos-night px-6 py-16">
+        <div className="mx-auto max-w-3xl text-center">
+          <h2 className="font-display text-cosmos-sage mb-4 text-4xl font-semibold">
+            Ready to explore what AI can do for you?
+          </h2>
+          <p className="text-cosmos-mist mb-8 text-lg font-light">
+            Every engagement starts with a free 60-minute discovery
+            conversation. No obligation, no sales pressure.
+          </p>
+          <Link
+            href="/contact"
+            className="bg-cosmos-accent hover:bg-cosmos-forest-light rounded-full px-10 py-3 text-base font-medium tracking-wide text-white transition-colors"
+          >
+            Book a Discovery Call
+          </Link>
+        </div>
+      </section>
+
+      {/* ── FOOTER ─────────────────────────────────────────── */}
+      <footer className="bg-cosmos-forest px-6 py-10">
+        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 md:flex-row">
+          <div className="font-display text-cosmos-sage text-base tracking-widest">
+            COSMOS AI
+          </div>
+          <div className="text-cosmos-sage/60 text-sm">
+            © {new Date().getFullYear()} Cosmos AI · Malawi
+          </div>
+          <div className="text-cosmos-sage flex gap-6 text-base">
+            <Link
+              href="/services"
+              className="transition-colors hover:text-white"
+            >
+              Services
+            </Link>
+            <Link href="/about" className="transition-colors hover:text-white">
+              About
+            </Link>
+            <Link
+              href="/contact"
+              className="transition-colors hover:text-white"
+            >
+              Contact
+            </Link>
+          </div>
+        </div>
+      </footer>
+    </main>
   );
 }
