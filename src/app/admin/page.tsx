@@ -28,18 +28,21 @@ export default async function AdminPage() {
             </div>
           </div>
           <div className="flex items-center gap-6">
-            <Link
+            <a
               href="/"
-              className="text-cosmos-sage text-sm font-medium transition-colors hover:text-white"
+              onClick={() => window.history.replaceState(null, "", "/")}
+              className="text-cosmos-sage cursor-pointer text-sm font-medium transition-colors hover:text-white"
             >
               View Site
-            </Link>
-            <Link
-              href="/api/auth/signout"
-              className="border-cosmos-sage text-cosmos-sage hover:bg-cosmos-sage hover:text-cosmos-night rounded-full border px-4 py-1.5 text-sm font-medium transition-colors"
-            >
-              Sign Out
-            </Link>
+            </a>
+            <form action="/api/auth/signout" method="POST">
+              <button
+                type="submit"
+                className="border-cosmos-sage text-cosmos-sage hover:bg-cosmos-sage hover:text-cosmos-night rounded-full border px-4 py-1.5 text-sm font-medium transition-colors"
+              >
+                Sign Out
+              </button>
+            </form>
           </div>
         </div>
       </nav>

@@ -43,6 +43,7 @@ export const authConfig = {
   },
   pages: {
     signIn: "/admin/login",
+    signOut: "/",
   },
   callbacks: {
     session: ({ session, token }) => ({
