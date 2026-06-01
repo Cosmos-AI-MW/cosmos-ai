@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { auth } from "~/server/auth";
 import { db } from "~/server/db";
+import SignOutButton from "~/components/admin/SignOutButton";
 
 export default async function AdminPage() {
   const session = await auth();
@@ -28,21 +29,13 @@ export default async function AdminPage() {
             </div>
           </div>
           <div className="flex items-center gap-6">
-            <a
+            <Link
               href="/"
-              onClick={() => window.history.replaceState(null, "", "/")}
-              className="text-cosmos-sage cursor-pointer text-sm font-medium transition-colors hover:text-white"
+              className="text-cosmos-sage text-sm font-medium transition-colors hover:text-white"
             >
               View Site
-            </a>
-            <form action="/api/auth/signout" method="POST">
-              <button
-                type="submit"
-                className="border-cosmos-sage text-cosmos-sage hover:bg-cosmos-sage hover:text-cosmos-night rounded-full border px-4 py-1.5 text-sm font-medium transition-colors"
-              >
-                Sign Out
-              </button>
-            </form>
+            </Link>
+            <SignOutButton />
           </div>
         </div>
       </nav>
