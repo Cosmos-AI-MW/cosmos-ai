@@ -4,6 +4,7 @@ import Link from "next/link";
 import Navbar from "~/components/layout/Navbar";
 import Footer from "~/components/layout/Footer";
 import { useState } from "react";
+import { api } from "~/trpc/react";
 
 const services = [
   "AI Consulting & Advisory",
@@ -45,11 +46,27 @@ export default function ContactPage() {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   }
 
-  async function handleSubmit() {
+  const submitContact = api.contact.submit.useMutation({
+    onSuccess: () => {
+      setSubmitted(true);
+      setLoading(false);
+    },
+    onError: (error) => {
+      console.error("Submission failed:", error);
+      setLoading(false);
+    },
+  });
+
+  function handleSubmit() {
     setLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    setLoading(false);
-    setSubmitted(true);
+    submitContact.mutate({
+      name: form.name,
+      organisation: form.organisation,
+      email: form.email,
+      phone: form.phone,
+      service: form.service,
+      message: form.message,
+    });
   }
 
   return (
