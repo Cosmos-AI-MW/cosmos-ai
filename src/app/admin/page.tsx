@@ -3,6 +3,7 @@ import Link from "next/link";
 import { auth } from "~/server/auth";
 import { db } from "~/server/db";
 import SignOutButton from "~/components/admin/SignOutButton";
+import MarkReadButton from "~/components/admin/MarkReadButton";
 
 export default async function AdminPage() {
   const session = await auth();
@@ -113,6 +114,10 @@ export default async function AdminPage() {
                             New
                           </span>
                         )}
+                        <MarkReadButton
+                          id={submission.id}
+                          read={submission.read}
+                        />
                       </div>
                       {submission.organisation && (
                         <p className="text-cosmos-sage text-sm">
