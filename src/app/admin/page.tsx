@@ -105,15 +105,17 @@ export default async function AdminPage() {
                 >
                   <div className="mb-4 flex items-start justify-between gap-4">
                     <div>
-                      <div className="flex items-center gap-3">
-                        <h3 className="font-display text-xl font-semibold text-white">
-                          {submission.name}
-                        </h3>
-                        {!submission.read && (
-                          <span className="bg-cosmos-teal rounded-full px-2 py-0.5 text-xs font-medium text-white">
-                            New
-                          </span>
-                        )}
+                      <div className="flex flex-col gap-2">
+                        <div className="flex items-center gap-3">
+                          <h3 className="font-display text-xl font-semibold text-white">
+                            {submission.name}
+                          </h3>
+                          {!submission.read && (
+                            <span className="bg-cosmos-teal rounded-full px-2 py-0.5 text-xs font-medium text-white">
+                              New
+                            </span>
+                          )}
+                        </div>
                         <MarkReadButton
                           id={submission.id}
                           read={submission.read}
