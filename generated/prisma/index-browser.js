@@ -133,6 +133,36 @@ exports.Prisma.ContactSubmissionScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.ServiceScalarFieldEnum = {
+  id: 'id',
+  number: 'number',
+  title: 'title',
+  tagline: 'tagline',
+  description: 'description',
+  deliverables: 'deliverables',
+  pricing: 'pricing',
+  ideal: 'ideal',
+  order: 'order',
+  published: 'published',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AboutContentScalarFieldEnum = {
+  id: 'id',
+  key: 'key',
+  value: 'value',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ValueScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  description: 'description',
+  order: 'order',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.AccountScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -188,6 +218,9 @@ exports.Prisma.NullsOrder = {
 
 exports.Prisma.ModelName = {
   ContactSubmission: 'ContactSubmission',
+  Service: 'Service',
+  AboutContent: 'AboutContent',
+  Value: 'Value',
   Account: 'Account',
   Session: 'Session',
   User: 'User',

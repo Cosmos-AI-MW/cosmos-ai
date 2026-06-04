@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider      = "prisma-client-js"
   output        = "../generated/prisma"
@@ -12,7 +9,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Cosmos AI — Contact form submissions
+// ── CONTACT SUBMISSIONS ──────────────────────────────────────────
 model ContactSubmission {
   id           String   @id @default(cuid())
   name         String
@@ -27,7 +24,44 @@ model ContactSubmission {
   @@index([createdAt])
 }
 
-// Necessary for Next auth
+// ── SERVICES ─────────────────────────────────────────────────────
+model Service {
+  id           String   @id @default(cuid())
+  number       String
+  title        String
+  tagline      String
+  description  String
+  deliverables String[]
+  pricing      String
+  ideal        String
+  order        Int      @default(0)
+  published    Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([order])
+}
+
+// ── ABOUT CONTENT ────────────────────────────────────────────────
+model AboutContent {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  updatedAt DateTime @updatedAt
+}
+
+// ── VALUES ───────────────────────────────────────────────────────
+model Value {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  order       Int      @default(0)
+  updatedAt   DateTime @updatedAt
+
+  @@index([order])
+}
+
+// ── NEXT AUTH ────────────────────────────────────────────────────
 model Account {
   id                       String  @id @default(cuid())
   userId                   String

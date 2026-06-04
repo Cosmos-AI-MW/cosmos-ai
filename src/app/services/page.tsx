@@ -1,7 +1,7 @@
 import Link from "next/link";
+import { db } from "~/server/db";
 import Navbar from "~/components/layout/Navbar";
 import Footer from "~/components/layout/Footer";
-
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -10,111 +10,17 @@ export const metadata: Metadata = {
     "Five integrated AI service lines for Malawian businesses and institutions. Consulting, custom development, product distribution, training, and data analytics.",
 };
 
-const services = [
-  {
-    number: "01",
-    title: "AI Consulting & Advisory",
-    tagline: "Clarity before commitment.",
-    description:
-      "Before investing in any AI tool or solution, you need an honest assessment of what AI can genuinely achieve for your organisation. Our consulting service provides exactly that — independent, objective advisory grounded in real AI expertise and deep knowledge of the Malawian business environment.",
-    deliverables: [
-      "AI Readiness Assessment — structured evaluation of your people, processes, data, and infrastructure",
-      "AI Opportunity Mapping — identifying the highest-value AI use cases for your organisation",
-      "Strategic AI Roadmap — a phased plan aligned to your budget and goals",
-      "Vendor & Tool Selection — independent evaluation and recommendation of AI platforms",
-      "Executive AI Briefings — board and leadership sessions on AI risks, opportunities, and strategy",
-      "Responsible AI Policy — governance frameworks for ethical and compliant AI use",
-    ],
-    pricing: "Project-based from MWK 350,000 · Retainer from MWK 120,000/month",
-    ideal:
-      "C-suite and board-level decision makers, strategy teams, and organisations planning their first AI investment.",
-  },
-  {
-    number: "02",
-    title: "Custom AI Development",
-    tagline: "Built for your problem. Built for Malawi.",
-    description:
-      "When off-the-shelf tools do not fit, we build. Our development team designs and builds bespoke AI-powered systems tailored to the specific workflows, data environments, and technical constraints of your organisation. All solutions are built to professional standards, fully documented, and supported after deployment.",
-    deliverables: [
-      "Intelligent Document Processing — automated extraction and processing of forms, reports, and records",
-      "Conversational AI — AI assistants for customer service, internal helpdesks, and operations",
-      "Predictive Analytics — forecasting demand, risk, churn, or outcomes from your data",
-      "Computer Vision — image recognition for quality control, security, or monitoring",
-      "Process Automation — AI-powered workflows replacing manual, repetitive tasks",
-      "Custom AI Dashboards — decision-support interfaces giving teams real-time AI-powered insights",
-      "System Integration — connecting AI capabilities to your existing software and databases",
-    ],
-    pricing:
-      "Project-based from MWK 800,000 depending on scope · Post-deployment support retainer available",
-    ideal:
-      "Banks, manufacturing companies, logistics providers, healthcare facilities, government agencies, and any organisation with a specific operational problem.",
-  },
-  {
-    number: "03",
-    title: "AI Product Distribution",
-    tagline: "The world's best AI tools, delivered locally.",
-    description:
-      "We curate, evaluate, and distribute leading global AI platforms to the Malawian market. We do the hard work of assessing which tools are genuinely useful in the local context, handling local billing and compliance, and providing local support. You get world-class AI tools without the friction of dealing with foreign vendors directly.",
-    deliverables: [
-      "Curated catalogue of productivity AI tools for businesses and professionals",
-      "Industry-specific AI platforms across legal, financial, agricultural, and healthcare sectors",
-      "AI tools for developers and technical teams",
-      "Local licensing, invoicing in MWK, and local support",
-      "Onboarding and setup assistance included with all subscriptions",
-      "Regular catalogue updates as new tools emerge globally",
-    ],
-    pricing:
-      "Subscription-based pricing at competitive local rates · Volume discounts for teams",
-    ideal:
-      "SMEs seeking affordable AI productivity tools, professionals, and organisations looking to equip teams without the complexity of direct international procurement.",
-  },
-  {
-    number: "04",
-    title: "AI Training & Workshops",
-    tagline: "Building the AI-capable workforce Malawi needs.",
-    description:
-      "AI tools are only as powerful as the people using them. Our training programmes build genuine AI capability at every level of an organisation — from the boardroom to the frontline. All training is practical and hands-on. We do not deliver slide-deck-only sessions.",
-    deliverables: [
-      "Executive AI Literacy — half-day or full-day programmes for leadership teams",
-      "Departmental AI Tools Training — customised by function across finance, HR, marketing, and operations",
-      "Technical AI Workshops — for developers and data professionals",
-      "Public Open Enrolment Workshops — in Malawi, open to individuals",
-      "Online and Hybrid Training — for remote teams and regional participants",
-      "Train-the-Trainer — equipping internal teams to sustain AI capability independently",
-    ],
-    pricing:
-      "In-house training from MWK 280,000/day · Public workshop tickets from MWK 15,000/person",
-    ideal:
-      "HR and L&D teams, corporate teams being upskilled, universities, and individual professionals investing in their own capabilities.",
-  },
-  {
-    number: "05",
-    title: "Data Analytics & Automation",
-    tagline: "Your data is already valuable. We unlock it.",
-    description:
-      "Most organisations are sitting on data that could dramatically improve their decisions and operations. Our data analytics and automation service helps you structure, analyse, and act on that data — and automates the repetitive processes that drain time and create errors.",
-    deliverables: [
-      "Data Audit & Strategy — assessing what data you have, what it is worth, and what you need",
-      "Business Intelligence Dashboards — real-time reporting for management and operations",
-      "Process Automation — replacing manual data entry, reporting, and approvals with automated workflows",
-      "Predictive Reporting — forecasting models for sales, operations, risk, and planning",
-      "Data Pipeline Development — building reliable data infrastructure for growing organisations",
-      "System Integration — connecting disparate data sources into a unified analytical environment",
-    ],
-    pricing:
-      "Project-based from MWK 450,000 · Monthly analytics retainer from MWK 180,000/month",
-    ideal:
-      "Operations managers, finance teams, NGO programme managers, government departments, and any organisation currently relying on manual Excel-based reporting.",
-  },
-];
+export default async function ServicesPage() {
+  const services = await db.service.findMany({
+    where: { published: true },
+    orderBy: { order: "asc" },
+  });
 
-export default function ServicesPage() {
   return (
     <main className="bg-cosmos-chalk min-h-screen font-sans">
-      {/* ── NAVBAR ─────────────────────────────────────────── */}
       <Navbar active="/services" />
 
-      {/* ── HERO ───────────────────────────────────────────── */}
+      {/* HERO */}
       <section className="bg-cosmos-forest px-6 py-20">
         <div className="mx-auto max-w-4xl text-center">
           <div className="text-cosmos-teal mb-3 text-sm font-medium tracking-widest uppercase">
@@ -130,15 +36,14 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      {/* ── SERVICE LIST ───────────────────────────────────── */}
+      {/* SERVICE LIST */}
       <section className="px-6 py-20">
         <div className="mx-auto max-w-5xl space-y-16">
           {services.map((service) => (
             <div
-              key={service.number}
+              key={service.id}
               className="border-cosmos-silver rounded-2xl border bg-white p-8 md:p-12"
             >
-              {/* Header */}
               <div className="mb-8 flex items-start gap-6">
                 <div className="text-cosmos-teal text-4xl font-bold">
                   {service.number}
@@ -153,12 +58,10 @@ export default function ServicesPage() {
                 </div>
               </div>
 
-              {/* Description */}
               <p className="text-cosmos-forest mb-8 text-lg leading-relaxed font-light">
                 {service.description}
               </p>
 
-              {/* Deliverables */}
               <div className="mb-8">
                 <h3 className="font-display text-cosmos-forest mb-4 text-xl font-semibold">
                   Key Deliverables
@@ -176,7 +79,6 @@ export default function ServicesPage() {
                 </ul>
               </div>
 
-              {/* Pricing and ideal */}
               <div className="border-cosmos-silver grid grid-cols-1 gap-4 border-t pt-6 md:grid-cols-2">
                 <div>
                   <div className="text-cosmos-teal mb-1 text-sm font-medium tracking-widest uppercase">
@@ -200,7 +102,7 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      {/* ── ENGAGEMENT MODELS ──────────────────────────────── */}
+      {/* ENGAGEMENT MODELS */}
       <section className="bg-cosmos-forest px-6 py-16">
         <div className="mx-auto max-w-5xl">
           <div className="mb-10 text-center">
@@ -238,7 +140,7 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      {/* ── CTA ────────────────────────────────────────────── */}
+      {/* CTA */}
       <section className="bg-cosmos-night px-6 py-16">
         <div className="mx-auto max-w-3xl text-center">
           <h2 className="font-display text-cosmos-sage mb-4 text-4xl font-semibold">
@@ -257,7 +159,6 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      {/* ── FOOTER ─────────────────────────────────────────── */}
       <Footer />
     </main>
   );

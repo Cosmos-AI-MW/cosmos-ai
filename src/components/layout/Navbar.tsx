@@ -50,6 +50,25 @@ export default function Navbar({ active }: { active?: string }) {
             </Link>
           ))}
           <Link
+            href="/search"
+            className="text-cosmos-sage transition-colors hover:text-white"
+            aria-label="Search"
+          >
+            <svg
+              className="h-5 w-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
+          </Link>
+          <Link
             href="/contact"
             className="bg-cosmos-accent hover:bg-cosmos-forest-light rounded-full px-6 py-2 text-base font-medium tracking-wide text-white transition-colors"
           >
@@ -98,6 +117,13 @@ export default function Navbar({ active }: { active?: string }) {
               {link.label}
             </Link>
           ))}
+          <Link
+            href="/search"
+            onClick={() => setMenuOpen(false)}
+            className="text-cosmos-sage text-base font-medium tracking-wide transition-colors hover:text-white"
+          >
+            Search
+          </Link>
           <Link
             href="/contact"
             onClick={() => setMenuOpen(false)}

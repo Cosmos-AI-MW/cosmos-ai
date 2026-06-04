@@ -1,7 +1,7 @@
 import Link from "next/link";
+import { db } from "~/server/db";
 import Navbar from "~/components/layout/Navbar";
 import Footer from "~/components/layout/Footer";
-
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -10,13 +10,21 @@ export const metadata: Metadata = {
     "Cosmos AI is a Malawian artificial intelligence company built to serve this country and grow with it.",
 };
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const [aboutContent, values] = await Promise.all([
+    db.aboutContent.findMany(),
+    db.value.findMany({ orderBy: { order: "asc" } }),
+  ]);
+
+  const content = Object.fromEntries(
+    aboutContent.map((item) => [item.key, item.value]),
+  );
+
   return (
     <main className="bg-cosmos-chalk min-h-screen font-sans">
-      {/* ── NAVBAR ─────────────────────────────────────────── */}
       <Navbar active="/about" />
 
-      {/* ── HERO ───────────────────────────────────────────── */}
+      {/* HERO */}
       <section className="bg-cosmos-forest px-6 py-20">
         <div className="mx-auto max-w-4xl text-center">
           <div className="text-cosmos-teal mb-3 text-sm font-medium tracking-widest uppercase">
@@ -26,13 +34,12 @@ export default function AboutPage() {
             About Cosmos AI
           </h1>
           <p className="text-cosmos-mist mx-auto max-w-2xl text-xl leading-relaxed font-light">
-            A Malawian artificial intelligence company built to serve this
-            country and grow with it.
+            {content.hero_tagline}
           </p>
         </div>
       </section>
 
-      {/* ── OUR STORY ──────────────────────────────────────── */}
+      {/* OUR STORY */}
       <section className="px-6 py-20">
         <div className="mx-auto max-w-3xl">
           <div className="text-cosmos-teal mb-3 text-sm font-medium tracking-widest uppercase">
@@ -42,29 +49,20 @@ export default function AboutPage() {
             Why Cosmos AI Exists
           </h2>
           <div className="text-cosmos-forest space-y-6 text-lg leading-relaxed font-light">
-            <p>
-              At Cosmos AI, we believe Malawi&apos;s future is built on
-              understanding its unique opportunities and strengths. We combine
-              deep local knowledge with access to the world&apos;s most advanced
-              AI solutions, serving as a bridge between global innovation and
-              Malawi&apos;s growing businesses, institutions, and entrepreneurs.
-            </p>
-            <p>
-              We are committed to helping Malawian technology and business
-              thrive on their own terms. If you are building the future, we want
-              to build it with you.
-            </p>
-            <p>
-              Cosmos AI was built on the belief that Malawi deserves world-class
-              AI capability — not as a future ambition, but as a present
-              reality. We are here, we are building, and we are in it for the
-              long term.
-            </p>
+            {[
+              content.story_paragraph_1,
+              content.story_paragraph_2,
+              content.story_paragraph_3,
+            ]
+              .filter(Boolean)
+              .map((para, i) => (
+                <p key={i}>{para}</p>
+              ))}
           </div>
         </div>
       </section>
 
-      {/* ── VISION & MISSION ───────────────────────────────── */}
+      {/* VISION & MISSION */}
       <section className="bg-cosmos-forest px-6 py-20">
         <div className="mx-auto max-w-5xl">
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
@@ -76,10 +74,7 @@ export default function AboutPage() {
                 Where We Are Going
               </h3>
               <p className="text-cosmos-mist text-base leading-relaxed font-light">
-                To be the leading artificial intelligence company in Malawi and
-                a recognised force across East and Southern Africa — a company
-                that demonstrably improves lives, businesses, and public
-                services through responsible and accessible AI.
+                {content.vision}
               </p>
             </div>
             <div className="border-cosmos-forest-light bg-cosmos-forest-light/30 rounded-2xl border p-8">
@@ -90,17 +85,14 @@ export default function AboutPage() {
                 What We Do Every Day
               </h3>
               <p className="text-cosmos-mist text-base leading-relaxed font-light">
-                To accelerate AI adoption across Malawi by providing world-class
-                consulting, custom-built solutions, curated AI products, and
-                practical training — delivered with deep local knowledge,
-                integrity, and a commitment to long-term partnerships.
+                {content.mission}
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── VALUES ─────────────────────────────────────────── */}
+      {/* VALUES */}
       <section className="px-6 py-20">
         <div className="mx-auto max-w-5xl">
           <div className="mb-12 text-center">
@@ -112,40 +104,9 @@ export default function AboutPage() {
             </h2>
           </div>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {[
-              {
-                title: "Accessibility",
-                description:
-                  "AI should not be the preserve of large corporations or wealthy nations. We design every engagement with inclusion in mind.",
-              },
-              {
-                title: "Integrity",
-                description:
-                  "We recommend what is right for the client, not what is most profitable for us. Trust is our most valuable asset.",
-              },
-              {
-                title: "Local First",
-                description:
-                  "We understand Malawi. Our solutions are designed for Malawian infrastructure, budgets, languages, and realities.",
-              },
-              {
-                title: "Excellence",
-                description:
-                  "We hold ourselves to international standards in everything we deliver — from a training workshop to a full enterprise system.",
-              },
-              {
-                title: "Partnership",
-                description:
-                  "We do not do one-off transactions. We build long-term relationships and grow alongside our clients.",
-              },
-              {
-                title: "Innovation",
-                description:
-                  "We stay at the frontier of AI development so our clients always have access to the most effective tools available.",
-              },
-            ].map((value) => (
+            {values.map((value) => (
               <div
-                key={value.title}
+                key={value.id}
                 className="border-cosmos-silver rounded-2xl border bg-white p-6"
               >
                 <h3 className="font-display text-cosmos-forest mb-3 text-xl font-semibold">
@@ -160,7 +121,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ── TEAM ───────────────────────────────────────────── */}
+      {/* TEAM */}
       <section className="bg-cosmos-mist px-6 py-20">
         <div className="mx-auto max-w-5xl">
           <div className="mb-12 text-center">
@@ -173,11 +134,7 @@ export default function AboutPage() {
           </div>
           <div className="border-cosmos-silver rounded-2xl border bg-white p-10 text-center">
             <p className="text-cosmos-forest mx-auto max-w-2xl text-lg leading-relaxed font-light">
-              Cosmos AI is led by a team of Malawian professionals with
-              expertise spanning artificial intelligence, software engineering,
-              business strategy, and enterprise consulting. We are practitioners
-              first — every recommendation we make is grounded in real
-              experience building and deploying AI systems.
+              {content.team_description}
             </p>
             <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Link
@@ -197,7 +154,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ── CTA ────────────────────────────────────────────── */}
+      {/* CTA */}
       <section className="bg-cosmos-night px-6 py-16">
         <div className="mx-auto max-w-3xl text-center">
           <h2 className="font-display text-cosmos-sage mb-4 text-4xl font-semibold">
@@ -216,7 +173,6 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ── FOOTER ─────────────────────────────────────────── */}
       <Footer />
     </main>
   );
