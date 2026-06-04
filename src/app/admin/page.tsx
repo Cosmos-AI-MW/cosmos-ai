@@ -2,44 +2,54 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { auth } from "~/server/auth";
 import { db } from "~/server/db";
-import SignOutButton from "~/components/admin/SignOutButton";
 import MarkReadButton from "~/components/admin/MarkReadButton";
+import SignOutButton from "~/components/admin/SignOutButton";
+import AdminNavbar from "~/components/admin/AdminNavbar";
 
-export default async function AdminPage() {
+const PER_PAGE = 10;
+
+export default async function AdminPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string; page?: string }>;
+}) {
   const session = await auth();
-
   if (!session?.user) {
     redirect("/admin/login");
   }
 
-  const submissions = await db.contactSubmission.findMany({
-    orderBy: { createdAt: "desc" },
-  });
+  const { q = "", page = "1" } = await searchParams;
+  const currentPage = Math.max(1, parseInt(page));
+  const skip = (currentPage - 1) * PER_PAGE;
+
+  const where = q
+    ? {
+        OR: [
+          { name: { contains: q, mode: "insensitive" as const } },
+          { email: { contains: q, mode: "insensitive" as const } },
+          { organisation: { contains: q, mode: "insensitive" as const } },
+        ],
+      }
+    : {};
+
+  const [submissions, total, allSubmissions] = await Promise.all([
+    db.contactSubmission.findMany({
+      where,
+      orderBy: { createdAt: "desc" },
+      skip,
+      take: PER_PAGE,
+    }),
+    db.contactSubmission.count({ where }),
+    db.contactSubmission.findMany({ orderBy: { createdAt: "desc" } }),
+  ]);
+
+  const totalPages = Math.ceil(total / PER_PAGE);
+  const unread = allSubmissions.filter((s) => !s.read).length;
 
   return (
     <main className="bg-cosmos-night min-h-screen font-sans">
       {/* HEADER */}
-      <nav className="border-cosmos-forest bg-cosmos-forest border-b px-6 py-4">
-        <div className="mx-auto flex max-w-6xl items-center justify-between">
-          <div>
-            <div className="font-display text-cosmos-sage text-lg font-semibold tracking-widest">
-              COSMOS AI
-            </div>
-            <div className="text-cosmos-teal text-xs tracking-widest">
-              ADMIN DASHBOARD
-            </div>
-          </div>
-          <div className="flex items-center gap-6">
-            <Link
-              href="/"
-              className="text-cosmos-sage text-sm font-medium transition-colors hover:text-white"
-            >
-              View Site
-            </Link>
-            <SignOutButton />
-          </div>
-        </div>
-      </nav>
+      <AdminNavbar q={q} />
 
       {/* STATS */}
       <section className="px-6 py-8">
@@ -50,7 +60,7 @@ export default async function AdminPage() {
                 Total Enquiries
               </div>
               <div className="font-display text-4xl font-semibold text-white">
-                {submissions.length}
+                {allSubmissions.length}
               </div>
             </div>
             <div className="border-cosmos-forest bg-cosmos-forest/30 rounded-2xl border p-6">
@@ -58,7 +68,7 @@ export default async function AdminPage() {
                 Unread
               </div>
               <div className="font-display text-4xl font-semibold text-white">
-                {submissions.filter((s) => !s.read).length}
+                {unread}
               </div>
             </div>
             <div className="border-cosmos-forest bg-cosmos-forest/30 rounded-2xl border p-6">
@@ -66,8 +76,8 @@ export default async function AdminPage() {
                 Latest
               </div>
               <div className="font-display text-lg font-semibold text-white">
-                {submissions[0]
-                  ? new Date(submissions[0].createdAt).toLocaleDateString(
+                {allSubmissions[0]
+                  ? new Date(allSubmissions[0].createdAt).toLocaleDateString(
                       "en-GB",
                       { day: "numeric", month: "short", year: "numeric" },
                     )
@@ -81,15 +91,22 @@ export default async function AdminPage() {
       {/* SUBMISSIONS */}
       <section className="px-6 pb-12">
         <div className="mx-auto max-w-6xl">
-          <h2 className="font-display mb-6 text-2xl font-semibold text-white">
-            Contact Submissions
-          </h2>
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="font-display text-2xl font-semibold text-white">
+              {q ? `Results for "${q}"` : "Contact Submissions"}
+            </h2>
+            <p className="text-cosmos-sage/60 text-sm">
+              {total} {total === 1 ? "submission" : "submissions"}
+              {totalPages > 1 && ` · Page ${currentPage} of ${totalPages}`}
+            </p>
+          </div>
 
           {submissions.length === 0 ? (
             <div className="border-cosmos-forest bg-cosmos-forest/20 rounded-2xl border p-12 text-center">
               <p className="text-cosmos-sage text-lg font-light">
-                No submissions yet. They will appear here when someone contacts
-                you.
+                {q
+                  ? `No submissions found for "${q}".`
+                  : "No submissions yet. They will appear here when someone contacts you."}
               </p>
             </div>
           ) : (
@@ -122,7 +139,7 @@ export default async function AdminPage() {
                         />
                       </div>
                       {submission.organisation && (
-                        <p className="text-cosmos-sage text-sm">
+                        <p className="text-cosmos-sage mt-1 text-sm">
                           {submission.organisation}
                         </p>
                       )}
@@ -131,11 +148,7 @@ export default async function AdminPage() {
                       <div className="text-cosmos-sage text-sm">
                         {new Date(submission.createdAt).toLocaleDateString(
                           "en-GB",
-                          {
-                            day: "numeric",
-                            month: "short",
-                            year: "numeric",
-                          },
+                          { day: "numeric", month: "short", year: "numeric" },
                         )}
                       </div>
                       <div className="text-cosmos-sage/60 text-xs">
@@ -188,6 +201,45 @@ export default async function AdminPage() {
                   </div>
                 </div>
               ))}
+            </div>
+          )}
+
+          {/* PAGINATION */}
+          {totalPages > 1 && (
+            <div className="mt-8 flex items-center justify-center gap-3">
+              {currentPage > 1 && (
+                <Link
+                  href={`/admin?${q ? `q=${q}&` : ""}page=${currentPage - 1}`}
+                  className="border-cosmos-forest-light text-cosmos-sage hover:border-cosmos-teal rounded-xl border px-5 py-2.5 text-sm font-medium transition-colors hover:text-white"
+                >
+                  ← Previous
+                </Link>
+              )}
+              <div className="flex items-center gap-2">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                  (pageNum) => (
+                    <Link
+                      key={pageNum}
+                      href={`/admin?${q ? `q=${q}&` : ""}page=${pageNum}`}
+                      className={`rounded-xl px-4 py-2.5 text-sm font-medium transition-colors ${
+                        pageNum === currentPage
+                          ? "bg-cosmos-accent text-white"
+                          : "border-cosmos-forest-light text-cosmos-sage hover:border-cosmos-teal border hover:text-white"
+                      }`}
+                    >
+                      {pageNum}
+                    </Link>
+                  ),
+                )}
+              </div>
+              {currentPage < totalPages && (
+                <Link
+                  href={`/admin?${q ? `q=${q}&` : ""}page=${currentPage + 1}`}
+                  className="border-cosmos-forest-light text-cosmos-sage hover:border-cosmos-teal rounded-xl border px-5 py-2.5 text-sm font-medium transition-colors hover:text-white"
+                >
+                  Next →
+                </Link>
+              )}
             </div>
           )}
         </div>
