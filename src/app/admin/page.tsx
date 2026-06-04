@@ -88,6 +88,18 @@ export default async function AdminPage({
         </div>
       </section>
 
+      {/* CONTENT MANAGEMENT LINK */}
+      <section className="px-6 pb-6">
+        <div className="mx-auto max-w-6xl">
+          <a
+            href="/admin/content"
+            className="border-cosmos-forest-light text-cosmos-sage hover:border-cosmos-teal inline-flex items-center gap-2 rounded-full border px-6 py-2.5 text-sm font-medium transition-colors hover:text-white"
+          >
+            ✦ Manage Website Content
+          </a>
+        </div>
+      </section>
+
       {/* SUBMISSIONS */}
       <section className="px-6 pb-12">
         <div className="mx-auto max-w-6xl">
