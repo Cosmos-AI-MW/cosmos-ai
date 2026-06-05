@@ -85,7 +85,8 @@ export default function ContactPage() {
           </h1>
           <p className="text-cosmos-mist mx-auto max-w-2xl text-xl leading-relaxed font-light">
             Book a free exploratory meeting. We understand your needs first,
-            then advise on the best path forward. No pressure, no obligation.
+            then advise on the best path forward. We take the time to understand
+            you before recommending a direction or committing to anything.
           </p>
         </div>
       </section>
