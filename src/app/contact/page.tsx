@@ -84,9 +84,8 @@ export default function ContactPage() {
             Let&apos;s Talk
           </h1>
           <p className="text-cosmos-mist mx-auto max-w-2xl text-xl leading-relaxed font-light">
-            Every engagement starts with a free 60-minute discovery
-            conversation. No obligation, no sales pressure. Just an honest
-            conversation about what AI can do for you.
+            Book a free exploratory meeting. We understand your needs first,
+            then advise on the best path forward. No pressure, no obligation.
           </p>
         </div>
       </section>
@@ -123,11 +122,11 @@ export default function ContactPage() {
               </div>
               <div>
                 <div className="text-cosmos-teal mb-2 text-sm font-medium tracking-widest uppercase">
-                  Discovery Call
+                  Exploratory Meeting
                 </div>
                 <p className="text-cosmos-forest text-base font-light">
-                  Free 60-minute session. We listen first, then recommend. No
-                  commitment required.
+                  A free meeting to understand your needs. We advise on the best
+                  path forward with no obligation.
                 </p>
               </div>
             </div>

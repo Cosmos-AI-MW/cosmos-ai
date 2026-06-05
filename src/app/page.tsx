@@ -195,14 +195,14 @@ export default function Home() {
             Ready to explore what AI can do for you?
           </h2>
           <p className="text-cosmos-mist mb-8 text-lg font-light">
-            Every engagement starts with a free 60-minute discovery
-            conversation. No obligation, no sales pressure.
+            Book a free exploratory meeting. We understand your needs first,
+            then advise on the best path forward.
           </p>
           <Link
             href="/contact"
             className="bg-cosmos-accent hover:bg-cosmos-forest-light rounded-full px-10 py-3 text-base font-medium tracking-wide text-white transition-colors"
           >
-            Book a Discovery Call
+            Book an Exploratory Meeting
           </Link>
         </div>
       </section>

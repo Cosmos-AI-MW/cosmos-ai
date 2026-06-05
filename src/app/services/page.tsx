@@ -32,8 +32,9 @@ export default async function ServicesPage() {
             Our Services
           </h1>
           <p className="text-cosmos-mist mx-auto max-w-2xl text-xl leading-relaxed font-light">
-            Five integrated service lines covering the full AI value chain.
-            Engage one or all — we meet you where you are.
+            Five ways we work with organisations across Malawi. Whether you are
+            just starting out with AI or ready to build something custom — we
+            have the right fit.
           </p>
         </div>
       </section>
@@ -109,10 +110,10 @@ export default async function ServicesPage() {
         <div className="mx-auto max-w-5xl">
           <div className="mb-10 text-center">
             <div className="text-cosmos-teal mb-3 text-sm font-medium tracking-widest uppercase">
-              How We Work
+              Our Approach
             </div>
             <h2 className="font-display text-4xl font-semibold text-white">
-              Engagement Models
+              How We Work
             </h2>
           </div>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -122,18 +123,17 @@ export default async function ServicesPage() {
               </h3>
               <p className="text-cosmos-mist text-base leading-relaxed font-light">
                 A defined scope, fixed deliverables, and a clear end point.
-                Ideal for first engagements, specific problems, and
-                organisations with capital budgets rather than operating
-                budgets.
+                Right for specific problems, first engagements, and
+                organisations working with capital budgets.
               </p>
             </div>
             <div className="border-cosmos-forest-light bg-cosmos-forest-light/30 rounded-2xl border p-8">
               <h3 className="font-display mb-3 text-2xl font-semibold text-white">
-                Monthly Retainer
+                Monthly Partnership
               </h3>
               <p className="text-cosmos-mist text-base leading-relaxed font-light">
-                An ongoing relationship with a committed number of hours or
-                deliverables per month. Ideal for organisations wanting
+                An ongoing working relationship with committed hours or
+                deliverables each month. Right for organisations that want
                 continuous AI support, regular training, or sustained
                 development.
               </p>
@@ -149,14 +149,14 @@ export default async function ServicesPage() {
             Not sure where to start?
           </h2>
           <p className="text-cosmos-mist mb-8 text-lg font-light">
-            Every engagement starts with a free 60-minute discovery
-            conversation. We listen first, then recommend.
+            Book a free exploratory meeting. We understand your needs first,
+            then advise on the best path forward.
           </p>
           <Link
             href="/contact"
             className="bg-cosmos-accent hover:bg-cosmos-forest-light rounded-full px-10 py-3 text-base font-medium tracking-wide text-white transition-colors"
           >
-            Book a Discovery Call
+            Book an Exploratory Meeting
           </Link>
         </div>
       </section>

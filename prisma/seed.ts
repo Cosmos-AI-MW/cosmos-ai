@@ -15,7 +15,7 @@ async function main() {
         title: "AI Consulting & Advisory",
         tagline: "Clarity before commitment.",
         description:
-          "Before investing in any AI tool or solution, you need an honest assessment of what AI can genuinely achieve for your organisation. Our consulting service provides exactly that — independent, objective advisory grounded in real AI expertise and deep knowledge of the Malawian business environment.",
+          "Before investing in any AI tool or solution, you need an honest assessment of what AI can genuinely achieve for your organisation. Our advisory service provides exactly that — independent, objective guidance grounded in real AI expertise and deep knowledge of the Malawian business environment.",
         deliverables: [
           "AI Readiness Assessment — structured evaluation of your people, processes, data, and infrastructure",
           "AI Opportunity Mapping — identifying the highest-value AI use cases for your organisation",
@@ -25,7 +25,7 @@ async function main() {
           "Responsible AI Policy — governance frameworks for ethical and compliant AI use",
         ],
         pricing:
-          "Project-based from MWK 350,000 · Retainer from MWK 120,000/month",
+          "Project-based from MWK 350,000 · Monthly partnership from MWK 120,000/month",
         ideal:
           "C-suite and board-level decision makers, strategy teams, and organisations planning their first AI investment.",
         order: 1,
@@ -46,7 +46,7 @@ async function main() {
           "System Integration — connecting AI capabilities to your existing software and databases",
         ],
         pricing:
-          "Project-based from MWK 800,000 depending on scope · Post-deployment support retainer available",
+          "Project-based from MWK 800,000 depending on scope · Monthly partnership available post-deployment",
         ideal:
           "Banks, manufacturing companies, logistics providers, healthcare facilities, government agencies, and any organisation with a specific operational problem.",
         order: 2,
@@ -106,7 +106,7 @@ async function main() {
           "System Integration — connecting disparate data sources into a unified analytical environment",
         ],
         pricing:
-          "Project-based from MWK 450,000 · Monthly analytics retainer from MWK 180,000/month",
+          "Project-based from MWK 450,000 · Monthly partnership from MWK 180,000/month",
         ideal:
           "Operations managers, finance teams, NGO programme managers, government departments, and any organisation currently relying on manual Excel-based reporting.",
         order: 5,
@@ -149,12 +149,12 @@ async function main() {
       {
         key: "mission",
         value:
-          "To accelerate AI adoption across Malawi by providing world-class consulting, custom-built solutions, curated AI products, and practical training — delivered with deep local knowledge, integrity, and a commitment to long-term partnerships.",
+          "To accelerate AI adoption across Malawi by providing world-class advisory, custom-built solutions, curated AI products, and practical training — delivered with deep local knowledge, integrity, and a commitment to long-term partnerships.",
       },
       {
         key: "team_description",
         value:
-          "Cosmos AI is led by a team of Malawian professionals with expertise spanning artificial intelligence, software engineering, business strategy, and enterprise consulting. We are practitioners first — every recommendation we make is grounded in real experience building and deploying AI systems.",
+          "Cosmos AI is led by a team of Malawian professionals with expertise spanning artificial intelligence, software engineering, business strategy, and enterprise advisory. We are practitioners first — every recommendation we make is grounded in real experience building and deploying AI systems.",
       },
     ],
   });

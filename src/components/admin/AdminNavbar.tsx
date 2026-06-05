@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import SignOutButton from "~/components/admin/SignOutButton";
 
@@ -12,14 +13,23 @@ export default function AdminNavbar({ q = "" }: { q?: string }) {
     <nav className="border-cosmos-forest bg-cosmos-forest border-b px-6 py-4">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4">
         {/* Brand */}
-        <div className="shrink-0">
-          <div className="font-display text-cosmos-sage text-lg font-semibold tracking-widest">
-            COSMOS AI
+        <Link href="/admin" className="flex shrink-0 items-center gap-3">
+          <Image
+            src="/images/cosmos_logo.png"
+            alt="Cosmos AI"
+            width={40}
+            height={40}
+            className="rounded"
+          />
+          <div>
+            <div className="font-display text-cosmos-sage text-lg font-semibold tracking-widest">
+              COSMOS AI
+            </div>
+            <div className="text-cosmos-teal text-xs tracking-widest">
+              ADMIN DASHBOARD
+            </div>
           </div>
-          <div className="text-cosmos-teal text-xs tracking-widest">
-            ADMIN DASHBOARD
-          </div>
-        </div>
+        </Link>
 
         {/* Desktop — search + links */}
         <div className="hidden max-w-sm flex-1 items-center gap-2 md:flex">
