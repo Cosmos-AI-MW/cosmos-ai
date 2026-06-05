@@ -46,7 +46,7 @@ export default async function ContentPage() {
               href="/admin/content/about"
               className="border-cosmos-forest bg-cosmos-forest/30 hover:border-cosmos-teal rounded-2xl border p-8 transition-colors"
             >
-              <div className="text-cosmos-teal mb-3 text-3xl font-bold">✦</div>
+              <div className="text-cosmos-teal mb-3 text-3xl font-bold">◎</div>
               <h2 className="font-display mb-2 text-2xl font-semibold text-white">
                 About
               </h2>
