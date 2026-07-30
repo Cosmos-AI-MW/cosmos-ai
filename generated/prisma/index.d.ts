@@ -19,6 +19,11 @@ export type PrismaPromise<T> = $Public.PrismaPromise<T>
  */
 export type ContactSubmission = $Result.DefaultSelection<Prisma.$ContactSubmissionPayload>
 /**
+ * Model WriteGeneration
+ * 
+ */
+export type WriteGeneration = $Result.DefaultSelection<Prisma.$WriteGenerationPayload>
+/**
  * Model Service
  * 
  */
@@ -181,6 +186,16 @@ export class PrismaClient<
     * ```
     */
   get contactSubmission(): Prisma.ContactSubmissionDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.writeGeneration`: Exposes CRUD operations for the **WriteGeneration** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more WriteGenerations
+    * const writeGenerations = await prisma.writeGeneration.findMany()
+    * ```
+    */
+  get writeGeneration(): Prisma.WriteGenerationDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.service`: Exposes CRUD operations for the **Service** model.
@@ -693,6 +708,7 @@ export namespace Prisma {
 
   export const ModelName: {
     ContactSubmission: 'ContactSubmission',
+    WriteGeneration: 'WriteGeneration',
     Service: 'Service',
     AboutContent: 'AboutContent',
     Value: 'Value',
@@ -718,7 +734,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "contactSubmission" | "service" | "aboutContent" | "value" | "account" | "session" | "user" | "verificationToken"
+      modelProps: "contactSubmission" | "writeGeneration" | "service" | "aboutContent" | "value" | "account" | "session" | "user" | "verificationToken"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -793,6 +809,80 @@ export namespace Prisma {
           count: {
             args: Prisma.ContactSubmissionCountArgs<ExtArgs>
             result: $Utils.Optional<ContactSubmissionCountAggregateOutputType> | number
+          }
+        }
+      }
+      WriteGeneration: {
+        payload: Prisma.$WriteGenerationPayload<ExtArgs>
+        fields: Prisma.WriteGenerationFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.WriteGenerationFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WriteGenerationPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.WriteGenerationFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WriteGenerationPayload>
+          }
+          findFirst: {
+            args: Prisma.WriteGenerationFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WriteGenerationPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.WriteGenerationFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WriteGenerationPayload>
+          }
+          findMany: {
+            args: Prisma.WriteGenerationFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WriteGenerationPayload>[]
+          }
+          create: {
+            args: Prisma.WriteGenerationCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WriteGenerationPayload>
+          }
+          createMany: {
+            args: Prisma.WriteGenerationCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.WriteGenerationCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WriteGenerationPayload>[]
+          }
+          delete: {
+            args: Prisma.WriteGenerationDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WriteGenerationPayload>
+          }
+          update: {
+            args: Prisma.WriteGenerationUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WriteGenerationPayload>
+          }
+          deleteMany: {
+            args: Prisma.WriteGenerationDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.WriteGenerationUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.WriteGenerationUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WriteGenerationPayload>[]
+          }
+          upsert: {
+            args: Prisma.WriteGenerationUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WriteGenerationPayload>
+          }
+          aggregate: {
+            args: Prisma.WriteGenerationAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateWriteGeneration>
+          }
+          groupBy: {
+            args: Prisma.WriteGenerationGroupByArgs<ExtArgs>
+            result: $Utils.Optional<WriteGenerationGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.WriteGenerationCountArgs<ExtArgs>
+            result: $Utils.Optional<WriteGenerationCountAggregateOutputType> | number
           }
         }
       }
@@ -1411,6 +1501,7 @@ export namespace Prisma {
   }
   export type GlobalOmitConfig = {
     contactSubmission?: ContactSubmissionOmit
+    writeGeneration?: WriteGenerationOmit
     service?: ServiceOmit
     aboutContent?: AboutContentOmit
     value?: ValueOmit
@@ -2581,6 +2672,1010 @@ export namespace Prisma {
      * Omit specific fields from the ContactSubmission
      */
     omit?: ContactSubmissionOmit<ExtArgs> | null
+  }
+
+
+  /**
+   * Model WriteGeneration
+   */
+
+  export type AggregateWriteGeneration = {
+    _count: WriteGenerationCountAggregateOutputType | null
+    _min: WriteGenerationMinAggregateOutputType | null
+    _max: WriteGenerationMaxAggregateOutputType | null
+  }
+
+  export type WriteGenerationMinAggregateOutputType = {
+    id: string | null
+    documentType: string | null
+    output: string | null
+    sessionId: string | null
+    createdAt: Date | null
+  }
+
+  export type WriteGenerationMaxAggregateOutputType = {
+    id: string | null
+    documentType: string | null
+    output: string | null
+    sessionId: string | null
+    createdAt: Date | null
+  }
+
+  export type WriteGenerationCountAggregateOutputType = {
+    id: number
+    documentType: number
+    inputs: number
+    output: number
+    sessionId: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type WriteGenerationMinAggregateInputType = {
+    id?: true
+    documentType?: true
+    output?: true
+    sessionId?: true
+    createdAt?: true
+  }
+
+  export type WriteGenerationMaxAggregateInputType = {
+    id?: true
+    documentType?: true
+    output?: true
+    sessionId?: true
+    createdAt?: true
+  }
+
+  export type WriteGenerationCountAggregateInputType = {
+    id?: true
+    documentType?: true
+    inputs?: true
+    output?: true
+    sessionId?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type WriteGenerationAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which WriteGeneration to aggregate.
+     */
+    where?: WriteGenerationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of WriteGenerations to fetch.
+     */
+    orderBy?: WriteGenerationOrderByWithRelationInput | WriteGenerationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: WriteGenerationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` WriteGenerations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` WriteGenerations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned WriteGenerations
+    **/
+    _count?: true | WriteGenerationCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: WriteGenerationMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: WriteGenerationMaxAggregateInputType
+  }
+
+  export type GetWriteGenerationAggregateType<T extends WriteGenerationAggregateArgs> = {
+        [P in keyof T & keyof AggregateWriteGeneration]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateWriteGeneration[P]>
+      : GetScalarType<T[P], AggregateWriteGeneration[P]>
+  }
+
+
+
+
+  export type WriteGenerationGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: WriteGenerationWhereInput
+    orderBy?: WriteGenerationOrderByWithAggregationInput | WriteGenerationOrderByWithAggregationInput[]
+    by: WriteGenerationScalarFieldEnum[] | WriteGenerationScalarFieldEnum
+    having?: WriteGenerationScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: WriteGenerationCountAggregateInputType | true
+    _min?: WriteGenerationMinAggregateInputType
+    _max?: WriteGenerationMaxAggregateInputType
+  }
+
+  export type WriteGenerationGroupByOutputType = {
+    id: string
+    documentType: string
+    inputs: JsonValue
+    output: string
+    sessionId: string
+    createdAt: Date
+    _count: WriteGenerationCountAggregateOutputType | null
+    _min: WriteGenerationMinAggregateOutputType | null
+    _max: WriteGenerationMaxAggregateOutputType | null
+  }
+
+  type GetWriteGenerationGroupByPayload<T extends WriteGenerationGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<WriteGenerationGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof WriteGenerationGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], WriteGenerationGroupByOutputType[P]>
+            : GetScalarType<T[P], WriteGenerationGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type WriteGenerationSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    documentType?: boolean
+    inputs?: boolean
+    output?: boolean
+    sessionId?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["writeGeneration"]>
+
+  export type WriteGenerationSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    documentType?: boolean
+    inputs?: boolean
+    output?: boolean
+    sessionId?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["writeGeneration"]>
+
+  export type WriteGenerationSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    documentType?: boolean
+    inputs?: boolean
+    output?: boolean
+    sessionId?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["writeGeneration"]>
+
+  export type WriteGenerationSelectScalar = {
+    id?: boolean
+    documentType?: boolean
+    inputs?: boolean
+    output?: boolean
+    sessionId?: boolean
+    createdAt?: boolean
+  }
+
+  export type WriteGenerationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "documentType" | "inputs" | "output" | "sessionId" | "createdAt", ExtArgs["result"]["writeGeneration"]>
+
+  export type $WriteGenerationPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "WriteGeneration"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      documentType: string
+      inputs: Prisma.JsonValue
+      output: string
+      sessionId: string
+      createdAt: Date
+    }, ExtArgs["result"]["writeGeneration"]>
+    composites: {}
+  }
+
+  type WriteGenerationGetPayload<S extends boolean | null | undefined | WriteGenerationDefaultArgs> = $Result.GetResult<Prisma.$WriteGenerationPayload, S>
+
+  type WriteGenerationCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<WriteGenerationFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: WriteGenerationCountAggregateInputType | true
+    }
+
+  export interface WriteGenerationDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['WriteGeneration'], meta: { name: 'WriteGeneration' } }
+    /**
+     * Find zero or one WriteGeneration that matches the filter.
+     * @param {WriteGenerationFindUniqueArgs} args - Arguments to find a WriteGeneration
+     * @example
+     * // Get one WriteGeneration
+     * const writeGeneration = await prisma.writeGeneration.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends WriteGenerationFindUniqueArgs>(args: SelectSubset<T, WriteGenerationFindUniqueArgs<ExtArgs>>): Prisma__WriteGenerationClient<$Result.GetResult<Prisma.$WriteGenerationPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one WriteGeneration that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {WriteGenerationFindUniqueOrThrowArgs} args - Arguments to find a WriteGeneration
+     * @example
+     * // Get one WriteGeneration
+     * const writeGeneration = await prisma.writeGeneration.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends WriteGenerationFindUniqueOrThrowArgs>(args: SelectSubset<T, WriteGenerationFindUniqueOrThrowArgs<ExtArgs>>): Prisma__WriteGenerationClient<$Result.GetResult<Prisma.$WriteGenerationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first WriteGeneration that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WriteGenerationFindFirstArgs} args - Arguments to find a WriteGeneration
+     * @example
+     * // Get one WriteGeneration
+     * const writeGeneration = await prisma.writeGeneration.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends WriteGenerationFindFirstArgs>(args?: SelectSubset<T, WriteGenerationFindFirstArgs<ExtArgs>>): Prisma__WriteGenerationClient<$Result.GetResult<Prisma.$WriteGenerationPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first WriteGeneration that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WriteGenerationFindFirstOrThrowArgs} args - Arguments to find a WriteGeneration
+     * @example
+     * // Get one WriteGeneration
+     * const writeGeneration = await prisma.writeGeneration.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends WriteGenerationFindFirstOrThrowArgs>(args?: SelectSubset<T, WriteGenerationFindFirstOrThrowArgs<ExtArgs>>): Prisma__WriteGenerationClient<$Result.GetResult<Prisma.$WriteGenerationPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more WriteGenerations that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WriteGenerationFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all WriteGenerations
+     * const writeGenerations = await prisma.writeGeneration.findMany()
+     * 
+     * // Get first 10 WriteGenerations
+     * const writeGenerations = await prisma.writeGeneration.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const writeGenerationWithIdOnly = await prisma.writeGeneration.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends WriteGenerationFindManyArgs>(args?: SelectSubset<T, WriteGenerationFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WriteGenerationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a WriteGeneration.
+     * @param {WriteGenerationCreateArgs} args - Arguments to create a WriteGeneration.
+     * @example
+     * // Create one WriteGeneration
+     * const WriteGeneration = await prisma.writeGeneration.create({
+     *   data: {
+     *     // ... data to create a WriteGeneration
+     *   }
+     * })
+     * 
+     */
+    create<T extends WriteGenerationCreateArgs>(args: SelectSubset<T, WriteGenerationCreateArgs<ExtArgs>>): Prisma__WriteGenerationClient<$Result.GetResult<Prisma.$WriteGenerationPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many WriteGenerations.
+     * @param {WriteGenerationCreateManyArgs} args - Arguments to create many WriteGenerations.
+     * @example
+     * // Create many WriteGenerations
+     * const writeGeneration = await prisma.writeGeneration.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends WriteGenerationCreateManyArgs>(args?: SelectSubset<T, WriteGenerationCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many WriteGenerations and returns the data saved in the database.
+     * @param {WriteGenerationCreateManyAndReturnArgs} args - Arguments to create many WriteGenerations.
+     * @example
+     * // Create many WriteGenerations
+     * const writeGeneration = await prisma.writeGeneration.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many WriteGenerations and only return the `id`
+     * const writeGenerationWithIdOnly = await prisma.writeGeneration.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends WriteGenerationCreateManyAndReturnArgs>(args?: SelectSubset<T, WriteGenerationCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WriteGenerationPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a WriteGeneration.
+     * @param {WriteGenerationDeleteArgs} args - Arguments to delete one WriteGeneration.
+     * @example
+     * // Delete one WriteGeneration
+     * const WriteGeneration = await prisma.writeGeneration.delete({
+     *   where: {
+     *     // ... filter to delete one WriteGeneration
+     *   }
+     * })
+     * 
+     */
+    delete<T extends WriteGenerationDeleteArgs>(args: SelectSubset<T, WriteGenerationDeleteArgs<ExtArgs>>): Prisma__WriteGenerationClient<$Result.GetResult<Prisma.$WriteGenerationPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one WriteGeneration.
+     * @param {WriteGenerationUpdateArgs} args - Arguments to update one WriteGeneration.
+     * @example
+     * // Update one WriteGeneration
+     * const writeGeneration = await prisma.writeGeneration.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends WriteGenerationUpdateArgs>(args: SelectSubset<T, WriteGenerationUpdateArgs<ExtArgs>>): Prisma__WriteGenerationClient<$Result.GetResult<Prisma.$WriteGenerationPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more WriteGenerations.
+     * @param {WriteGenerationDeleteManyArgs} args - Arguments to filter WriteGenerations to delete.
+     * @example
+     * // Delete a few WriteGenerations
+     * const { count } = await prisma.writeGeneration.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends WriteGenerationDeleteManyArgs>(args?: SelectSubset<T, WriteGenerationDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more WriteGenerations.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WriteGenerationUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many WriteGenerations
+     * const writeGeneration = await prisma.writeGeneration.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends WriteGenerationUpdateManyArgs>(args: SelectSubset<T, WriteGenerationUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more WriteGenerations and returns the data updated in the database.
+     * @param {WriteGenerationUpdateManyAndReturnArgs} args - Arguments to update many WriteGenerations.
+     * @example
+     * // Update many WriteGenerations
+     * const writeGeneration = await prisma.writeGeneration.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more WriteGenerations and only return the `id`
+     * const writeGenerationWithIdOnly = await prisma.writeGeneration.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends WriteGenerationUpdateManyAndReturnArgs>(args: SelectSubset<T, WriteGenerationUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WriteGenerationPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one WriteGeneration.
+     * @param {WriteGenerationUpsertArgs} args - Arguments to update or create a WriteGeneration.
+     * @example
+     * // Update or create a WriteGeneration
+     * const writeGeneration = await prisma.writeGeneration.upsert({
+     *   create: {
+     *     // ... data to create a WriteGeneration
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the WriteGeneration we want to update
+     *   }
+     * })
+     */
+    upsert<T extends WriteGenerationUpsertArgs>(args: SelectSubset<T, WriteGenerationUpsertArgs<ExtArgs>>): Prisma__WriteGenerationClient<$Result.GetResult<Prisma.$WriteGenerationPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of WriteGenerations.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WriteGenerationCountArgs} args - Arguments to filter WriteGenerations to count.
+     * @example
+     * // Count the number of WriteGenerations
+     * const count = await prisma.writeGeneration.count({
+     *   where: {
+     *     // ... the filter for the WriteGenerations we want to count
+     *   }
+     * })
+    **/
+    count<T extends WriteGenerationCountArgs>(
+      args?: Subset<T, WriteGenerationCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], WriteGenerationCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a WriteGeneration.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WriteGenerationAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends WriteGenerationAggregateArgs>(args: Subset<T, WriteGenerationAggregateArgs>): Prisma.PrismaPromise<GetWriteGenerationAggregateType<T>>
+
+    /**
+     * Group by WriteGeneration.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WriteGenerationGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends WriteGenerationGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: WriteGenerationGroupByArgs['orderBy'] }
+        : { orderBy?: WriteGenerationGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, WriteGenerationGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetWriteGenerationGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the WriteGeneration model
+   */
+  readonly fields: WriteGenerationFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for WriteGeneration.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__WriteGenerationClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the WriteGeneration model
+   */
+  interface WriteGenerationFieldRefs {
+    readonly id: FieldRef<"WriteGeneration", 'String'>
+    readonly documentType: FieldRef<"WriteGeneration", 'String'>
+    readonly inputs: FieldRef<"WriteGeneration", 'Json'>
+    readonly output: FieldRef<"WriteGeneration", 'String'>
+    readonly sessionId: FieldRef<"WriteGeneration", 'String'>
+    readonly createdAt: FieldRef<"WriteGeneration", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * WriteGeneration findUnique
+   */
+  export type WriteGenerationFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WriteGeneration
+     */
+    select?: WriteGenerationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WriteGeneration
+     */
+    omit?: WriteGenerationOmit<ExtArgs> | null
+    /**
+     * Filter, which WriteGeneration to fetch.
+     */
+    where: WriteGenerationWhereUniqueInput
+  }
+
+  /**
+   * WriteGeneration findUniqueOrThrow
+   */
+  export type WriteGenerationFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WriteGeneration
+     */
+    select?: WriteGenerationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WriteGeneration
+     */
+    omit?: WriteGenerationOmit<ExtArgs> | null
+    /**
+     * Filter, which WriteGeneration to fetch.
+     */
+    where: WriteGenerationWhereUniqueInput
+  }
+
+  /**
+   * WriteGeneration findFirst
+   */
+  export type WriteGenerationFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WriteGeneration
+     */
+    select?: WriteGenerationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WriteGeneration
+     */
+    omit?: WriteGenerationOmit<ExtArgs> | null
+    /**
+     * Filter, which WriteGeneration to fetch.
+     */
+    where?: WriteGenerationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of WriteGenerations to fetch.
+     */
+    orderBy?: WriteGenerationOrderByWithRelationInput | WriteGenerationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for WriteGenerations.
+     */
+    cursor?: WriteGenerationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` WriteGenerations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` WriteGenerations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of WriteGenerations.
+     */
+    distinct?: WriteGenerationScalarFieldEnum | WriteGenerationScalarFieldEnum[]
+  }
+
+  /**
+   * WriteGeneration findFirstOrThrow
+   */
+  export type WriteGenerationFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WriteGeneration
+     */
+    select?: WriteGenerationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WriteGeneration
+     */
+    omit?: WriteGenerationOmit<ExtArgs> | null
+    /**
+     * Filter, which WriteGeneration to fetch.
+     */
+    where?: WriteGenerationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of WriteGenerations to fetch.
+     */
+    orderBy?: WriteGenerationOrderByWithRelationInput | WriteGenerationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for WriteGenerations.
+     */
+    cursor?: WriteGenerationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` WriteGenerations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` WriteGenerations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of WriteGenerations.
+     */
+    distinct?: WriteGenerationScalarFieldEnum | WriteGenerationScalarFieldEnum[]
+  }
+
+  /**
+   * WriteGeneration findMany
+   */
+  export type WriteGenerationFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WriteGeneration
+     */
+    select?: WriteGenerationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WriteGeneration
+     */
+    omit?: WriteGenerationOmit<ExtArgs> | null
+    /**
+     * Filter, which WriteGenerations to fetch.
+     */
+    where?: WriteGenerationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of WriteGenerations to fetch.
+     */
+    orderBy?: WriteGenerationOrderByWithRelationInput | WriteGenerationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing WriteGenerations.
+     */
+    cursor?: WriteGenerationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` WriteGenerations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` WriteGenerations.
+     */
+    skip?: number
+    distinct?: WriteGenerationScalarFieldEnum | WriteGenerationScalarFieldEnum[]
+  }
+
+  /**
+   * WriteGeneration create
+   */
+  export type WriteGenerationCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WriteGeneration
+     */
+    select?: WriteGenerationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WriteGeneration
+     */
+    omit?: WriteGenerationOmit<ExtArgs> | null
+    /**
+     * The data needed to create a WriteGeneration.
+     */
+    data: XOR<WriteGenerationCreateInput, WriteGenerationUncheckedCreateInput>
+  }
+
+  /**
+   * WriteGeneration createMany
+   */
+  export type WriteGenerationCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many WriteGenerations.
+     */
+    data: WriteGenerationCreateManyInput | WriteGenerationCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * WriteGeneration createManyAndReturn
+   */
+  export type WriteGenerationCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WriteGeneration
+     */
+    select?: WriteGenerationSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the WriteGeneration
+     */
+    omit?: WriteGenerationOmit<ExtArgs> | null
+    /**
+     * The data used to create many WriteGenerations.
+     */
+    data: WriteGenerationCreateManyInput | WriteGenerationCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * WriteGeneration update
+   */
+  export type WriteGenerationUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WriteGeneration
+     */
+    select?: WriteGenerationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WriteGeneration
+     */
+    omit?: WriteGenerationOmit<ExtArgs> | null
+    /**
+     * The data needed to update a WriteGeneration.
+     */
+    data: XOR<WriteGenerationUpdateInput, WriteGenerationUncheckedUpdateInput>
+    /**
+     * Choose, which WriteGeneration to update.
+     */
+    where: WriteGenerationWhereUniqueInput
+  }
+
+  /**
+   * WriteGeneration updateMany
+   */
+  export type WriteGenerationUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update WriteGenerations.
+     */
+    data: XOR<WriteGenerationUpdateManyMutationInput, WriteGenerationUncheckedUpdateManyInput>
+    /**
+     * Filter which WriteGenerations to update
+     */
+    where?: WriteGenerationWhereInput
+    /**
+     * Limit how many WriteGenerations to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * WriteGeneration updateManyAndReturn
+   */
+  export type WriteGenerationUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WriteGeneration
+     */
+    select?: WriteGenerationSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the WriteGeneration
+     */
+    omit?: WriteGenerationOmit<ExtArgs> | null
+    /**
+     * The data used to update WriteGenerations.
+     */
+    data: XOR<WriteGenerationUpdateManyMutationInput, WriteGenerationUncheckedUpdateManyInput>
+    /**
+     * Filter which WriteGenerations to update
+     */
+    where?: WriteGenerationWhereInput
+    /**
+     * Limit how many WriteGenerations to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * WriteGeneration upsert
+   */
+  export type WriteGenerationUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WriteGeneration
+     */
+    select?: WriteGenerationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WriteGeneration
+     */
+    omit?: WriteGenerationOmit<ExtArgs> | null
+    /**
+     * The filter to search for the WriteGeneration to update in case it exists.
+     */
+    where: WriteGenerationWhereUniqueInput
+    /**
+     * In case the WriteGeneration found by the `where` argument doesn't exist, create a new WriteGeneration with this data.
+     */
+    create: XOR<WriteGenerationCreateInput, WriteGenerationUncheckedCreateInput>
+    /**
+     * In case the WriteGeneration was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<WriteGenerationUpdateInput, WriteGenerationUncheckedUpdateInput>
+  }
+
+  /**
+   * WriteGeneration delete
+   */
+  export type WriteGenerationDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WriteGeneration
+     */
+    select?: WriteGenerationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WriteGeneration
+     */
+    omit?: WriteGenerationOmit<ExtArgs> | null
+    /**
+     * Filter which WriteGeneration to delete.
+     */
+    where: WriteGenerationWhereUniqueInput
+  }
+
+  /**
+   * WriteGeneration deleteMany
+   */
+  export type WriteGenerationDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which WriteGenerations to delete
+     */
+    where?: WriteGenerationWhereInput
+    /**
+     * Limit how many WriteGenerations to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * WriteGeneration without action
+   */
+  export type WriteGenerationDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WriteGeneration
+     */
+    select?: WriteGenerationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WriteGeneration
+     */
+    omit?: WriteGenerationOmit<ExtArgs> | null
   }
 
 
@@ -10052,6 +11147,18 @@ export namespace Prisma {
   export type ContactSubmissionScalarFieldEnum = (typeof ContactSubmissionScalarFieldEnum)[keyof typeof ContactSubmissionScalarFieldEnum]
 
 
+  export const WriteGenerationScalarFieldEnum: {
+    id: 'id',
+    documentType: 'documentType',
+    inputs: 'inputs',
+    output: 'output',
+    sessionId: 'sessionId',
+    createdAt: 'createdAt'
+  };
+
+  export type WriteGenerationScalarFieldEnum = (typeof WriteGenerationScalarFieldEnum)[keyof typeof WriteGenerationScalarFieldEnum]
+
+
   export const ServiceScalarFieldEnum: {
     id: 'id',
     number: 'number',
@@ -10148,6 +11255,13 @@ export namespace Prisma {
   export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
+  export const JsonNullValueInput: {
+    JsonNull: typeof JsonNull
+  };
+
+  export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
+
+
   export const QueryMode: {
     default: 'default',
     insensitive: 'insensitive'
@@ -10162,6 +11276,15 @@ export namespace Prisma {
   };
 
   export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+  export const JsonNullValueFilter: {
+    DbNull: typeof DbNull,
+    JsonNull: typeof JsonNull,
+    AnyNull: typeof AnyNull
+  };
+
+  export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 
 
   /**
@@ -10201,6 +11324,20 @@ export namespace Prisma {
    * Reference to a field of type 'DateTime[]'
    */
   export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Json'
+   */
+  export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+    
+
+
+  /**
+   * Reference to a field of type 'QueryMode'
+   */
+  export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
     
 
 
@@ -10305,6 +11442,63 @@ export namespace Prisma {
     message?: StringWithAggregatesFilter<"ContactSubmission"> | string
     read?: BoolWithAggregatesFilter<"ContactSubmission"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"ContactSubmission"> | Date | string
+  }
+
+  export type WriteGenerationWhereInput = {
+    AND?: WriteGenerationWhereInput | WriteGenerationWhereInput[]
+    OR?: WriteGenerationWhereInput[]
+    NOT?: WriteGenerationWhereInput | WriteGenerationWhereInput[]
+    id?: StringFilter<"WriteGeneration"> | string
+    documentType?: StringFilter<"WriteGeneration"> | string
+    inputs?: JsonFilter<"WriteGeneration">
+    output?: StringFilter<"WriteGeneration"> | string
+    sessionId?: StringFilter<"WriteGeneration"> | string
+    createdAt?: DateTimeFilter<"WriteGeneration"> | Date | string
+  }
+
+  export type WriteGenerationOrderByWithRelationInput = {
+    id?: SortOrder
+    documentType?: SortOrder
+    inputs?: SortOrder
+    output?: SortOrder
+    sessionId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type WriteGenerationWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: WriteGenerationWhereInput | WriteGenerationWhereInput[]
+    OR?: WriteGenerationWhereInput[]
+    NOT?: WriteGenerationWhereInput | WriteGenerationWhereInput[]
+    documentType?: StringFilter<"WriteGeneration"> | string
+    inputs?: JsonFilter<"WriteGeneration">
+    output?: StringFilter<"WriteGeneration"> | string
+    sessionId?: StringFilter<"WriteGeneration"> | string
+    createdAt?: DateTimeFilter<"WriteGeneration"> | Date | string
+  }, "id">
+
+  export type WriteGenerationOrderByWithAggregationInput = {
+    id?: SortOrder
+    documentType?: SortOrder
+    inputs?: SortOrder
+    output?: SortOrder
+    sessionId?: SortOrder
+    createdAt?: SortOrder
+    _count?: WriteGenerationCountOrderByAggregateInput
+    _max?: WriteGenerationMaxOrderByAggregateInput
+    _min?: WriteGenerationMinOrderByAggregateInput
+  }
+
+  export type WriteGenerationScalarWhereWithAggregatesInput = {
+    AND?: WriteGenerationScalarWhereWithAggregatesInput | WriteGenerationScalarWhereWithAggregatesInput[]
+    OR?: WriteGenerationScalarWhereWithAggregatesInput[]
+    NOT?: WriteGenerationScalarWhereWithAggregatesInput | WriteGenerationScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"WriteGeneration"> | string
+    documentType?: StringWithAggregatesFilter<"WriteGeneration"> | string
+    inputs?: JsonWithAggregatesFilter<"WriteGeneration">
+    output?: StringWithAggregatesFilter<"WriteGeneration"> | string
+    sessionId?: StringWithAggregatesFilter<"WriteGeneration"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"WriteGeneration"> | Date | string
   }
 
   export type ServiceWhereInput = {
@@ -10827,6 +12021,69 @@ export namespace Prisma {
     service?: NullableStringFieldUpdateOperationsInput | string | null
     message?: StringFieldUpdateOperationsInput | string
     read?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type WriteGenerationCreateInput = {
+    id?: string
+    documentType: string
+    inputs: JsonNullValueInput | InputJsonValue
+    output: string
+    sessionId: string
+    createdAt?: Date | string
+  }
+
+  export type WriteGenerationUncheckedCreateInput = {
+    id?: string
+    documentType: string
+    inputs: JsonNullValueInput | InputJsonValue
+    output: string
+    sessionId: string
+    createdAt?: Date | string
+  }
+
+  export type WriteGenerationUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    documentType?: StringFieldUpdateOperationsInput | string
+    inputs?: JsonNullValueInput | InputJsonValue
+    output?: StringFieldUpdateOperationsInput | string
+    sessionId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type WriteGenerationUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    documentType?: StringFieldUpdateOperationsInput | string
+    inputs?: JsonNullValueInput | InputJsonValue
+    output?: StringFieldUpdateOperationsInput | string
+    sessionId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type WriteGenerationCreateManyInput = {
+    id?: string
+    documentType: string
+    inputs: JsonNullValueInput | InputJsonValue
+    output: string
+    sessionId: string
+    createdAt?: Date | string
+  }
+
+  export type WriteGenerationUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    documentType?: StringFieldUpdateOperationsInput | string
+    inputs?: JsonNullValueInput | InputJsonValue
+    output?: StringFieldUpdateOperationsInput | string
+    sessionId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type WriteGenerationUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    documentType?: StringFieldUpdateOperationsInput | string
+    inputs?: JsonNullValueInput | InputJsonValue
+    output?: StringFieldUpdateOperationsInput | string
+    sessionId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -11448,6 +12705,80 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedDateTimeFilter<$PrismaModel>
     _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+  export type JsonFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+
+  export type WriteGenerationCountOrderByAggregateInput = {
+    id?: SortOrder
+    documentType?: SortOrder
+    inputs?: SortOrder
+    output?: SortOrder
+    sessionId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type WriteGenerationMaxOrderByAggregateInput = {
+    id?: SortOrder
+    documentType?: SortOrder
+    output?: SortOrder
+    sessionId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type WriteGenerationMinOrderByAggregateInput = {
+    id?: SortOrder
+    documentType?: SortOrder
+    output?: SortOrder
+    sessionId?: SortOrder
+    createdAt?: SortOrder
+  }
+  export type JsonWithAggregatesFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonWithAggregatesFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonWithAggregatesFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedJsonFilter<$PrismaModel>
+    _max?: NestedJsonFilter<$PrismaModel>
   }
 
   export type StringNullableListFilter<$PrismaModel = never> = {
@@ -12074,6 +13405,29 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedDateTimeFilter<$PrismaModel>
     _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+  export type NestedJsonFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<NestedJsonFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonFilterBase<$PrismaModel>>, 'path'>>,
+        Required<NestedJsonFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<NestedJsonFilterBase<$PrismaModel>>, 'path'>>
+
+  export type NestedJsonFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
   export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {

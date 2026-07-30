@@ -133,6 +133,15 @@ exports.Prisma.ContactSubmissionScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.WriteGenerationScalarFieldEnum = {
+  id: 'id',
+  documentType: 'documentType',
+  inputs: 'inputs',
+  output: 'output',
+  sessionId: 'sessionId',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.ServiceScalarFieldEnum = {
   id: 'id',
   number: 'number',
@@ -205,6 +214,10 @@ exports.Prisma.SortOrder = {
   desc: 'desc'
 };
 
+exports.Prisma.JsonNullValueInput = {
+  JsonNull: Prisma.JsonNull
+};
+
 exports.Prisma.QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
@@ -215,9 +228,16 @@ exports.Prisma.NullsOrder = {
   last: 'last'
 };
 
+exports.Prisma.JsonNullValueFilter = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull,
+  AnyNull: Prisma.AnyNull
+};
+
 
 exports.Prisma.ModelName = {
   ContactSubmission: 'ContactSubmission',
+  WriteGeneration: 'WriteGeneration',
   Service: 'Service',
   AboutContent: 'AboutContent',
   Value: 'Value',

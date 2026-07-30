@@ -24,6 +24,20 @@ model ContactSubmission {
   @@index([createdAt])
 }
 
+// ── COSMOS WRITE ─────────────────────────────────────────────────
+model WriteGeneration {
+  id           String   @id @default(cuid())
+  documentType String
+  inputs       Json
+  output       String
+  sessionId    String
+  createdAt    DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([documentType])
+  @@index([sessionId])
+}
+
 // ── SERVICES ─────────────────────────────────────────────────────
 model Service {
   id           String   @id @default(cuid())

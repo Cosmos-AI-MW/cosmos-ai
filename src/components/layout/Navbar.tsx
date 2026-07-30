@@ -2,10 +2,31 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+
+const tools = [
+  {
+    href: "/tools/cosmos-write",
+    label: "Cosmos Write",
+    description: "AI business writing assistant",
+  },
+];
 
 export default function Navbar({ active }: { active?: string }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [toolsOpen, setToolsOpen] = useState(false);
+  const toolsRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (toolsRef.current && !toolsRef.current.contains(e.target as Node)) {
+        setToolsOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const links = [
     { href: "/services", label: "Services" },
@@ -13,7 +34,7 @@ export default function Navbar({ active }: { active?: string }) {
   ];
 
   return (
-    <nav className="bg-cosmos-forest px-6 py-4">
+    <nav className="bg-cosmos-forest relative z-50 px-6 py-4">
       <div className="mx-auto flex max-w-6xl items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3">
@@ -49,6 +70,60 @@ export default function Navbar({ active }: { active?: string }) {
               {link.label}
             </Link>
           ))}
+
+          {/* AI Tools dropdown — click outside to close */}
+          <div ref={toolsRef} className="relative">
+            <button
+              onClick={() => setToolsOpen((prev) => !prev)}
+              className={`flex items-center gap-1.5 text-base font-medium tracking-wide transition-colors ${
+                active?.startsWith("/tools")
+                  ? "text-white"
+                  : "text-cosmos-sage hover:text-white"
+              }`}
+            >
+              AI Tools
+              <svg
+                className={`h-4 w-4 transition-transform duration-200 ${toolsOpen ? "rotate-180" : ""}`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </button>
+
+            {toolsOpen && (
+              <div className="border-cosmos-forest-light bg-cosmos-night absolute top-full right-0 mt-2 w-64 rounded-2xl border p-2 shadow-xl">
+                {tools.map((tool) => (
+                  <Link
+                    key={tool.href}
+                    href={tool.href}
+                    onClick={() => setToolsOpen(false)}
+                    className="hover:bg-cosmos-forest block rounded-xl px-4 py-3 transition-colors"
+                  >
+                    <div className="text-sm font-medium text-white">
+                      {tool.label}
+                    </div>
+                    <div className="text-cosmos-sage/70 text-xs font-light">
+                      {tool.description}
+                    </div>
+                  </Link>
+                ))}
+                <div className="border-cosmos-forest-light mt-1 border-t px-4 py-3">
+                  <div className="text-cosmos-sage/40 text-xs font-light">
+                    More tools coming soon
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Search */}
           <Link
             href="/search"
             className="text-cosmos-sage transition-colors hover:text-white"
@@ -68,6 +143,7 @@ export default function Navbar({ active }: { active?: string }) {
               />
             </svg>
           </Link>
+
           <Link
             href="/contact"
             className="bg-cosmos-accent hover:bg-cosmos-forest-light rounded-full px-6 py-2 text-base font-medium tracking-wide text-white transition-colors"
@@ -83,19 +159,13 @@ export default function Navbar({ active }: { active?: string }) {
           aria-label="Toggle menu"
         >
           <span
-            className={`bg-cosmos-sage block h-0.5 w-6 transition-transform duration-300 ${
-              menuOpen ? "translate-y-2 rotate-45" : ""
-            }`}
+            className={`bg-cosmos-sage block h-0.5 w-6 transition-transform duration-300 ${menuOpen ? "translate-y-2 rotate-45" : ""}`}
           />
           <span
-            className={`bg-cosmos-sage block h-0.5 w-6 transition-opacity duration-300 ${
-              menuOpen ? "opacity-0" : ""
-            }`}
+            className={`bg-cosmos-sage block h-0.5 w-6 transition-opacity duration-300 ${menuOpen ? "opacity-0" : ""}`}
           />
           <span
-            className={`bg-cosmos-sage block h-0.5 w-6 transition-transform duration-300 ${
-              menuOpen ? "-translate-y-2 -rotate-45" : ""
-            }`}
+            className={`bg-cosmos-sage block h-0.5 w-6 transition-transform duration-300 ${menuOpen ? "-translate-y-2 -rotate-45" : ""}`}
           />
         </button>
       </div>
@@ -117,6 +187,23 @@ export default function Navbar({ active }: { active?: string }) {
               {link.label}
             </Link>
           ))}
+
+          <div>
+            <div className="text-cosmos-teal mb-2 text-xs font-medium tracking-widest uppercase">
+              AI Tools
+            </div>
+            {tools.map((tool) => (
+              <Link
+                key={tool.href}
+                href={tool.href}
+                onClick={() => setMenuOpen(false)}
+                className="text-cosmos-sage block py-2 text-base font-medium transition-colors hover:text-white"
+              >
+                {tool.label}
+              </Link>
+            ))}
+          </div>
+
           <Link
             href="/search"
             onClick={() => setMenuOpen(false)}
@@ -124,6 +211,7 @@ export default function Navbar({ active }: { active?: string }) {
           >
             Search
           </Link>
+
           <Link
             href="/contact"
             onClick={() => setMenuOpen(false)}

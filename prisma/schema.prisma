@@ -6,7 +6,6 @@ generator client {
 
 datasource db {
     provider = "postgresql"
-    url      = env("DATABASE_URL")
 }
 
 // ── CONTACT SUBMISSIONS ──────────────────────────────────────────
@@ -22,6 +21,20 @@ model ContactSubmission {
     createdAt    DateTime @default(now())
 
     @@index([createdAt])
+}
+
+// ── COSMOS WRITE ─────────────────────────────────────────────────
+model WriteGeneration {
+    id           String   @id @default(cuid())
+    documentType String
+    inputs       Json
+    output       String
+    sessionId    String
+    createdAt    DateTime @default(now())
+
+    @@index([createdAt])
+    @@index([documentType])
+    @@index([sessionId])
 }
 
 // ── SERVICES ─────────────────────────────────────────────────────
