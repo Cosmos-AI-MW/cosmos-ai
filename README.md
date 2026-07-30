@@ -22,10 +22,10 @@ We bridge the gap between global AI innovation and local business reality across
 
 We would love to hear from you. Every engagement starts with a free 60-minute discovery conversation — no obligation, no sales pressure.
 
-- **Website** — [cosmosai.co.mw](https://cosmosai.co.mw) *(coming soon)*
+- **Website** — [cosmosai.co.mw](https://cosmosai.mw)
 - **Email** — [hello@cosmosai.co.mw](mailto:hello@cosmosai.co.mw)
 - **Locations** — Blantyre & Lilongwe, Malawi
 
 ---
 
-*© 2025 Cosmos AI. All rights reserved.*
+_© 2025 Cosmos AI. All rights reserved._
