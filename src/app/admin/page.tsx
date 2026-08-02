@@ -88,14 +88,20 @@ export default async function AdminPage({
         </div>
       </section>
 
-      {/* CONTENT MANAGEMENT LINK */}
+      {/* QUICK LINKS */}
       <section className="px-6 pb-6">
-        <div className="mx-auto max-w-6xl">
+        <div className="mx-auto flex max-w-6xl flex-wrap gap-3">
           <a
             href="/admin/content"
             className="border-cosmos-forest-light text-cosmos-sage hover:border-cosmos-teal inline-flex items-center gap-2 rounded-full border px-6 py-2.5 text-sm font-medium transition-colors hover:text-white"
           >
-            ⚙ Manage Website Content
+            ⚙ Manage Content
+          </a>
+          <a
+            href="/admin/cosmos-write"
+            className="border-cosmos-forest-light text-cosmos-sage hover:border-cosmos-teal inline-flex items-center gap-2 rounded-full border px-6 py-2.5 text-sm font-medium transition-colors hover:text-white"
+          >
+            📈 Cosmos Write Stats
           </a>
         </div>
       </section>
