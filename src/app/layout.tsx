@@ -2,6 +2,7 @@ import "~/styles/globals.css";
 import { type Metadata } from "next";
 import { Syne, DM_Sans } from "next/font/google";
 import { TRPCReactProvider } from "~/trpc/react";
+import { SessionProvider } from "next-auth/react";
 
 const syne = Syne({
   subsets: ["latin"],
@@ -20,8 +21,8 @@ export const metadata: Metadata = {
   description:
     "Cosmos AI provides artificial intelligence consulting, custom solutions, training, and data analytics for businesses and institutions across Malawi.",
   icons: [
-    { rel: "icon", url: "/images/cosmos_favicon.png" },
-    { rel: "apple-touch-icon", url: "/images/cosmos_favicon.png" },
+    { rel: "icon", url: "/images/cosmos_icon.png" },
+    { rel: "apple-touch-icon", url: "/images/cosmos_icon.png" },
   ],
 };
 
@@ -31,7 +32,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${syne.variable} ${dmSans.variable}`}>
       <body className="bg-cosmos-chalk text-cosmos-night font-sans antialiased">
-        <TRPCReactProvider>{children}</TRPCReactProvider>
+        <SessionProvider>
+          <TRPCReactProvider>{children}</TRPCReactProvider>
+        </SessionProvider>
       </body>
     </html>
   );

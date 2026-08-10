@@ -11,7 +11,7 @@ Cosmos AI is a Malawian artificial intelligence company dedicated to making AI a
 We bridge the gap between global AI innovation and local business reality across five service lines:
 
 - **AI Consulting & Advisory** — strategy, readiness assessments, and AI roadmaps
-- **Custom AI Solution Development** — bespoke AI systems built for your specific problem
+- **Custom AI Solution Development** — AI systems built for your specific problem
 - **AI Product Distribution** — world-class AI tools with local support and MWK billing
 - **AI Training & Workshops** — building AI-capable teams at every level
 - **Data Analytics & Automation** — unlocking the value in your existing data

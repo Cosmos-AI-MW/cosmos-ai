@@ -29,6 +29,7 @@ export type WriteGenerationMinAggregateOutputType = {
   documentType: string | null
   output: string | null
   sessionId: string | null
+  userId: string | null
   createdAt: Date | null
 }
 
@@ -37,6 +38,7 @@ export type WriteGenerationMaxAggregateOutputType = {
   documentType: string | null
   output: string | null
   sessionId: string | null
+  userId: string | null
   createdAt: Date | null
 }
 
@@ -46,6 +48,7 @@ export type WriteGenerationCountAggregateOutputType = {
   inputs: number
   output: number
   sessionId: number
+  userId: number
   createdAt: number
   _all: number
 }
@@ -56,6 +59,7 @@ export type WriteGenerationMinAggregateInputType = {
   documentType?: true
   output?: true
   sessionId?: true
+  userId?: true
   createdAt?: true
 }
 
@@ -64,6 +68,7 @@ export type WriteGenerationMaxAggregateInputType = {
   documentType?: true
   output?: true
   sessionId?: true
+  userId?: true
   createdAt?: true
 }
 
@@ -73,6 +78,7 @@ export type WriteGenerationCountAggregateInputType = {
   inputs?: true
   output?: true
   sessionId?: true
+  userId?: true
   createdAt?: true
   _all?: true
 }
@@ -155,6 +161,7 @@ export type WriteGenerationGroupByOutputType = {
   inputs: runtime.JsonValue
   output: string
   sessionId: string
+  userId: string | null
   createdAt: Date
   _count: WriteGenerationCountAggregateOutputType | null
   _min: WriteGenerationMinAggregateOutputType | null
@@ -185,7 +192,9 @@ export type WriteGenerationWhereInput = {
   inputs?: Prisma.JsonFilter<"WriteGeneration">
   output?: Prisma.StringFilter<"WriteGeneration"> | string
   sessionId?: Prisma.StringFilter<"WriteGeneration"> | string
+  userId?: Prisma.StringNullableFilter<"WriteGeneration"> | string | null
   createdAt?: Prisma.DateTimeFilter<"WriteGeneration"> | Date | string
+  user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
 }
 
 export type WriteGenerationOrderByWithRelationInput = {
@@ -194,7 +203,9 @@ export type WriteGenerationOrderByWithRelationInput = {
   inputs?: Prisma.SortOrder
   output?: Prisma.SortOrder
   sessionId?: Prisma.SortOrder
+  userId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  user?: Prisma.UserOrderByWithRelationInput
 }
 
 export type WriteGenerationWhereUniqueInput = Prisma.AtLeast<{
@@ -206,7 +217,9 @@ export type WriteGenerationWhereUniqueInput = Prisma.AtLeast<{
   inputs?: Prisma.JsonFilter<"WriteGeneration">
   output?: Prisma.StringFilter<"WriteGeneration"> | string
   sessionId?: Prisma.StringFilter<"WriteGeneration"> | string
+  userId?: Prisma.StringNullableFilter<"WriteGeneration"> | string | null
   createdAt?: Prisma.DateTimeFilter<"WriteGeneration"> | Date | string
+  user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
 }, "id">
 
 export type WriteGenerationOrderByWithAggregationInput = {
@@ -215,6 +228,7 @@ export type WriteGenerationOrderByWithAggregationInput = {
   inputs?: Prisma.SortOrder
   output?: Prisma.SortOrder
   sessionId?: Prisma.SortOrder
+  userId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.WriteGenerationCountOrderByAggregateInput
   _max?: Prisma.WriteGenerationMaxOrderByAggregateInput
@@ -230,6 +244,7 @@ export type WriteGenerationScalarWhereWithAggregatesInput = {
   inputs?: Prisma.JsonWithAggregatesFilter<"WriteGeneration">
   output?: Prisma.StringWithAggregatesFilter<"WriteGeneration"> | string
   sessionId?: Prisma.StringWithAggregatesFilter<"WriteGeneration"> | string
+  userId?: Prisma.StringNullableWithAggregatesFilter<"WriteGeneration"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"WriteGeneration"> | Date | string
 }
 
@@ -240,6 +255,7 @@ export type WriteGenerationCreateInput = {
   output: string
   sessionId: string
   createdAt?: Date | string
+  user?: Prisma.UserCreateNestedOneWithoutGenerationsInput
 }
 
 export type WriteGenerationUncheckedCreateInput = {
@@ -248,6 +264,7 @@ export type WriteGenerationUncheckedCreateInput = {
   inputs: Prisma.JsonNullValueInput | runtime.InputJsonValue
   output: string
   sessionId: string
+  userId?: string | null
   createdAt?: Date | string
 }
 
@@ -258,6 +275,7 @@ export type WriteGenerationUpdateInput = {
   output?: Prisma.StringFieldUpdateOperationsInput | string
   sessionId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneWithoutGenerationsNestedInput
 }
 
 export type WriteGenerationUncheckedUpdateInput = {
@@ -266,6 +284,7 @@ export type WriteGenerationUncheckedUpdateInput = {
   inputs?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   output?: Prisma.StringFieldUpdateOperationsInput | string
   sessionId?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -275,6 +294,7 @@ export type WriteGenerationCreateManyInput = {
   inputs: Prisma.JsonNullValueInput | runtime.InputJsonValue
   output: string
   sessionId: string
+  userId?: string | null
   createdAt?: Date | string
 }
 
@@ -293,6 +313,7 @@ export type WriteGenerationUncheckedUpdateManyInput = {
   inputs?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   output?: Prisma.StringFieldUpdateOperationsInput | string
   sessionId?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -302,6 +323,7 @@ export type WriteGenerationCountOrderByAggregateInput = {
   inputs?: Prisma.SortOrder
   output?: Prisma.SortOrder
   sessionId?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -310,6 +332,7 @@ export type WriteGenerationMaxOrderByAggregateInput = {
   documentType?: Prisma.SortOrder
   output?: Prisma.SortOrder
   sessionId?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -318,7 +341,153 @@ export type WriteGenerationMinOrderByAggregateInput = {
   documentType?: Prisma.SortOrder
   output?: Prisma.SortOrder
   sessionId?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+}
+
+export type WriteGenerationListRelationFilter = {
+  every?: Prisma.WriteGenerationWhereInput
+  some?: Prisma.WriteGenerationWhereInput
+  none?: Prisma.WriteGenerationWhereInput
+}
+
+export type WriteGenerationOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
+}
+
+export type WriteGenerationCreateNestedManyWithoutUserInput = {
+  create?: Prisma.XOR<Prisma.WriteGenerationCreateWithoutUserInput, Prisma.WriteGenerationUncheckedCreateWithoutUserInput> | Prisma.WriteGenerationCreateWithoutUserInput[] | Prisma.WriteGenerationUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.WriteGenerationCreateOrConnectWithoutUserInput | Prisma.WriteGenerationCreateOrConnectWithoutUserInput[]
+  createMany?: Prisma.WriteGenerationCreateManyUserInputEnvelope
+  connect?: Prisma.WriteGenerationWhereUniqueInput | Prisma.WriteGenerationWhereUniqueInput[]
+}
+
+export type WriteGenerationUncheckedCreateNestedManyWithoutUserInput = {
+  create?: Prisma.XOR<Prisma.WriteGenerationCreateWithoutUserInput, Prisma.WriteGenerationUncheckedCreateWithoutUserInput> | Prisma.WriteGenerationCreateWithoutUserInput[] | Prisma.WriteGenerationUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.WriteGenerationCreateOrConnectWithoutUserInput | Prisma.WriteGenerationCreateOrConnectWithoutUserInput[]
+  createMany?: Prisma.WriteGenerationCreateManyUserInputEnvelope
+  connect?: Prisma.WriteGenerationWhereUniqueInput | Prisma.WriteGenerationWhereUniqueInput[]
+}
+
+export type WriteGenerationUpdateManyWithoutUserNestedInput = {
+  create?: Prisma.XOR<Prisma.WriteGenerationCreateWithoutUserInput, Prisma.WriteGenerationUncheckedCreateWithoutUserInput> | Prisma.WriteGenerationCreateWithoutUserInput[] | Prisma.WriteGenerationUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.WriteGenerationCreateOrConnectWithoutUserInput | Prisma.WriteGenerationCreateOrConnectWithoutUserInput[]
+  upsert?: Prisma.WriteGenerationUpsertWithWhereUniqueWithoutUserInput | Prisma.WriteGenerationUpsertWithWhereUniqueWithoutUserInput[]
+  createMany?: Prisma.WriteGenerationCreateManyUserInputEnvelope
+  set?: Prisma.WriteGenerationWhereUniqueInput | Prisma.WriteGenerationWhereUniqueInput[]
+  disconnect?: Prisma.WriteGenerationWhereUniqueInput | Prisma.WriteGenerationWhereUniqueInput[]
+  delete?: Prisma.WriteGenerationWhereUniqueInput | Prisma.WriteGenerationWhereUniqueInput[]
+  connect?: Prisma.WriteGenerationWhereUniqueInput | Prisma.WriteGenerationWhereUniqueInput[]
+  update?: Prisma.WriteGenerationUpdateWithWhereUniqueWithoutUserInput | Prisma.WriteGenerationUpdateWithWhereUniqueWithoutUserInput[]
+  updateMany?: Prisma.WriteGenerationUpdateManyWithWhereWithoutUserInput | Prisma.WriteGenerationUpdateManyWithWhereWithoutUserInput[]
+  deleteMany?: Prisma.WriteGenerationScalarWhereInput | Prisma.WriteGenerationScalarWhereInput[]
+}
+
+export type WriteGenerationUncheckedUpdateManyWithoutUserNestedInput = {
+  create?: Prisma.XOR<Prisma.WriteGenerationCreateWithoutUserInput, Prisma.WriteGenerationUncheckedCreateWithoutUserInput> | Prisma.WriteGenerationCreateWithoutUserInput[] | Prisma.WriteGenerationUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.WriteGenerationCreateOrConnectWithoutUserInput | Prisma.WriteGenerationCreateOrConnectWithoutUserInput[]
+  upsert?: Prisma.WriteGenerationUpsertWithWhereUniqueWithoutUserInput | Prisma.WriteGenerationUpsertWithWhereUniqueWithoutUserInput[]
+  createMany?: Prisma.WriteGenerationCreateManyUserInputEnvelope
+  set?: Prisma.WriteGenerationWhereUniqueInput | Prisma.WriteGenerationWhereUniqueInput[]
+  disconnect?: Prisma.WriteGenerationWhereUniqueInput | Prisma.WriteGenerationWhereUniqueInput[]
+  delete?: Prisma.WriteGenerationWhereUniqueInput | Prisma.WriteGenerationWhereUniqueInput[]
+  connect?: Prisma.WriteGenerationWhereUniqueInput | Prisma.WriteGenerationWhereUniqueInput[]
+  update?: Prisma.WriteGenerationUpdateWithWhereUniqueWithoutUserInput | Prisma.WriteGenerationUpdateWithWhereUniqueWithoutUserInput[]
+  updateMany?: Prisma.WriteGenerationUpdateManyWithWhereWithoutUserInput | Prisma.WriteGenerationUpdateManyWithWhereWithoutUserInput[]
+  deleteMany?: Prisma.WriteGenerationScalarWhereInput | Prisma.WriteGenerationScalarWhereInput[]
+}
+
+export type WriteGenerationCreateWithoutUserInput = {
+  id?: string
+  documentType: string
+  inputs: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  output: string
+  sessionId: string
+  createdAt?: Date | string
+}
+
+export type WriteGenerationUncheckedCreateWithoutUserInput = {
+  id?: string
+  documentType: string
+  inputs: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  output: string
+  sessionId: string
+  createdAt?: Date | string
+}
+
+export type WriteGenerationCreateOrConnectWithoutUserInput = {
+  where: Prisma.WriteGenerationWhereUniqueInput
+  create: Prisma.XOR<Prisma.WriteGenerationCreateWithoutUserInput, Prisma.WriteGenerationUncheckedCreateWithoutUserInput>
+}
+
+export type WriteGenerationCreateManyUserInputEnvelope = {
+  data: Prisma.WriteGenerationCreateManyUserInput | Prisma.WriteGenerationCreateManyUserInput[]
+  skipDuplicates?: boolean
+}
+
+export type WriteGenerationUpsertWithWhereUniqueWithoutUserInput = {
+  where: Prisma.WriteGenerationWhereUniqueInput
+  update: Prisma.XOR<Prisma.WriteGenerationUpdateWithoutUserInput, Prisma.WriteGenerationUncheckedUpdateWithoutUserInput>
+  create: Prisma.XOR<Prisma.WriteGenerationCreateWithoutUserInput, Prisma.WriteGenerationUncheckedCreateWithoutUserInput>
+}
+
+export type WriteGenerationUpdateWithWhereUniqueWithoutUserInput = {
+  where: Prisma.WriteGenerationWhereUniqueInput
+  data: Prisma.XOR<Prisma.WriteGenerationUpdateWithoutUserInput, Prisma.WriteGenerationUncheckedUpdateWithoutUserInput>
+}
+
+export type WriteGenerationUpdateManyWithWhereWithoutUserInput = {
+  where: Prisma.WriteGenerationScalarWhereInput
+  data: Prisma.XOR<Prisma.WriteGenerationUpdateManyMutationInput, Prisma.WriteGenerationUncheckedUpdateManyWithoutUserInput>
+}
+
+export type WriteGenerationScalarWhereInput = {
+  AND?: Prisma.WriteGenerationScalarWhereInput | Prisma.WriteGenerationScalarWhereInput[]
+  OR?: Prisma.WriteGenerationScalarWhereInput[]
+  NOT?: Prisma.WriteGenerationScalarWhereInput | Prisma.WriteGenerationScalarWhereInput[]
+  id?: Prisma.StringFilter<"WriteGeneration"> | string
+  documentType?: Prisma.StringFilter<"WriteGeneration"> | string
+  inputs?: Prisma.JsonFilter<"WriteGeneration">
+  output?: Prisma.StringFilter<"WriteGeneration"> | string
+  sessionId?: Prisma.StringFilter<"WriteGeneration"> | string
+  userId?: Prisma.StringNullableFilter<"WriteGeneration"> | string | null
+  createdAt?: Prisma.DateTimeFilter<"WriteGeneration"> | Date | string
+}
+
+export type WriteGenerationCreateManyUserInput = {
+  id?: string
+  documentType: string
+  inputs: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  output: string
+  sessionId: string
+  createdAt?: Date | string
+}
+
+export type WriteGenerationUpdateWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  documentType?: Prisma.StringFieldUpdateOperationsInput | string
+  inputs?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  output?: Prisma.StringFieldUpdateOperationsInput | string
+  sessionId?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type WriteGenerationUncheckedUpdateWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  documentType?: Prisma.StringFieldUpdateOperationsInput | string
+  inputs?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  output?: Prisma.StringFieldUpdateOperationsInput | string
+  sessionId?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type WriteGenerationUncheckedUpdateManyWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  documentType?: Prisma.StringFieldUpdateOperationsInput | string
+  inputs?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  output?: Prisma.StringFieldUpdateOperationsInput | string
+  sessionId?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 
@@ -329,7 +498,9 @@ export type WriteGenerationSelect<ExtArgs extends runtime.Types.Extensions.Inter
   inputs?: boolean
   output?: boolean
   sessionId?: boolean
+  userId?: boolean
   createdAt?: boolean
+  user?: boolean | Prisma.WriteGeneration$userArgs<ExtArgs>
 }, ExtArgs["result"]["writeGeneration"]>
 
 export type WriteGenerationSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -338,7 +509,9 @@ export type WriteGenerationSelectCreateManyAndReturn<ExtArgs extends runtime.Typ
   inputs?: boolean
   output?: boolean
   sessionId?: boolean
+  userId?: boolean
   createdAt?: boolean
+  user?: boolean | Prisma.WriteGeneration$userArgs<ExtArgs>
 }, ExtArgs["result"]["writeGeneration"]>
 
 export type WriteGenerationSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -347,7 +520,9 @@ export type WriteGenerationSelectUpdateManyAndReturn<ExtArgs extends runtime.Typ
   inputs?: boolean
   output?: boolean
   sessionId?: boolean
+  userId?: boolean
   createdAt?: boolean
+  user?: boolean | Prisma.WriteGeneration$userArgs<ExtArgs>
 }, ExtArgs["result"]["writeGeneration"]>
 
 export type WriteGenerationSelectScalar = {
@@ -356,20 +531,33 @@ export type WriteGenerationSelectScalar = {
   inputs?: boolean
   output?: boolean
   sessionId?: boolean
+  userId?: boolean
   createdAt?: boolean
 }
 
-export type WriteGenerationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "documentType" | "inputs" | "output" | "sessionId" | "createdAt", ExtArgs["result"]["writeGeneration"]>
+export type WriteGenerationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "documentType" | "inputs" | "output" | "sessionId" | "userId" | "createdAt", ExtArgs["result"]["writeGeneration"]>
+export type WriteGenerationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  user?: boolean | Prisma.WriteGeneration$userArgs<ExtArgs>
+}
+export type WriteGenerationIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  user?: boolean | Prisma.WriteGeneration$userArgs<ExtArgs>
+}
+export type WriteGenerationIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  user?: boolean | Prisma.WriteGeneration$userArgs<ExtArgs>
+}
 
 export type $WriteGenerationPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "WriteGeneration"
-  objects: {}
+  objects: {
+    user: Prisma.$UserPayload<ExtArgs> | null
+  }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     documentType: string
     inputs: runtime.JsonValue
     output: string
     sessionId: string
+    userId: string | null
     createdAt: Date
   }, ExtArgs["result"]["writeGeneration"]>
   composites: {}
@@ -765,6 +953,7 @@ readonly fields: WriteGenerationFieldRefs;
  */
 export interface Prisma__WriteGenerationClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  user<T extends Prisma.WriteGeneration$userArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.WriteGeneration$userArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -799,6 +988,7 @@ export interface WriteGenerationFieldRefs {
   readonly inputs: Prisma.FieldRef<"WriteGeneration", 'Json'>
   readonly output: Prisma.FieldRef<"WriteGeneration", 'String'>
   readonly sessionId: Prisma.FieldRef<"WriteGeneration", 'String'>
+  readonly userId: Prisma.FieldRef<"WriteGeneration", 'String'>
   readonly createdAt: Prisma.FieldRef<"WriteGeneration", 'DateTime'>
 }
     
@@ -816,6 +1006,10 @@ export type WriteGenerationFindUniqueArgs<ExtArgs extends runtime.Types.Extensio
    * Omit specific fields from the WriteGeneration
    */
   omit?: Prisma.WriteGenerationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.WriteGenerationInclude<ExtArgs> | null
   /**
    * Filter, which WriteGeneration to fetch.
    */
@@ -835,6 +1029,10 @@ export type WriteGenerationFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.E
    */
   omit?: Prisma.WriteGenerationOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.WriteGenerationInclude<ExtArgs> | null
+  /**
    * Filter, which WriteGeneration to fetch.
    */
   where: Prisma.WriteGenerationWhereUniqueInput
@@ -852,6 +1050,10 @@ export type WriteGenerationFindFirstArgs<ExtArgs extends runtime.Types.Extension
    * Omit specific fields from the WriteGeneration
    */
   omit?: Prisma.WriteGenerationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.WriteGenerationInclude<ExtArgs> | null
   /**
    * Filter, which WriteGeneration to fetch.
    */
@@ -901,6 +1103,10 @@ export type WriteGenerationFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Ex
    */
   omit?: Prisma.WriteGenerationOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.WriteGenerationInclude<ExtArgs> | null
+  /**
    * Filter, which WriteGeneration to fetch.
    */
   where?: Prisma.WriteGenerationWhereInput
@@ -948,6 +1154,10 @@ export type WriteGenerationFindManyArgs<ExtArgs extends runtime.Types.Extensions
    * Omit specific fields from the WriteGeneration
    */
   omit?: Prisma.WriteGenerationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.WriteGenerationInclude<ExtArgs> | null
   /**
    * Filter, which WriteGenerations to fetch.
    */
@@ -997,6 +1207,10 @@ export type WriteGenerationCreateArgs<ExtArgs extends runtime.Types.Extensions.I
    */
   omit?: Prisma.WriteGenerationOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.WriteGenerationInclude<ExtArgs> | null
+  /**
    * The data needed to create a WriteGeneration.
    */
   data: Prisma.XOR<Prisma.WriteGenerationCreateInput, Prisma.WriteGenerationUncheckedCreateInput>
@@ -1030,6 +1244,10 @@ export type WriteGenerationCreateManyAndReturnArgs<ExtArgs extends runtime.Types
    */
   data: Prisma.WriteGenerationCreateManyInput | Prisma.WriteGenerationCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.WriteGenerationIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1044,6 +1262,10 @@ export type WriteGenerationUpdateArgs<ExtArgs extends runtime.Types.Extensions.I
    * Omit specific fields from the WriteGeneration
    */
   omit?: Prisma.WriteGenerationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.WriteGenerationInclude<ExtArgs> | null
   /**
    * The data needed to update a WriteGeneration.
    */
@@ -1096,6 +1318,10 @@ export type WriteGenerationUpdateManyAndReturnArgs<ExtArgs extends runtime.Types
    * Limit how many WriteGenerations to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.WriteGenerationIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1110,6 +1336,10 @@ export type WriteGenerationUpsertArgs<ExtArgs extends runtime.Types.Extensions.I
    * Omit specific fields from the WriteGeneration
    */
   omit?: Prisma.WriteGenerationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.WriteGenerationInclude<ExtArgs> | null
   /**
    * The filter to search for the WriteGeneration to update in case it exists.
    */
@@ -1137,6 +1367,10 @@ export type WriteGenerationDeleteArgs<ExtArgs extends runtime.Types.Extensions.I
    */
   omit?: Prisma.WriteGenerationOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.WriteGenerationInclude<ExtArgs> | null
+  /**
    * Filter which WriteGeneration to delete.
    */
   where: Prisma.WriteGenerationWhereUniqueInput
@@ -1157,6 +1391,25 @@ export type WriteGenerationDeleteManyArgs<ExtArgs extends runtime.Types.Extensio
 }
 
 /**
+ * WriteGeneration.user
+ */
+export type WriteGeneration$userArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the User
+   */
+  select?: Prisma.UserSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the User
+   */
+  omit?: Prisma.UserOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserInclude<ExtArgs> | null
+  where?: Prisma.UserWhereInput
+}
+
+/**
  * WriteGeneration without action
  */
 export type WriteGenerationDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1168,4 +1421,8 @@ export type WriteGenerationDefaultArgs<ExtArgs extends runtime.Types.Extensions.
    * Omit specific fields from the WriteGeneration
    */
   omit?: Prisma.WriteGenerationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.WriteGenerationInclude<ExtArgs> | null
 }

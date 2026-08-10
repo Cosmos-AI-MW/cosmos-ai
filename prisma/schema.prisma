@@ -29,11 +29,14 @@ model WriteGeneration {
     inputs       Json
     output       String
     sessionId    String
+    userId       String?
+    user         User?    @relation(fields: [userId], references: [id])
     createdAt    DateTime @default(now())
 
     @@index([createdAt])
     @@index([documentType])
     @@index([sessionId])
+    @@index([userId])
 }
 
 // ── SERVICES ─────────────────────────────────────────────────────
@@ -102,13 +105,20 @@ model Session {
 }
 
 model User {
-    id            String    @id @default(cuid())
-    name          String?
-    email         String?   @unique
-    emailVerified DateTime?
-    image         String?
-    accounts      Account[]
-    sessions      Session[]
+    id                 String    @id @default(cuid())
+    email              String    @unique
+    password           String
+    emailVerified      DateTime?
+    tier               String    @default("free")
+    generationsUsed    Int       @default(0)
+    generationsLimit   Int       @default(10)
+    tierResetDate      DateTime  @default(now())
+    createdAt          DateTime  @default(now())
+    accounts           Account[]
+    sessions           Session[]
+    generations        WriteGeneration[]
+
+    @@index([email])
 }
 
 model VerificationToken {

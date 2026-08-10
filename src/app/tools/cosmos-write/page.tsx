@@ -5,6 +5,7 @@ import Link from "next/link";
 import Navbar from "~/components/layout/Navbar";
 import Footer from "~/components/layout/Footer";
 import { api } from "~/trpc/react";
+import { useSession } from "next-auth/react";
 import CosmicLoader from "~/components/ui/CosmicLoader";
 import ReactMarkdown from "react-markdown";
 
@@ -35,11 +36,12 @@ export default function CosmosWritePage() {
   const [sessionId, setSessionId] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
-  const [remaining, setRemaining] = useState(3);
+  const [remaining, setRemaining] = useState<number | null>(null);
   const [limitReached, setLimitReached] = useState(false);
   const [copied, setCopied] = useState<number | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const { data: session } = useSession();
 
   useEffect(() => {
     setSessionId(getSessionId());
@@ -58,7 +60,10 @@ export default function CosmosWritePage() {
       setRemaining(data.remaining);
     },
     onError: (error) => {
-      if (error.message.includes("FREE_LIMIT_REACHED")) {
+      if (
+        error.message.includes("FREE_LIMIT_REACHED") ||
+        error.message.includes("ACCOUNT_LIMIT_REACHED")
+      ) {
         setLimitReached(true);
       } else {
         setMessages((prev) => [
@@ -124,8 +129,11 @@ export default function CosmosWritePage() {
           </p>
           {!limitReached && (
             <div className="border-cosmos-teal text-cosmos-teal mt-4 inline-block rounded-full border px-4 py-1 text-sm font-medium">
-              {remaining} free {remaining === 1 ? "generation" : "generations"}{" "}
-              remaining
+              {remaining === null
+                ? session?.user
+                  ? `${(session.user as { generationsLimit?: number; generationsUsed?: number }).generationsLimit ?? 10} generations available this month`
+                  : "3 free generations to try"
+                : `${remaining} ${remaining === 1 ? "generation" : "generations"} remaining`}
             </div>
           )}
         </div>

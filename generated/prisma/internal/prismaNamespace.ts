@@ -1151,6 +1151,7 @@ export const WriteGenerationScalarFieldEnum = {
   inputs: 'inputs',
   output: 'output',
   sessionId: 'sessionId',
+  userId: 'userId',
   createdAt: 'createdAt'
 } as const
 
@@ -1227,10 +1228,14 @@ export type SessionScalarFieldEnum = (typeof SessionScalarFieldEnum)[keyof typeo
 
 export const UserScalarFieldEnum = {
   id: 'id',
-  name: 'name',
   email: 'email',
+  password: 'password',
   emailVerified: 'emailVerified',
-  image: 'image'
+  tier: 'tier',
+  generationsUsed: 'generationsUsed',
+  generationsLimit: 'generationsLimit',
+  tierResetDate: 'tierResetDate',
+  createdAt: 'createdAt'
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]

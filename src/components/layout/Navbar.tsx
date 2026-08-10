@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
+import { useSession, signOut } from "next-auth/react";
 
 const tools = [
   {
@@ -16,6 +17,8 @@ export default function Navbar({ active }: { active?: string }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [toolsOpen, setToolsOpen] = useState(false);
   const toolsRef = useRef<HTMLDivElement>(null);
+  const { data: session } = useSession();
+  const isLoggedIn = !!session?.user && !session.user.isAdmin;
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -143,13 +146,37 @@ export default function Navbar({ active }: { active?: string }) {
               />
             </svg>
           </Link>
-
-          <Link
-            href="/contact"
-            className="bg-cosmos-accent hover:bg-cosmos-forest-light rounded-full px-6 py-2 text-base font-medium tracking-wide text-white transition-colors"
-          >
-            Get in Touch
-          </Link>
+          {isLoggedIn ? (
+            <div className="flex items-center gap-4">
+              <Link
+                href="/account"
+                className="text-cosmos-sage text-sm font-medium transition-colors hover:text-white"
+              >
+                {session?.user?.email?.split("@")[0]}
+              </Link>
+              <button
+                onClick={() => signOut({ callbackUrl: "/" })}
+                className="border-cosmos-sage text-cosmos-sage hover:bg-cosmos-sage hover:text-cosmos-night rounded-full border px-4 py-1.5 text-sm font-medium transition-colors"
+              >
+                Sign Out
+              </button>
+            </div>
+          ) : (
+            <div className="flex items-center gap-3">
+              <Link
+                href="/auth/login"
+                className="text-cosmos-sage text-sm font-medium transition-colors hover:text-white"
+              >
+                Sign In
+              </Link>
+              <Link
+                href="/contact"
+                className="bg-cosmos-accent hover:bg-cosmos-forest-light rounded-full px-6 py-2 text-base font-medium tracking-wide text-white transition-colors"
+              >
+                Get in Touch
+              </Link>
+            </div>
+          )}
         </div>
 
         {/* Mobile hamburger */}
@@ -212,13 +239,47 @@ export default function Navbar({ active }: { active?: string }) {
             Search
           </Link>
 
-          <Link
-            href="/contact"
-            onClick={() => setMenuOpen(false)}
-            className="bg-cosmos-accent hover:bg-cosmos-forest-light rounded-full px-6 py-3 text-center text-base font-medium tracking-wide text-white transition-colors"
-          >
-            Get in Touch
-          </Link>
+          {isLoggedIn ? (
+            <>
+              <Link
+                href="/account"
+                onClick={() => setMenuOpen(false)}
+                className="text-cosmos-sage text-base font-medium transition-colors hover:text-white"
+              >
+                My Account
+              </Link>
+              <button
+                onClick={() => signOut({ callbackUrl: "/" })}
+                className="border-cosmos-sage text-cosmos-sage hover:bg-cosmos-sage hover:text-cosmos-night rounded-full border px-6 py-3 text-base font-medium transition-colors"
+              >
+                Sign Out
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                href="/auth/login"
+                onClick={() => setMenuOpen(false)}
+                className="text-cosmos-sage text-base font-medium transition-colors hover:text-white"
+              >
+                Sign In
+              </Link>
+              <Link
+                href="/auth/register"
+                onClick={() => setMenuOpen(false)}
+                className="text-cosmos-sage text-base font-medium transition-colors hover:text-white"
+              >
+                Register
+              </Link>
+              <Link
+                href="/contact"
+                onClick={() => setMenuOpen(false)}
+                className="bg-cosmos-accent hover:bg-cosmos-forest-light rounded-full px-6 py-3 text-center text-base font-medium tracking-wide text-white transition-colors"
+              >
+                Get in Touch
+              </Link>
+            </>
+          )}
         </div>
       )}
     </nav>

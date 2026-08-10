@@ -36,16 +36,34 @@ export const writeRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      // Check session usage
-      const sessionCount = await ctx.db.writeGeneration.count({
-        where: { sessionId: input.sessionId },
-      });
+      const userId = ctx.session?.user?.id;
+      const isAdmin = (ctx.session?.user as { isAdmin?: boolean })?.isAdmin;
 
-      if (sessionCount >= 3) {
-        throw new Error("FREE_LIMIT_REACHED");
+      if (isAdmin) {
+        // Admin bypasses all limits — do nothing
+      } else if (userId) {
+        // Logged in user — check account generations
+        const user = await ctx.db.user.findUnique({
+          where: { id: userId },
+        });
+
+        if (!user) throw new Error("User not found");
+
+        if (user.generationsUsed >= user.generationsLimit) {
+          throw new Error("ACCOUNT_LIMIT_REACHED");
+        }
+      } else {
+        // Anonymous session — max 3 free generations
+        const sessionCount = await ctx.db.writeGeneration.count({
+          where: { sessionId: input.sessionId, userId: null },
+        });
+
+        if (sessionCount >= 3) {
+          throw new Error("FREE_LIMIT_REACHED");
+        }
       }
 
-      // Build conversation history for context
+      // Build conversation history
       type HistoryMessage = { role: "user" | "assistant"; content: string };
       let history: HistoryMessage[] = [];
       try {
@@ -55,8 +73,6 @@ export const writeRouter = createTRPCRouter({
       }
 
       const userMessage = input.inputs.message ?? "";
-
-      // Build messages array with history
       const messages: { role: "user" | "assistant"; content: string }[] = [
         ...history,
         { role: "user", content: userMessage },
@@ -74,16 +90,43 @@ export const writeRouter = createTRPCRouter({
         .map((block) => (block as { type: "text"; text: string }).text)
         .join("\n");
 
+      // Save generation
       await ctx.db.writeGeneration.create({
         data: {
           documentType: input.documentType,
           inputs: input.inputs,
           output,
           sessionId: input.sessionId,
+          userId: userId ?? null,
         },
       });
 
-      return { output, remaining: 2 - sessionCount };
+      // Update user generation count if logged in
+      if (userId && !isAdmin) {
+        await ctx.db.user.update({
+          where: { id: userId },
+          data: { generationsUsed: { increment: 1 } },
+        });
+      }
+
+      // Calculate remaining
+      let remaining = 0;
+      if (isAdmin) {
+        remaining = 999;
+      } else if (userId) {
+        const updated = await ctx.db.user.findUnique({ where: { id: userId } });
+        remaining = Math.max(
+          0,
+          (updated?.generationsLimit ?? 10) - (updated?.generationsUsed ?? 0),
+        );
+      } else {
+        const sessionCount = await ctx.db.writeGeneration.count({
+          where: { sessionId: input.sessionId, userId: null },
+        });
+        remaining = Math.max(0, 3 - sessionCount);
+      }
+
+      return { output, remaining };
     }),
 
   getStats: protectedProcedure.query(async ({ ctx }) => {
