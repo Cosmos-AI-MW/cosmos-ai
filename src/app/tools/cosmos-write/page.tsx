@@ -177,11 +177,22 @@ export default function CosmosWritePage() {
   });
 
   function handleSend() {
-  const text = input.trim();
-  if (!text || !sessionId || generate.isPending) return;
-  if (remaining !== null && remaining <= 0) {
-    setLimitReached(true);
-    return;
+    const text = input.trim();
+    if (!text || !sessionId || generate.isPending) return;
+    if (remaining !== null && remaining <= 0) {
+      setLimitReached(true);
+      return;
+    }
+    setMessages((prev) => [...prev, { role: "user", content: text }]);
+    setInput("");
+    generate.mutate({
+      documentType: "Chat",
+      inputs: {
+        message: text,
+        history: JSON.stringify(messages.slice(-6)),
+      },
+      sessionId,
+    });
   }
 
   function handleSuggestion(prompt: string) {
