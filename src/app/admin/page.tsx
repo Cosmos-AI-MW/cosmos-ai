@@ -103,6 +103,12 @@ export default async function AdminPage({
           >
             📈 Cosmos Write Stats
           </a>
+          <a
+            href="/admin/users"
+            className="border-cosmos-forest-light text-cosmos-sage hover:border-cosmos-teal inline-flex items-center gap-2 rounded-full border px-6 py-2.5 text-sm font-medium transition-colors hover:text-white"
+          >
+            ◎ Registered Users
+          </a>
         </div>
       </section>
 

@@ -59,7 +59,7 @@ export default function AdminLoginPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="welcome@cosmosai.co.mw"
+                placeholder="Email address"
                 className="border-cosmos-forest-light bg-cosmos-chalk text-cosmos-night focus:border-cosmos-teal placeholder:text-cosmos-forest/40 w-full rounded-xl border px-4 py-3 text-base font-light transition-colors outline-none"
               />
             </div>
