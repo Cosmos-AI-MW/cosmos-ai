@@ -130,7 +130,8 @@ export default function CosmosWritePage() {
           {!limitReached && (
             <div className="border-cosmos-teal text-cosmos-teal mt-4 inline-block rounded-full border px-4 py-1 text-sm font-medium">
               {remaining === null
-                ? session?.user
+                ? session?.user &&
+                  !(session.user as { isAdmin?: boolean }).isAdmin
                   ? `${(session.user as { generationsLimit?: number; generationsUsed?: number }).generationsLimit ?? 10} generations available this month`
                   : "3 free generations to try"
                 : `${remaining} ${remaining === 1 ? "generation" : "generations"} remaining`}

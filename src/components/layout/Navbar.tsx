@@ -17,8 +17,11 @@ export default function Navbar({ active }: { active?: string }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [toolsOpen, setToolsOpen] = useState(false);
   const toolsRef = useRef<HTMLDivElement>(null);
-  const { data: session } = useSession();
-  const isLoggedIn = !!session?.user && !session.user.isAdmin;
+  const { data: session, status } = useSession();
+  const isLoggedIn =
+    status === "authenticated" &&
+    !!session?.user &&
+    !(session.user as { isAdmin?: boolean }).isAdmin;
 
   // Close dropdown when clicking outside
   useEffect(() => {

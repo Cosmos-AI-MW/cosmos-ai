@@ -23,7 +23,7 @@ We bridge the gap between global AI innovation and local business reality across
 We would love to hear from you. Every engagement starts with a free 60-minute discovery conversation — no obligation, no sales pressure.
 
 - **Website** — [cosmosai.mw](https://cosmosai.mw)
-- **Email** — [hello@cosmosai.co.mw](mailto:hello@cosmosai.co.mw)
+- **Email** — [hello@cosmosai.mw](mailto:hello@cosmosai.mw)
 - **Locations** — Blantyre & Lilongwe, Malawi
 
 ---
