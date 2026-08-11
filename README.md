@@ -20,7 +20,7 @@ We bridge the gap between global AI innovation and local business reality across
 
 ## Get in Touch
 
-We would love to hear from you. Every engagement starts with a free 60-minute discovery conversation — no obligation, no sales pressure.
+We would love to hear from you. Book a free exploratory meeting. We understand your needs first, then advise on the best path forward. We take the time to understand you before recommending a direction or committing to anything.
 
 - **Website** — [cosmosai.mw](https://cosmosai.mw)
 - **Email** — [hello@cosmosai.mw](mailto:hello@cosmosai.mw)
