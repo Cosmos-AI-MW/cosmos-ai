@@ -116,6 +116,7 @@ export default function CosmosWritePage() {
   const [remaining, setRemaining] = useState<number | null>(null);
   const [limitReached, setLimitReached] = useState(false);
   const [copied, setCopied] = useState<number | null>(null);
+  const [refineIndex, setRefineIndex] = useState<number | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -403,10 +404,7 @@ export default function CosmosWritePage() {
                           {copied === i ? "✓ Copied" : "Copy"}
                         </button>
                         <button
-                          onClick={() => {
-                            setInput("Please refine the document above — ");
-                            textareaRef.current?.focus();
-                          }}
+                          onClick={() => setRefineIndex(i)}
                           className="border-cosmos-silver text-cosmos-forest/60 hover:border-cosmos-forest hover:text-cosmos-forest rounded-full border px-4 py-1.5 text-sm font-medium transition-colors"
                         >
                           ✴ Refine
@@ -428,6 +426,48 @@ export default function CosmosWritePage() {
             </div>
 
             {/* INPUT */}
+            {refineIndex !== null && (
+              <div className="border-cosmos-teal bg-cosmos-mist mb-3 rounded-2xl border p-4">
+                <p className="text-cosmos-forest mb-3 text-sm font-medium">
+                  How would you like to refine the document?
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    "Make it more formal",
+                    "Make it shorter",
+                    "Make it more detailed",
+                    "Make the tone warmer",
+                    "Fix grammar and flow",
+                    "Custom refinement",
+                  ].map((option) => (
+                    <button
+                      key={option}
+                      onClick={() => {
+                        if (option === "Custom refinement") {
+                          setInput("Please refine the document above — ");
+                        } else {
+                          setInput(
+                            `Please refine the document above. ${option}.`,
+                          );
+                        }
+                        setRefineIndex(null);
+                        textareaRef.current?.focus();
+                        textareaRef.current?.setSelectionRange(9999, 9999);
+                      }}
+                      className="border-cosmos-teal text-cosmos-forest hover:bg-cosmos-teal rounded-full border bg-white px-4 py-1.5 text-sm font-medium transition-colors hover:text-white"
+                    >
+                      {option}
+                    </button>
+                  ))}
+                </div>
+                <button
+                  onClick={() => setRefineIndex(null)}
+                  className="text-cosmos-forest/40 hover:text-cosmos-forest mt-3 text-xs font-light transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            )}
             <div className="border-cosmos-silver rounded-2xl border bg-white p-4 shadow-sm">
               <textarea
                 ref={textareaRef}
