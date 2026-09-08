@@ -2,19 +2,19 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
 
 export default function RegisterPage() {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
 
+  const [registered, setRegistered] = useState(false);
+
   const register = api.auth.register.useMutation({
     onSuccess: () => {
-      router.push("/auth/login?registered=true");
+      setRegistered(true);
     },
     onError: (err) => {
       setError(err.message);
@@ -52,76 +52,106 @@ export default function RegisterPage() {
 
         {/* Card */}
         <div className="border-cosmos-silver rounded-2xl border bg-white p-8">
-          <h1 className="font-display text-cosmos-forest mb-2 text-2xl font-semibold">
-            Get started free
-          </h1>
-          <p className="text-cosmos-forest/60 mb-6 text-sm font-light">
-            10 free generations every month. No credit card required.
-          </p>
-
-          <div className="space-y-4">
-            <div>
-              <label className="text-cosmos-forest mb-2 block text-sm font-medium">
-                Email
-              </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="your@email.com"
-                className="border-cosmos-silver bg-cosmos-chalk text-cosmos-forest focus:border-cosmos-teal placeholder:text-cosmos-forest/30 w-full rounded-xl border px-4 py-3 text-base font-light transition-colors outline-none focus:bg-white"
-              />
-            </div>
-
-            <div>
-              <label className="text-cosmos-forest mb-2 block text-sm font-medium">
-                Password
-              </label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="At least 8 characters"
-                className="border-cosmos-silver bg-cosmos-chalk text-cosmos-forest focus:border-cosmos-teal placeholder:text-cosmos-forest/30 w-full rounded-xl border px-4 py-3 text-base font-light transition-colors outline-none focus:bg-white"
-              />
-            </div>
-
-            <div>
-              <label className="text-cosmos-forest mb-2 block text-sm font-medium">
-                Confirm Password
-              </label>
-              <input
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Repeat your password"
-                onKeyDown={(e) => e.key === "Enter" && handleRegister()}
-                className="border-cosmos-silver bg-cosmos-chalk text-cosmos-forest focus:border-cosmos-teal placeholder:text-cosmos-forest/30 w-full rounded-xl border px-4 py-3 text-base font-light transition-colors outline-none focus:bg-white"
-              />
-            </div>
-
-            {error && <p className="text-sm text-red-500">{error}</p>}
-
-            <button
-              onClick={handleRegister}
-              disabled={
-                register.isPending || !email || !password || !confirmPassword
-              }
-              className="bg-cosmos-accent hover:bg-cosmos-forest-light w-full rounded-full px-8 py-3 text-base font-medium text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {register.isPending ? "Creating account..." : "Create Account"}
-            </button>
-
-            <p className="text-cosmos-forest/60 text-center text-sm font-light">
-              Already have an account?{" "}
+          {registered ? (
+            <div className="text-center">
+              <div className="mb-4 text-5xl">✉</div>
+              <h1 className="font-display text-cosmos-forest mb-3 text-2xl font-semibold">
+                Check your email
+              </h1>
+              <p className="text-cosmos-forest mb-2 text-base font-light">
+                We sent a verification link to{" "}
+                <span className="font-medium">{email}</span>
+              </p>
+              <p className="text-cosmos-forest/60 mb-8 text-sm font-light">
+                Click the link in the email to activate your account. The link
+                expires in 24 hours.
+              </p>
               <Link
                 href="/auth/login"
-                className="text-cosmos-teal font-medium hover:underline"
+                className="bg-cosmos-accent hover:bg-cosmos-forest-light rounded-full px-8 py-3 text-base font-medium text-white transition-colors"
               >
-                Sign in
+                Go to Sign In
               </Link>
-            </p>
-          </div>
+            </div>
+          ) : (
+            <>
+              <h1 className="font-display text-cosmos-forest mb-2 text-2xl font-semibold">
+                Get started free
+              </h1>
+              <p className="text-cosmos-forest/60 mb-6 text-sm font-light">
+                10 free generations every month. No credit card required.
+              </p>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="text-cosmos-forest mb-2 block text-sm font-medium">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="your@email.com"
+                    className="border-cosmos-silver bg-cosmos-chalk text-cosmos-forest focus:border-cosmos-teal placeholder:text-cosmos-forest/30 w-full rounded-xl border px-4 py-3 text-base font-light transition-colors outline-none focus:bg-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-cosmos-forest mb-2 block text-sm font-medium">
+                    Password
+                  </label>
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="At least 8 characters"
+                    className="border-cosmos-silver bg-cosmos-chalk text-cosmos-forest focus:border-cosmos-teal placeholder:text-cosmos-forest/30 w-full rounded-xl border px-4 py-3 text-base font-light transition-colors outline-none focus:bg-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-cosmos-forest mb-2 block text-sm font-medium">
+                    Confirm Password
+                  </label>
+                  <input
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="Repeat your password"
+                    onKeyDown={(e) => e.key === "Enter" && handleRegister()}
+                    className="border-cosmos-silver bg-cosmos-chalk text-cosmos-forest focus:border-cosmos-teal placeholder:text-cosmos-forest/30 w-full rounded-xl border px-4 py-3 text-base font-light transition-colors outline-none focus:bg-white"
+                  />
+                </div>
+
+                {error && <p className="text-sm text-red-500">{error}</p>}
+
+                <button
+                  onClick={handleRegister}
+                  disabled={
+                    register.isPending ||
+                    !email ||
+                    !password ||
+                    !confirmPassword
+                  }
+                  className="bg-cosmos-accent hover:bg-cosmos-forest-light w-full rounded-full px-8 py-3 text-base font-medium text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {register.isPending
+                    ? "Creating account..."
+                    : "Create Account"}
+                </button>
+
+                <p className="text-cosmos-forest/60 text-center text-sm font-light">
+                  Already have an account?{" "}
+                  <Link
+                    href="/auth/login"
+                    className="text-cosmos-teal font-medium hover:underline"
+                  >
+                    Sign in
+                  </Link>
+                </p>
+              </div>
+            </>
+          )}
         </div>
 
         <p className="text-cosmos-forest/40 mt-6 text-center text-sm">

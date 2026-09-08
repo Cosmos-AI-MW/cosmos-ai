@@ -123,6 +123,18 @@ model User {
     @@index([email])
 }
 
+// ── EMAIL VERIFICATION ───────────────────────────────────────────
+model EmailVerificationToken {
+    id        String   @id @default(cuid())
+    email     String
+    token     String   @unique
+    expires   DateTime
+    createdAt DateTime @default(now())
+
+    @@index([email])
+    @@index([token])
+}
+
 model VerificationToken {
     identifier String
     token      String   @unique
