@@ -3,6 +3,7 @@ import Link from "next/link";
 import { auth } from "~/server/auth";
 import { db } from "~/server/db";
 import AdminNavbar from "~/components/admin/AdminNavbar";
+import UpgradeTierButton from "~/components/admin/UpgradeTierButton";
 
 export const dynamic = "force-dynamic";
 
@@ -109,6 +110,7 @@ export default async function AdminUsersPage() {
                         "Verified",
                         "Joined",
                         "Next Reset",
+                        "Actions",
                       ].map((h) => (
                         <th
                           key={h}
@@ -193,6 +195,13 @@ export default async function AdminUsersPage() {
                                 ? "Unlimited — no reset"
                                 : `${user.generationsLimit} generations refresh`}
                             </div>
+                          </td>
+                          <td className="py-4">
+                            <UpgradeTierButton
+                              userId={user.id}
+                              currentTier={user.tier}
+                              email={user.email}
+                            />
                           </td>
                         </tr>
                       );

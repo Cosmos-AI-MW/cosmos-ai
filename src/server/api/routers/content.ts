@@ -96,4 +96,32 @@ export const contentRouter = createTRPCRouter({
       ]);
       return { services, aboutContent, values };
     }),
+
+  // ── USER TIER MANAGEMENT ─────────────────────────────────────
+  upgradeUser: protectedProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+        tier: z.enum(["free", "starter", "professional"]),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const limits: Record<string, number> = {
+        free: 10,
+        starter: 50,
+        professional: 999999,
+      };
+
+      await ctx.db.user.update({
+        where: { id: input.userId },
+        data: {
+          tier: input.tier,
+          generationsLimit: limits[input.tier] ?? 10,
+          generationsUsed: 0,
+          tierResetDate: new Date(),
+        },
+      });
+
+      return { success: true };
+    }),
 });
