@@ -4,6 +4,7 @@ import { auth } from "~/server/auth";
 import { db } from "~/server/db";
 import Navbar from "~/components/layout/Navbar";
 import Footer from "~/components/layout/Footer";
+import VerificationBanner from "~/components/ui/VerificationBanner";
 import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
@@ -53,6 +54,9 @@ export default async function AccountPage() {
   return (
     <main className="bg-cosmos-chalk min-h-screen font-sans">
       <Navbar />
+      {!freshUser.emailVerified && (
+        <VerificationBanner email={freshUser.email} />
+      )}
 
       {/* HERO */}
       <section className="bg-cosmos-forest px-6 py-16">

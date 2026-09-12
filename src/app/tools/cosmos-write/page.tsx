@@ -7,6 +7,7 @@ import Footer from "~/components/layout/Footer";
 import { api } from "~/trpc/react";
 import { useSession } from "next-auth/react";
 import CosmicLoader from "~/components/ui/CosmicLoader";
+import VerificationBanner from "~/components/ui/VerificationBanner";
 import ReactMarkdown from "react-markdown";
 
 function getSessionId(): string {
@@ -217,6 +218,11 @@ export default function CosmosWritePage() {
   return (
     <main className="bg-cosmos-chalk flex min-h-screen flex-col font-sans">
       <Navbar active="/tools/cosmos-write" />
+      {isLoggedIn &&
+        session?.user &&
+        !(session.user as { emailVerified?: string | null }).emailVerified && (
+          <VerificationBanner email={session.user.email ?? ""} />
+        )}
 
       {/* HEADER */}
       <section className="bg-cosmos-forest px-6 py-10">
