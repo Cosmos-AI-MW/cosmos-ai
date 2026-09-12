@@ -13,7 +13,6 @@ export const authRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      // Check if email already exists
       const existing = await ctx.db.user.findUnique({
         where: { email: input.email },
       });
@@ -22,10 +21,8 @@ export const authRouter = createTRPCRouter({
         throw new Error("An account with this email already exists.");
       }
 
-      // Hash password
       const hashedPassword = await bcrypt.hash(input.password, 12);
 
-      // Create user
       await ctx.db.user.create({
         data: {
           email: input.email,
@@ -37,15 +34,13 @@ export const authRouter = createTRPCRouter({
         },
       });
 
-      // Create verification token
       const token = crypto.randomBytes(32).toString("hex");
-      const expires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+      const expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
       await ctx.db.emailVerificationToken.create({
         data: { email: input.email, token, expires },
       });
 
-      // Send verification email
       const baseUrl = process.env.NEXTAUTH_URL ?? "http://localhost:3000";
       await sendVerificationEmail(input.email, token, baseUrl);
 
@@ -72,16 +67,42 @@ export const authRouter = createTRPCRouter({
         );
       }
 
-      // Mark user as verified
       await ctx.db.user.update({
         where: { email: verificationToken.email },
         data: { emailVerified: new Date() },
       });
 
-      // Delete used token
       await ctx.db.emailVerificationToken.delete({
         where: { token: input.token },
       });
+
+      return { success: true };
+    }),
+
+  resendVerification: publicProcedure
+    .input(z.object({ email: z.string().email() }))
+    .mutation(async ({ ctx, input }) => {
+      const user = await ctx.db.user.findUnique({
+        where: { email: input.email },
+      });
+
+      if (!user || user.emailVerified) return { success: true };
+
+      // Delete any existing token
+      await ctx.db.emailVerificationToken.deleteMany({
+        where: { email: input.email },
+      });
+
+      // Create new token
+      const token = crypto.randomBytes(32).toString("hex");
+      const expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
+      await ctx.db.emailVerificationToken.create({
+        data: { email: input.email, token, expires },
+      });
+
+      const baseUrl = process.env.NEXTAUTH_URL ?? "http://localhost:3000";
+      await sendVerificationEmail(input.email, token, baseUrl);
 
       return { success: true };
     }),
