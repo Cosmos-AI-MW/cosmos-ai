@@ -4,6 +4,7 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
+import { sendContactNotification } from "~/lib/email";
 
 export const contactRouter = createTRPCRouter({
   submit: publicProcedure
@@ -18,6 +19,7 @@ export const contactRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      // Save to database first — always
       await ctx.db.contactSubmission.create({
         data: {
           name: input.name,
@@ -28,6 +30,20 @@ export const contactRouter = createTRPCRouter({
           message: input.message,
         },
       });
+
+      // Send email notification — fire and forget
+      // Does not block form submission if email fails
+      void sendContactNotification({
+        name: input.name,
+        organisation: input.organisation,
+        email: input.email,
+        phone: input.phone,
+        service: input.service,
+        message: input.message,
+      }).catch((err) =>
+        console.error("Contact notification email failed:", err),
+      );
+
       return { success: true };
     }),
 
