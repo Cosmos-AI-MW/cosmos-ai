@@ -91,6 +91,7 @@ export const authConfig = {
           tier: user.tier,
           generationsUsed: monthPassed ? 0 : user.generationsUsed,
           generationsLimit: user.generationsLimit,
+          emailVerified: user.emailVerified,
           isAdmin: false,
         };
       },
@@ -114,6 +115,8 @@ export const authConfig = {
         token.generationsLimit =
           (user as { generationsLimit?: number }).generationsLimit ?? 10;
         token.isAdmin = (user as { isAdmin?: boolean }).isAdmin ?? false;
+        token.emailVerified =
+          (user as { emailVerified?: Date | null }).emailVerified ?? null;
       }
       return token;
     },
@@ -127,6 +130,7 @@ export const authConfig = {
           generationsUsed: token.generationsUsed as number,
           generationsLimit: token.generationsLimit as number,
           isAdmin: token.isAdmin as boolean,
+          emailVerified: token.emailVerified as Date | null,
         },
       };
     },

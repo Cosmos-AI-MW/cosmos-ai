@@ -250,9 +250,12 @@ export default function CosmosWritePage() {
               {/* Live counter — show once we know the remaining count */}
               {remaining !== null && (
                 <div className="border-cosmos-sage/50 text-cosmos-sage rounded-full border px-4 py-1 text-sm font-medium">
-                  {isLoggedIn
-                    ? `${remaining} ${remaining === 1 ? "generation" : "generations"} remaining this month`
-                    : `${remaining} ${remaining === 1 ? "generation" : "generations"} remaining today`}
+                  {isLoggedIn &&
+                  (session?.user as { tier?: string })?.tier === "professional"
+                    ? "Unlimited access"
+                    : isLoggedIn
+                      ? `${remaining} ${remaining === 1 ? "generation" : "generations"} remaining this month`
+                      : `${remaining} ${remaining === 1 ? "generation" : "generations"} remaining today`}
                 </div>
               )}
 

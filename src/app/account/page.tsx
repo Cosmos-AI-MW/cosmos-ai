@@ -85,33 +85,56 @@ export default async function AccountPage() {
 
             <div className="mb-4 flex items-end justify-between">
               <div>
-                <div className="text-cosmos-forest text-4xl font-bold">
-                  {user.generationsUsed}
-                  <span className="text-cosmos-forest/50 text-lg font-light">
-                    /{user.generationsLimit}
-                  </span>
-                </div>
-                <div className="text-cosmos-forest/60 mt-1 text-sm font-light">
-                  generations used this month
-                </div>
+                {user.tier === "professional" ? (
+                  <>
+                    <div className="text-cosmos-forest text-4xl font-bold">
+                      Unlimited
+                    </div>
+                    <div className="text-cosmos-forest/60 mt-1 text-sm font-light">
+                      Professional — unrestricted access
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="text-cosmos-forest text-4xl font-bold">
+                      {user.generationsUsed}
+                      <span className="text-cosmos-forest/50 text-lg font-light">
+                        /{user.generationsLimit}
+                      </span>
+                    </div>
+                    <div className="text-cosmos-forest/60 mt-1 text-sm font-light">
+                      generations used this month
+                    </div>
+                  </>
+                )}
               </div>
-              <div className="text-right">
-                <div className="text-cosmos-teal text-2xl font-bold">
-                  {remaining}
+              {user.tier !== "professional" && (
+                <div className="text-right">
+                  <div className="text-cosmos-teal text-2xl font-bold">
+                    {remaining}
+                  </div>
+                  <div className="text-cosmos-forest/60 text-sm font-light">
+                    remaining
+                  </div>
                 </div>
-                <div className="text-cosmos-forest/60 text-sm font-light">
-                  remaining
-                </div>
-              </div>
+              )}
             </div>
 
             {/* Progress bar */}
-            <div className="bg-cosmos-mist mb-6 h-3 w-full rounded-full">
-              <div
-                className={`h-3 rounded-full transition-all ${usedPct >= 90 ? "bg-red-400" : usedPct >= 70 ? "bg-cosmos-gold" : "bg-cosmos-teal"}`}
-                style={{ width: `${usedPct}%` }}
-              />
-            </div>
+            {user.tier !== "professional" && (
+              <div className="bg-cosmos-mist mb-6 h-3 w-full rounded-full">
+                <div
+                  className={`h-3 rounded-full transition-all ${
+                    usedPct >= 90
+                      ? "bg-red-400"
+                      : usedPct >= 70
+                        ? "bg-cosmos-gold"
+                        : "bg-cosmos-teal"
+                  }`}
+                  style={{ width: `${usedPct}%` }}
+                />
+              </div>
+            )}
 
             <div className="flex flex-col gap-3 sm:flex-row">
               <Link
