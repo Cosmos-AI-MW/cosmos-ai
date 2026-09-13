@@ -102,7 +102,11 @@ export default function ContactPage() {
                   Email
                 </div>
                 <p className="text-cosmos-forest text-base font-light">
-                  hello@cosmosai.co.mw
+                  hello@cosmosai.mw
+                </p>
+                <p className="text-cosmos-forest/50 mt-1 text-xs font-light">
+                  Or use the form to get in touch — we respond within one
+                  business day.
                 </p>
               </div>
               <div>
