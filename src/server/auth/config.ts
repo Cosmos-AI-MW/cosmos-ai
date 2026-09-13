@@ -98,7 +98,7 @@ export const authConfig = {
   ],
 
   adapter: PrismaAdapter(db),
-  session: { strategy: "jwt" },
+  session: { strategy: "jwt", maxAge: 60 * 60 * 8 }, // 8 hours
   pages: {
     signIn: "/auth/login",
     signOut: "/",

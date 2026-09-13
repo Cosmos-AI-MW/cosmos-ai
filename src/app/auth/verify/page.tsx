@@ -17,7 +17,13 @@ function VerifyEmailContent() {
     onSuccess: () => setStatus("success"),
     onError: (error) => {
       setStatus("error");
-      setMessage(error.message);
+      if (error.message.includes("Invalid or expired")) {
+        setMessage(
+          "This verification link has already been used or has expired. If you already verified your email, you can sign in directly.",
+        );
+      } else {
+        setMessage(error.message);
+      }
     },
   });
 
@@ -75,16 +81,16 @@ function VerifyEmailContent() {
           </p>
           <div className="flex flex-col items-center gap-3">
             <Link
-              href="/auth/register"
+              href="/auth/login"
               className="bg-cosmos-accent hover:bg-cosmos-forest-light rounded-full px-8 py-3 text-base font-medium text-white transition-colors"
             >
-              Register Again
+              Sign In
             </Link>
             <Link
-              href="/contact"
+              href="/auth/register"
               className="border-cosmos-forest text-cosmos-forest hover:bg-cosmos-forest rounded-full border px-8 py-3 text-base font-medium transition-colors hover:text-white"
             >
-              Contact Support
+              Register New Account
             </Link>
           </div>
         </>
