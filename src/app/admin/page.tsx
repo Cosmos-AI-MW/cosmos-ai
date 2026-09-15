@@ -109,6 +109,12 @@ export default async function AdminPage({
           >
             ◎ Registered Users
           </a>
+          <a
+            href="/admin/health"
+            className="border-cosmos-forest-light text-cosmos-sage hover:border-cosmos-teal inline-flex items-center gap-2 rounded-full border px-6 py-2.5 text-sm font-medium transition-colors hover:text-white"
+          >
+            ◉ System Health
+          </a>
         </div>
       </section>
 
