@@ -83,6 +83,7 @@ export async function sendContactNotification(submission: {
   const adminEmails = [
     process.env.ADMIN_EMAIL,
     process.env.ADMIN_EMAIL_2,
+    process.env.ADMIN_EMAIL_3,
   ].filter(Boolean) as string[];
 
   if (adminEmails.length === 0) return;
