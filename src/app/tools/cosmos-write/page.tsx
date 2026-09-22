@@ -118,15 +118,14 @@ export default function CosmosWritePage() {
   const [limitReached, setLimitReached] = useState(false);
   const [copied, setCopied] = useState<number | null>(null);
   const [refineIndex, setRefineIndex] = useState<number | null>(null);
+  const [activeConvId, setActiveConvId] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Initialise session ID
   useEffect(() => {
     setSessionId(getSessionId());
   }, []);
 
-  // Set remaining count once session status is known
   useEffect(() => {
     if (status === "loading") return;
     if (isLoggedIn) {
@@ -156,8 +155,14 @@ export default function CosmosWritePage() {
       setRemaining(data.remaining);
       if (!isLoggedIn) {
         setAnonymousRemaining(data.remaining);
-        // Don't show limit screen immediately — let user read the output first
-        // Limit screen shows when they try to generate again
+      }
+      if (data.conversationId && isLoggedIn) {
+        setActiveConvId(data.conversationId);
+        window.history.replaceState(
+          {},
+          "",
+          `/tools/cosmos-write?conversation=${data.conversationId}`,
+        );
       }
     },
     onError: (error) => {
@@ -194,6 +199,7 @@ export default function CosmosWritePage() {
         history: JSON.stringify(messages.slice(-6)),
       },
       sessionId,
+      conversationId: activeConvId ?? undefined,
     });
   }
 
@@ -214,6 +220,8 @@ export default function CosmosWritePage() {
       handleSend();
     }
   }
+
+  const tier = (session?.user as { tier?: string })?.tier ?? "free";
 
   return (
     <main className="bg-cosmos-chalk flex min-h-screen flex-col font-sans">
@@ -237,29 +245,34 @@ export default function CosmosWritePage() {
             Describe what you need and get a professional document instantly.
           </p>
 
+          {isLoggedIn && (
+            <div className="mt-4 flex justify-center gap-3">
+              <Link
+                href="/account/history"
+                className="border-cosmos-sage/50 text-cosmos-sage hover:border-cosmos-sage rounded-full border px-4 py-1.5 text-xs font-medium transition-colors hover:text-white"
+              >
+                History
+              </Link>
+            </div>
+          )}
+
           {!limitReached && (
             <div className="mt-4 flex flex-col items-center gap-2">
-              {/* Always show the offer to anonymous users */}
               {!isLoggedIn && status !== "loading" && (
                 <div className="border-cosmos-teal text-cosmos-teal rounded-full border px-4 py-1 text-sm font-medium">
                   Try free — 3 generations today, 10 every month with a free
                   account
                 </div>
               )}
-
-              {/* Live counter — show once we know the remaining count */}
               {remaining !== null && (
                 <div className="border-cosmos-sage/50 text-cosmos-sage rounded-full border px-4 py-1 text-sm font-medium">
-                  {isLoggedIn &&
-                  (session?.user as { tier?: string })?.tier === "professional"
+                  {tier === "professional"
                     ? "Unlimited access"
                     : isLoggedIn
                       ? `${remaining} ${remaining === 1 ? "generation" : "generations"} remaining this month`
                       : `${remaining} ${remaining === 1 ? "generation" : "generations"} remaining today`}
                 </div>
               )}
-
-              {/* Logged in — show monthly allowance before first generation */}
               {isLoggedIn && remaining === null && (
                 <div className="border-cosmos-teal text-cosmos-teal rounded-full border px-4 py-1 text-sm font-medium">
                   {(session?.user as { generationsLimit?: number })
@@ -276,7 +289,6 @@ export default function CosmosWritePage() {
         <section className="flex flex-1 items-center justify-center px-6 py-20">
           <div className="mx-auto max-w-xl text-center">
             {isLoggedIn ? (
-              /* Logged in user hit their limit */
               <div className="border-cosmos-silver rounded-2xl border bg-white p-12">
                 <div className="mb-4 text-5xl">✴</div>
                 <h2 className="font-display text-cosmos-forest mb-3 text-3xl font-semibold">
@@ -332,7 +344,6 @@ export default function CosmosWritePage() {
                 </div>
               </div>
             ) : (
-              /* Anonymous user hit their limit */
               <div className="border-cosmos-silver rounded-2xl border bg-white p-12">
                 <div className="mb-4 text-5xl">✴</div>
                 <h2 className="font-display text-cosmos-forest mb-3 text-3xl font-semibold">
@@ -434,7 +445,7 @@ export default function CosmosWritePage() {
               <div ref={bottomRef} />
             </div>
 
-            {/* INPUT */}
+            {/* REFINE OPTIONS */}
             {refineIndex !== null && (
               <div className="border-cosmos-teal bg-cosmos-mist mb-3 rounded-2xl border p-4">
                 <p className="text-cosmos-forest mb-3 text-sm font-medium">
@@ -477,6 +488,8 @@ export default function CosmosWritePage() {
                 </button>
               </div>
             )}
+
+            {/* INPUT */}
             <div className="border-cosmos-silver rounded-2xl border bg-white p-4 shadow-sm">
               <textarea
                 ref={textareaRef}

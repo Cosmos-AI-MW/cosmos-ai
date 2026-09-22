@@ -33,6 +33,7 @@ export const writeRouter = createTRPCRouter({
         documentType: z.string(),
         inputs: z.record(z.string()),
         sessionId: z.string(),
+        conversationId: z.string().optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -40,24 +41,19 @@ export const writeRouter = createTRPCRouter({
       const isAdmin = (ctx.session?.user as { isAdmin?: boolean })?.isAdmin;
 
       if (isAdmin) {
-        // Admin bypasses all limits — do nothing
+        // Admin bypasses all limits
       } else if (userId) {
-        // Logged in user — check account generations
         const user = await ctx.db.user.findUnique({
           where: { id: userId },
         });
-
         if (!user) throw new Error("User not found");
-
         if (user.generationsUsed >= user.generationsLimit) {
           throw new Error("ACCOUNT_LIMIT_REACHED");
         }
       } else {
-        // Anonymous session — max 3 free generations
         const sessionCount = await ctx.db.writeGeneration.count({
           where: { sessionId: input.sessionId, userId: null },
         });
-
         if (sessionCount >= 3) {
           throw new Error("FREE_LIMIT_REACHED");
         }
@@ -90,7 +86,7 @@ export const writeRouter = createTRPCRouter({
         .map((block) => (block as { type: "text"; text: string }).text)
         .join("\n");
 
-      // Save generation
+      // Save generation record
       await ctx.db.writeGeneration.create({
         data: {
           documentType: input.documentType,
@@ -101,7 +97,7 @@ export const writeRouter = createTRPCRouter({
         },
       });
 
-      // Update user generation count if logged in
+      // Update user generation count
       if (userId && !isAdmin) {
         await ctx.db.user.update({
           where: { id: userId },
@@ -126,7 +122,46 @@ export const writeRouter = createTRPCRouter({
         remaining = Math.max(0, 3 - sessionCount);
       }
 
-      return { output, remaining };
+      // Save conversation server-side for logged-in users
+      let conversationId: string | null = input.conversationId ?? null;
+
+      if (userId && !isAdmin) {
+        if (!conversationId) {
+          // Create new conversation
+          const title =
+            userMessage.slice(0, 60) + (userMessage.length > 60 ? "..." : "");
+          const conv = await ctx.db.conversation.create({
+            data: { userId, title },
+          });
+          conversationId = conv.id;
+        } else {
+          // Update existing conversation timestamp
+          await ctx.db.conversation.update({
+            where: { id: conversationId },
+            data: { updatedAt: new Date() },
+          });
+        }
+
+        // Save user message
+        await ctx.db.conversationMessage.create({
+          data: {
+            conversationId,
+            role: "user",
+            content: userMessage,
+          },
+        });
+
+        // Save assistant message
+        await ctx.db.conversationMessage.create({
+          data: {
+            conversationId,
+            role: "assistant",
+            content: output,
+          },
+        });
+      }
+
+      return { output, remaining, conversationId };
     }),
 
   getStats: protectedProcedure.query(async ({ ctx }) => {
