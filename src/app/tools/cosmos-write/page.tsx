@@ -91,12 +91,28 @@ function setAnonymousRemaining(remaining: number): void {
   }
 }
 
+// const suggestions = [
+//   { label: "Business Email", prompt: "Write a professional business email " },
+//   { label: "Formal Letter", prompt: "Write a formal letter " },
+//   { label: "Business Proposal", prompt: "Write a business proposal " },
+//   { label: "Meeting Agenda", prompt: "Create a meeting agenda for " },
+//   { label: "Job Description", prompt: "Write a job description for " },
+// ];
+
 const suggestions = [
   { label: "Business Email", prompt: "Write a professional business email " },
-  { label: "Formal Letter", prompt: "Write a formal letter " },
-  { label: "Business Proposal", prompt: "Write a business proposal " },
+  { label: "Formal Letter", prompt: "Write a formal letter to " },
+  { label: "Business Proposal", prompt: "Write a business proposal for " },
   { label: "Meeting Agenda", prompt: "Create a meeting agenda for " },
   { label: "Job Description", prompt: "Write a job description for " },
+  { label: "Quotation", prompt: "Write a quotation for " },
+  {
+    label: "Employment Letter",
+    prompt: "Write an employment offer letter for ",
+  },
+  { label: "NGO Report", prompt: "Write a donor/NGO progress report for " },
+  { label: "Resignation Letter", prompt: "Write a resignation letter " },
+  { label: "Company Profile", prompt: "Write a company profile for " },
 ];
 
 type Message = {
