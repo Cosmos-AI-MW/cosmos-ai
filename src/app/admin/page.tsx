@@ -3,7 +3,6 @@ import Link from "next/link";
 import { auth } from "~/server/auth";
 import { db } from "~/server/db";
 import MarkReadButton from "~/components/admin/MarkReadButton";
-import SignOutButton from "~/components/admin/SignOutButton";
 import AdminNavbar from "~/components/admin/AdminNavbar";
 
 const PER_PAGE = 10;

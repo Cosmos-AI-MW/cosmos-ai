@@ -117,8 +117,8 @@ export default async function AdminHealthPage() {
   const resendDailyLimit = 100;
 
   // Neon free tier limits
-  const neonStorageLimit = 500; // MB
-  const neonComputeLimit = 190; // hours per month
+  const _neonStorageLimit = 500; // MB
+  const _neonComputeLimit = 190; // hours per month
 
   return (
     <main className="bg-cosmos-night min-h-screen font-sans">
