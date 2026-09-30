@@ -23,6 +23,10 @@ export const env = createEnv({
     ADMIN_EMAIL: z.string().email().optional(),
     ADMIN_EMAIL_2: z.string().email().optional(),
     ADMIN_EMAIL_3: z.string().email().optional(),
+    WHATSAPP_PHONE_NUMBER_ID: z.string().optional(),
+    WHATSAPP_BUSINESS_ACCOUNT_ID: z.string().optional(),
+    WHATSAPP_ACCESS_TOKEN: z.string().optional(),
+    WHATSAPP_VERIFY_TOKEN: z.string().optional(),
   },
 
   /**
@@ -47,6 +51,10 @@ export const env = createEnv({
     ADMIN_EMAIL: process.env.ADMIN_EMAIL,
     ADMIN_EMAIL_2: process.env.ADMIN_EMAIL_2,
     ADMIN_EMAIL_3: process.env.ADMIN_EMAIL_3,
+    WHATSAPP_PHONE_NUMBER_ID: process.env.WHATSAPP_PHONE_NUMBER_ID,
+    WHATSAPP_BUSINESS_ACCOUNT_ID: process.env.WHATSAPP_BUSINESS_ACCOUNT_ID,
+    WHATSAPP_ACCESS_TOKEN: process.env.WHATSAPP_ACCESS_TOKEN,
+    WHATSAPP_VERIFY_TOKEN: process.env.WHATSAPP_VERIFY_TOKEN,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
