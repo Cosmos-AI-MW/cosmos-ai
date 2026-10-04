@@ -137,7 +137,12 @@ export async function GET(request: NextRequest) {
   console.log("token match:", token === process.env.WHATSAPP_VERIFY_TOKEN);
   console.log("env token length:", process.env.WHATSAPP_VERIFY_TOKEN?.length);
 
-  if (mode === "subscribe" && token === process.env.WHATSAPP_VERIFY_TOKEN) {
+  const verifyToken = process.env.WHATSAPP_VERIFY_TOKEN ?? "";
+  console.log("verify token from env:", verifyToken);
+  console.log("token received:", token);
+  console.log("match:", token === verifyToken);
+
+  if (mode === "subscribe" && token === verifyToken) {
     console.log("WhatsApp webhook verified");
     return new NextResponse(challenge, { status: 200 });
   }
