@@ -61,7 +61,7 @@ async function sendWhatsAppMessage(to: string, message: string) {
   const accessToken = process.env.WHATSAPP_ACCESS_TOKEN;
 
   const response = await fetch(
-    `https://graph.facebook.com/v18.0/${phoneNumberId}/messages`,
+    `https://graph.facebook.com/v26.0/${phoneNumberId}/messages`,
     {
       method: "POST",
       headers: {
