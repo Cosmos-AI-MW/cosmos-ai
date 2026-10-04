@@ -1,3 +1,4 @@
+// WhatsApp webhook handler v2
 import { type NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 
