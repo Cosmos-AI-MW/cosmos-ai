@@ -132,15 +132,15 @@ export async function GET(request: NextRequest) {
   const challenge = searchParams.get("hub.challenge");
 
   // Temporary debug — remove after fixing
-  console.log("Webhook GET received");
-  console.log("mode:", mode);
-  console.log("token match:", token === process.env.WHATSAPP_VERIFY_TOKEN);
-  console.log("env token length:", process.env.WHATSAPP_VERIFY_TOKEN?.length);
+  // console.log("Webhook GET received");
+  // console.log("mode:", mode);
+  // console.log("token match:", token === process.env.WHATSAPP_VERIFY_TOKEN);
+  // console.log("env token length:", process.env.WHATSAPP_VERIFY_TOKEN?.length);
 
   const verifyToken = process.env.WHATSAPP_VERIFY_TOKEN ?? "";
-  console.log("verify token from env:", verifyToken);
-  console.log("token received:", token);
-  console.log("match:", token === verifyToken);
+  // console.log("verify token from env:", verifyToken);
+  // console.log("token received:", token);
+  // console.log("match:", token === verifyToken);
 
   if (mode === "subscribe" && token === verifyToken) {
     console.log("WhatsApp webhook verified");
@@ -189,7 +189,7 @@ export async function POST(request: NextRequest) {
           const phoneNumber = message.from;
           const userMessage = message.text.body.trim();
 
-          console.log(`Message from ${phoneNumber}: ${userMessage}`);
+          // console.log(`Message from ${phoneNumber}: ${userMessage}`);
 
           // Generate response
           const response = await generateResponse(userMessage, phoneNumber);
