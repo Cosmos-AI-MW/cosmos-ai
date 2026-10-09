@@ -1,195 +1,401 @@
-# Cosmos AI — Architecture & Decision Record
+# Cosmos AI — Master Architecture & Vision Document
 
-This document captures the key architectural decisions made during development of the Cosmos AI platform. It exists so future contributors understand not just what was built but why.
+> This document is the single source of truth for Cosmos AI's architecture, vision, decisions, and build pipeline. If this conversation is ever lost, start here. It captures not just what was built but why, and where we are going.
 
 ---
 
-## Stack
+## The Mission
 
-| Layer           | Technology              | Why                                                         |
-| --------------- | ----------------------- | ----------------------------------------------------------- |
-| Framework       | Next.js 15 (App Router) | Full-stack, server components, edge-ready, Vercel native    |
-| Language        | TypeScript              | Type safety across frontend and backend                     |
-| API layer       | tRPC                    | End-to-end type safety, no REST boilerplate                 |
-| Database ORM    | Prisma v7               | Type-safe queries, schema migrations, Neon compatible       |
-| Database        | Neon PostgreSQL         | Serverless Postgres, free tier generous, EU region          |
-| Auth            | NextAuth v5             | JWT sessions, credentials providers, flexible               |
-| Styling         | Tailwind v4             | Utility-first, fast iteration                               |
-| Email           | Resend                  | Developer-friendly, domain verification, Vercel integration |
-| AI              | Anthropic Claude Haiku  | Fast, cheap, high quality for business writing              |
-| Hosting         | Vercel                  | Zero-config Next.js deployment, CDN, serverless functions   |
-| Package manager | pnpm                    | Fast, disk efficient                                        |
+**AI at every Malawian's fingertips, no matter their level in society, at an affordable price.**
+
+This is not a tagline. It is the architectural constraint that drives every decision. Every feature, every pricing model, every tool must be measurable against this mission.
+
+---
+
+## The Platform Overview
+
+Cosmos AI is a platform with multiple products under one brand:
+
+```
+Cosmos AI (cosmosai.mw)
+├── Cosmos Write          — Web app, AI business writing, all sectors
+├── Cosmos AI Bot         — WhatsApp +265991455490, serves every Malawian
+├── Future: Cosmos Summarise — Web app, document summarisation
+└── Future: More tools    — Each added as the platform matures
+```
+
+### The Key Principle
+One great tool beats ten mediocre ones. Products are added only when the existing ones are solid. Features are deepened before new products are launched.
+
+---
+
+## Product 1 — Cosmos Write (Web)
+
+### What It Is
+An AI-powered business writing assistant at `cosmosai.mw/tools/cosmos-write`. It produces complete, professional, ready-to-use documents instantly.
+
+### Who It Serves
+Every Malawian who has internet access and needs professional documents — professionals, NGO workers, government staff, students, entrepreneurs, traders. Not segmented by sector — the tool adapts to whoever is using it.
+
+### Sector Coverage (Current and Growing)
+The tool knows and serves every sector:
+- Banking and finance
+- Agriculture and farming
+- Education and academia
+- Healthcare and hospitals
+- Government and civil service
+- NGOs and donor organisations
+- Legal and compliance
+- Construction and engineering
+- Hospitality and tourism
+- Retail and trading
+- Transport and logistics
+- Media and communications
+- Religious organisations
+- Community and social work
+- Technology and startups
+- Everyday needs: complaints, rental agreements, job applications, payment requests
+
+**This list grows through system prompt refinement — no code changes needed.**
+
+### Pricing (Web)
+| Plan | Generations | Price |
+|---|---|---|
+| Free (anonymous) | 3 per 24 hours via cookie | Free |
+| Free (registered) | 10 per month | Free |
+| Starter | 50 per month | MWK 5,000/month |
+| Professional | Unlimited | MWK 15,000/month |
+
+### Key Files
+- `src/app/tools/cosmos-write/page.tsx` — the UI
+- `src/server/api/routers/write.ts` — the tRPC mutation, generation logic, conversation saving
+- `src/server/api/routers/conversation.ts` — conversation CRUD
+- `prisma/schema.prisma` — Conversation and ConversationMessage models
+
+### How Conversations Are Saved
+Server-side only — inside the `write.generate` tRPC mutation. The client never calls separate save mutations. This prevents re-render loops and double animations. The server returns `conversationId` and the client updates the URL once.
+
+### What Never Changes About Cosmos Write
+- It is English-first (Chichewa may be added later via Hugging Face)
+- It is account-based with tiers
+- It lives on the web
+- It is independent from WhatsApp
+
+---
+
+## Product 2 — Cosmos AI Bot (WhatsApp)
+
+### What It Is
+An AI assistant on WhatsApp number `+265991455490`. It serves every Malawian regardless of literacy level, technical skill, or language.
+
+### Who It Serves
+Everyone. A university professor writing a formal proposal. A market vendor needing a receipt. A farmer asking about crop pricing. A student needing help with a job application. The system adapts to the person — the person does not adapt to the system.
+
+### Language Support
+- **Current:** English only
+- **Planned:** Automatic language detection via Hugging Face. If the user writes in Chichewa, the bot detects it, translates to English, sends to Claude, translates response back to Chichewa. The user never has to specify a language.
+
+### Pricing (WhatsApp)
+| Tier | Prompts | Price |
+|---|---|---|
+| Free | 5 per day | Free |
+| Paid bundle | 50 prompts | MWK 500 |
+
+Payment via Airtel Money or TNM Mpamba — no web account needed. Phone number is the identity.
+
+### Key Files
+- `src/app/api/webhooks/whatsapp/route.ts` — everything WhatsApp lives here
+
+### What Is Separate from Cosmos Write
+- Different system prompt — broader mandate, Cosmos AI identity
+- Different limits — 5/day free, not 3/day
+- Different payment model — MWK 500 bundles not monthly subscriptions
+- Different identity storage — phone number not email account
+- Conversation history stored in memory per phone number (database persistence planned)
+- No tRPC — direct API calls inside the route handler
+
+### What Is Shared with Cosmos Write
+- Same Claude AI model (claude-haiku-4-5-20251001)
+- Same Cosmos AI brand
+- Same Malawian context knowledge
+- Same cosmosai.mw domain for privacy/terms
+
+### The Bot's Broader Mandate
+Unlike Cosmos Write which focuses on document generation, the WhatsApp bot handles:
+- Formal business documents (same as Cosmos Write)
+- Simple everyday documents — receipts, payment requests, basic contracts
+- Explanations — explain this document to me simply
+- Business advice — how to price goods, how to register a business
+- Questions — what is VAT, what is a TPIN, how does Airtel Money work
+- All in English or Chichewa automatically
+
+---
+
+## Technical Stack
+
+| Layer | Technology | Why |
+|---|---|---|
+| Framework | Next.js 15 (App Router) | Full-stack, server components, Vercel native |
+| Language | TypeScript | Type safety across frontend and backend |
+| API layer | tRPC | End-to-end type safety, no REST boilerplate |
+| Database ORM | Prisma v7 | Type-safe queries, Neon compatible |
+| Database | Neon PostgreSQL (eu-central-1) | Serverless Postgres, free tier generous |
+| Auth | NextAuth v5 | JWT sessions, credentials providers |
+| Styling | Tailwind v4 | Utility-first, fast iteration |
+| Email | Resend | Domain verified, cosmosai.mw |
+| AI | Anthropic Claude Haiku 4.5 | Fast, cheap, high quality |
+| Hosting | Vercel (Hobby — public repo required) | Zero-config Next.js deployment |
+| Package manager | pnpm | Fast, disk efficient |
+| WhatsApp | Meta WhatsApp Business API (direct) | Not Twilio — direct Meta integration |
+| Translation (planned) | Hugging Face Helsinki-NLP | English-Chichewa translation |
+
+---
+
+## Brand & Design
+
+| Element | Value |
+|---|---|
+| Display font | Syne |
+| Body font | DM Sans |
+| Primary | cosmos-forest #0D4A3A |
+| Accent | cosmos-accent #2E7D5E |
+| Teal | cosmos-teal #2A8C6E |
+| Sage | cosmos-sage #B8CFC4 |
+| Background | cosmos-chalk #F2F5F3 |
+| Night | cosmos-night #041E17 |
+| Glyph | ✴ (not ✦ or Gemini-style) |
+| Language | "Exploratory Meeting" not "Discovery Call" |
+
+---
+
+## Infrastructure & Services
+
+### Domain
+- Primary: `cosmosai.mw`
+- Nameservers: Vercel (ns1.vercel-dns.com, ns2.vercel-dns.com)
+- www redirects to non-www
+- SSL: automatic via Vercel
+
+### Email
+- Provider: Resend (free tier: 3,000/month, 100/day)
+- Sending domain: `noreply@cosmosai.mw` (verified)
+- Business inbox: `hello@cosmosai.mw` (Zoho mailbox)
+- Admin emails: ADMIN_EMAIL, ADMIN_EMAIL_2, ADMIN_EMAIL_3
+
+### Database
+- Provider: Neon PostgreSQL
+- Region: eu-central-1
+- Free tier: 0.5 GB storage, 190 compute hours/month
+
+### WhatsApp
+- Number: +265991455490 (Malawian business number)
+- API: Meta WhatsApp Business API v26.0
+- Webhook: `https://cosmosai.mw/api/webhooks/whatsapp`
+- Access token: Permanent system user token (never expires)
+- Verify token: stored in WHATSAPP_VERIFY_TOKEN env var
 
 ---
 
 ## Key Architectural Decisions
 
-### 1. Two separate auth providers — not one
-
-**Decision:** Admin login and user login are completely separate NextAuth credential providers.
-
-**Why:** Admins are not database users — they are environment variable credentials. This means:
-
-- No admin record in the User table — zero risk of privilege escalation
-- User login failures never reveal admin credentials
-- Admin session and user session are completely isolated
-- A user trying admin credentials at `/auth/login` correctly fails
-
-**Rule:** Admin uses `signIn("admin")`, users use `signIn("user")`. Never mix.
-
----
+### 1. Two separate auth providers
+Admin login uses env var credentials (no database record). User login uses database. Completely isolated — a user cannot access admin and admin does not appear in the User table.
 
 ### 2. Session tokens carry user state
-
-**Decision:** JWT tokens include `tier`, `generationsUsed`, `generationsLimit`, `isAdmin`, and `emailVerified`.
-
-**Why:** Avoids a database query on every page load to check tier or admin status. The tradeoff is that session data can be stale — a tier upgrade takes effect on next login.
-
-**Mitigation:** The account page always fetches fresh data from the database directly (`force-dynamic`, `db.user.findUnique`) so the displayed count is always accurate even if the session token is stale.
-
----
+JWT includes tier, generationsUsed, generationsLimit, isAdmin, emailVerified. Account page always fetches fresh from database to avoid stale token display.
 
 ### 3. Conversation saving is server-side only
+Conversations saved inside write.generate tRPC mutation — not via client-side mutations. Prevents React re-render loops and double animations. Client receives one response and updates URL once.
 
-**Decision:** Conversations are saved inside the `write.generate` tRPC mutation on the server — not via separate client-side mutations after generation.
+### 4. Anonymous usage via cookie (web)
+24-hour cookie stores session ID and remaining count. Cannot be reset by user (unlike sessionStorage). Expires automatically.
 
-**Why:** Client-side mutations caused React re-renders that triggered double animations in the CosmicLoader. Moving saving to the server means the client receives one response (`output`, `remaining`, `conversationId`) and updates UI once. Zero extra mutations, zero re-render loops.
+### 5. WhatsApp is completely separate from web
+Different limits, different pricing, different system prompt, different identity model. They share the AI model and brand only. This allows each to evolve independently without coupling problems.
 
-**Rule:** Never save conversation messages from the client. Always go through the generate mutation.
+### 6. API isolation and graceful degradation
+Each external API is isolated. A failure in one never crashes another:
+- Resend: fire-and-forget, database saves first
+- Anthropic: core product, errors surfaced cleanly
+- Hugging Face (planned): always additive, Cosmos Write works without it
+- Paychangu (planned): admin can upgrade manually if down
+- Airtel/TNM (planned): WhatsApp bot works without payment if provider is down
 
----
+### 7. Database schema is additive only
+Never destructive migrations in production. Sacred data: ContactSubmission, User, Conversation, ConversationMessage, Service, AboutContent, Value.
 
-### 4. Anonymous usage via cookie, not session
+### 8. Repository is public
+Vercel free tier requires public repo for automatic deployments. Private repo needs Vercel Pro ($20/month). Secrets are safe in environment variables — code being public is an acceptable tradeoff at this stage.
 
-**Decision:** Anonymous users (not logged in) get a cookie-based session with a 24-hour limit of 3 generations. The cookie stores `{ id, created, remaining }`.
-
-**Why:** Server-side session for anonymous users would require a database record per visitor — expensive and unnecessary. Cookie is client-side, expires automatically, and is harder to game than `sessionStorage` which resets on new tab.
-
-**Limit hierarchy:**
-
-- Anonymous: 3 generations per 24 hours
-- Free registered: 10 per month
-- Starter: 50 per month
-- Professional: unlimited (stored as 999999, displayed as "Unlimited")
-
----
-
-### 5. API isolation and graceful degradation
-
-**Decision:** Each external API is isolated behind its own module. A failure in one never crashes another.
-
-**APIs and their isolation:**
-
-- `src/lib/email.ts` — Resend. Contact form saves to DB first, email is fire-and-forget with `.catch()`. Email failure never blocks form submission.
-- `src/server/api/routers/write.ts` — Anthropic. Core product. If this fails the error is surfaced to the user cleanly.
-- Future: Hugging Face — translation and summarisation. Always additive. Cosmos Write works fully without it. If translation fails, pass the original text to Claude directly.
-- Future: Paychangu — payments. Tier upgrades can be done manually by admin if Paychangu is down.
-
-**Rule:** Never make the core generation flow depend on a secondary API. Enhance, never couple.
+### 9. Cosmos Write is one tool for all sectors
+Not split into sector-specific tools. The system prompt grows smarter per sector over time. Same interface, same URL, same brand — increasingly intelligent.
 
 ---
 
-### 6. Database schema is additive only
+## Environment Variables
 
-**Decision:** Never run `pnpm db:push` without checking for data loss. Schema changes must be additive (new tables, new optional fields) never destructive.
-
-**Sacred data:**
-
-- `ContactSubmission` — real client enquiries, never wipe
-- `User` — real user accounts
-- `Conversation` and `ConversationMessage` — user history
-- `Service`, `AboutContent`, `Value` — CMS content
-
-**Safe to wipe in development:** `WriteGeneration`, `EmailVerificationToken`
-
-**Rule:** Always run `pnpm db:push` (not `db:migrate reset`) in production. Always stop dev server on Windows before schema changes.
-
----
-
-### 7. Prisma v7 specific configuration
-
-**Decision:** Prisma v7 uses a different configuration pattern from v5/v6.
-
-**Key differences:**
-
-- `generator provider = "prisma-client"` not `"prisma-client-js"`
-- `datasource url` removed from schema, lives in `prisma.config.ts`
-- `src/server/db.ts` uses `PrismaPg` adapter from `@prisma/adapter-pg`
-- Import path: `../../generated/prisma/client`
-- `/generated` is gitignored — Vercel regenerates via `prisma generate && next build`
-- `binaryTargets = ["native", "rhel-openssl-3.0.x"]` required for Vercel
+```
+DATABASE_URL                  — Neon connection string
+AUTH_SECRET                   — NextAuth JWT secret
+NEXTAUTH_URL                  — https://cosmosai.mw
+ANTHROPIC_API_KEY             — Claude API key
+RESEND_API_KEY                — Resend email API key
+ADMIN_EMAIL                   — hello@cosmosai.mw
+ADMIN_EMAIL_2                 — co-founder 1 Gmail
+ADMIN_EMAIL_3                 — co-founder 2 Gmail
+ADMIN_PASSWORD                — Admin dashboard password
+WHATSAPP_PHONE_NUMBER_ID      — Malawian number Meta ID
+WHATSAPP_BUSINESS_ACCOUNT_ID  — Meta business account ID
+WHATSAPP_ACCESS_TOKEN         — Permanent system user token
+WHATSAPP_VERIFY_TOKEN         — Webhook verification token
+HUGGINGFACE_API_KEY           — Planned: translation
+```
 
 ---
 
-### 8. Three admin emails
+## Service Limits Reference
 
-**Decision:** Contact form notifications go to up to three admin emails simultaneously.
-
-**Current assignment:**
-
-- `ADMIN_EMAIL` — hello@cosmosai.mw (Zoho business mailbox)
-- `ADMIN_EMAIL_2` — personal Gmail of co-founder 1
-- `ADMIN_EMAIL_3` — personal Gmail of co-founder 2
-
-**Why three:** Business mailbox may not always be checked. Personal Gmail ensures notifications are seen. When Google Workspace is set up on cosmosai.mw, the Zoho mailbox will be replaced.
+| Service | Free Limit | Upgrade | Alert At |
+|---|---|---|---|
+| Resend | 3,000 emails/month, 100/day | $20/month → 50,000 | 70% |
+| Neon | 0.5 GB, 190 compute hours/month | $19/month → 10 GB | 85% |
+| Vercel | 100 GB bandwidth, 6,000 build minutes | $20/month/member | Monitor |
+| Anthropic | Pay as you go | ~$0.80/million tokens (Haiku) | Monitor cost |
 
 ---
 
-## Service Limits (Free Tiers)
+## Build Pipeline — What Is Done
 
-| Service   | Free Limit                              | Upgrade Cost                      | Action at 85%                |
-| --------- | --------------------------------------- | --------------------------------- | ---------------------------- |
-| Resend    | 3,000 emails/month, 100/day             | $20/month for 50,000              | Email alert to admins        |
-| Neon      | 0.5 GB storage, 190 compute hours/month | $19/month for 10 GB               | Warning on health dashboard  |
-| Vercel    | 100 GB bandwidth, 6,000 build minutes   | $20/month per member              | Monitor deployments          |
-| Anthropic | Pay as you go                           | ~$0.80 per million tokens (Haiku) | Monitor via health dashboard |
+### Website
+- [x] Home page with hero, services, about teaser, CTA
+- [x] Services page — reads from database, editable from admin
+- [x] About page — reads from database, editable from admin
+- [x] Contact page — form saves to database, email notifications to all admins
+- [x] Search — across Service, AboutContent, Value tables
+- [x] Privacy Policy — `/privacy`
+- [x] Terms of Service — `/terms`
+- [x] Data Deletion — `/data-deletion`
+
+### Auth
+- [x] Admin login — env var credentials, separate from users
+- [x] User registration with email verification via Resend
+- [x] User login with JWT session
+- [x] Email verification flow with resend option
+- [x] Unverified user banner on account and Cosmos Write
+
+### User Accounts
+- [x] Registration and login
+- [x] Account dashboard — usage, tier, remaining generations
+- [x] Chat history page — `/account/history`
+- [x] Tier system — Free, Starter, Professional
+- [x] Monthly generation reset on login
+
+### Cosmos Write (Web)
+- [x] Chat interface with markdown rendering
+- [x] Cosmic loader animation
+- [x] Suggestion chips (10 categories)
+- [x] Refine panel with quick options
+- [x] Copy button per message
+- [x] Anonymous limit — 3/day via cookie
+- [x] Registered limit — 10/month Free, 50 Starter, Unlimited Professional
+- [x] Server-side conversation saving
+- [x] Conversation history loading from URL
+- [x] History link for logged-in users
+- [x] Limit reached screens — different for anonymous vs logged-in
+- [x] Comprehensive Malawian system prompt
+
+### Admin
+- [x] Admin dashboard — contact submissions, pagination, mark as read
+- [x] Content management — services, about, values
+- [x] Cosmos Write stats — usage by type, daily activity
+- [x] User management — tier upgrade, usage bars, next reset date
+- [x] Health dashboard — service limits, usage tracking
+- [x] Three admin emails for notifications
+
+### WhatsApp Bot
+- [x] Webhook at `/api/webhooks/whatsapp`
+- [x] Message reception and Claude response
+- [x] Guided mode — user types "help" to get menu
+- [x] Conversation history in memory per phone number
+- [x] Permanent system user token (never expires)
+- [x] Malawian business number +265991455490 active
+- [x] Meta app in Live mode
 
 ---
 
-## Future Architecture Decisions (Pending)
+## Build Pipeline — What Is Next
 
-### WhatsApp Business Chatbot
+### Immediate (WhatsApp improvements)
+- [ ] 5 prompts per day limit (currently 3 — same as web anonymous)
+- [ ] Updated system prompt — Cosmos AI identity, broader mandate, serves everyone
+- [ ] Chichewa language detection and translation via Hugging Face
+- [ ] Conversation persistence to database per phone number
+- [ ] Airtel Money / TNM Mpamba payment — MWK 500 for 50 prompts
 
-- Webhook endpoint at `/api/webhooks/whatsapp` receives messages from Meta
-- Calls Claude for response generation
-- Airtel Money and TNM Mpamba payment confirmation via webhook
-- Tier upgrades triggered server-side on payment confirmation
-- Loosely coupled — website works fully without WhatsApp
+### Web improvements
+- [ ] Session reset on sign out for privacy (chat messages clear)
+- [ ] Cosmos Write system prompt — add remaining sectors
+- [ ] Paychangu payment integration for web tiers
+- [ ] Admin ability to delete users
 
-### Hugging Face Integration
+### Future tools
+- [ ] Cosmos Summarise — paste a long document, get a clear summary
+- [ ] Hugging Face Whisper — speech to text for WhatsApp voice notes
 
-- Translation module at `src/lib/translate.ts`
-- English ↔ Chichewa via Helsinki-NLP models
-- Speech to text via Whisper
-- Always optional — core generation never depends on it
-- Graceful fallback: if translation fails, pass original text to Claude
+### Future platform
+- [ ] Organisation subscription bundle — org admin approves members
+- [ ] Google sign-in
+- [ ] Legal documents (deeper)
+- [ ] Telegram alerts for system health
 
-### Paychangu
+---
 
-- Payment initiation from `/account` page
-- Webhook at `/api/webhooks/paychangu` confirms payment
-- On confirmation: update user tier via `upgradeUser` mutation
-- Admin can always upgrade manually if Paychangu is down
+## Database Schema (Key Models)
 
-### Organisation Subscription Bundle
-
-- New `Organisation` model with `adminUserId`, `memberLimit`, `tier`
-- Organisation admin approves members
-- Members inherit organisation tier
-- Separate billing from individual accounts
+```prisma
+User              — email, password, tier, generationsUsed, generationsLimit
+ContactSubmission — name, org, email, phone, service, message, read
+Service           — CMS: title, tagline, description, deliverables, pricing
+AboutContent      — CMS: key, value pairs
+Value             — CMS: title, description
+WriteGeneration   — documentType, inputs, output, sessionId, userId
+Conversation      — title, userId, updatedAt
+ConversationMessage — conversationId, role, content
+EmailVerificationToken — email, token, expires
+```
 
 ---
 
 ## Repository
 
-- **GitHub:** github.com/Cosmos-AI-MW/cosmos-ai (public)
-- **Production:** cosmosai.mw
-- **Staging:** cosmos-ai-mw.vercel.app
-- **Local:** http://localhost:3000
-
-## Environment Variables Required
+- GitHub: github.com/Cosmos-AI-MW/cosmos-ai (public)
+- Production: https://cosmosai.mw
+- Staging: https://cosmos-ai-mw.vercel.app
+- Local: http://localhost:3000
+- Local path: C:\Users\finly\OneDrive\Documents\PhD\Kitchen\CosmosAI\devv\cosmos-ai
 
 ---
 
-_Last updated: September 2026_
-_Maintained by: Cosmos AI development team_
+## Commands Reference
+
+```bash
+pnpm dev              — Start development server (Terminal 1)
+pnpm build            — prisma generate && next build
+pnpm db:push          — Push schema to Neon (stop dev first on Windows)
+pnpm db:generate      — Regenerate Prisma client (stop dev first on Windows)
+pnpm db:studio        — Open Prisma Studio at localhost:5555
+pnpm db:seed          — Seed content tables only (safe for production)
+```
+
+### Critical Rules
+- Always stop `pnpm dev` before `db:push` or `db:generate` on Windows
+- Always run `pnpm build` locally before pushing to catch TypeScript errors
+- Always run `db:push` before pushing to GitHub when schema changes
+- Never run `db:push` without checking for data loss first
+- Never run `db:seed` on production without confirming content tables only
+- ContactSubmission records are production data — never wipe
+
+---
+
+*Last updated: October 2026*
+*Maintained by: Finlyson Mwadambo Msiska — Technical Co-founder, Cosmos AI*
