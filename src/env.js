@@ -27,6 +27,7 @@ export const env = createEnv({
     WHATSAPP_BUSINESS_ACCOUNT_ID: z.string().optional(),
     WHATSAPP_ACCESS_TOKEN: z.string().optional(),
     WHATSAPP_VERIFY_TOKEN: z.string().optional(),
+    HUGGINGFACE_API_KEY: z.string().optional(),
   },
 
   /**
@@ -55,6 +56,7 @@ export const env = createEnv({
     WHATSAPP_BUSINESS_ACCOUNT_ID: process.env.WHATSAPP_BUSINESS_ACCOUNT_ID,
     WHATSAPP_ACCESS_TOKEN: process.env.WHATSAPP_ACCESS_TOKEN,
     WHATSAPP_VERIFY_TOKEN: process.env.WHATSAPP_VERIFY_TOKEN,
+    HUGGINGFACE_API_KEY: process.env.HUGGINGFACE_API_KEY,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

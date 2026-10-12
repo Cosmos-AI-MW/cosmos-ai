@@ -1,6 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { db } from "~/server/db";
+import { processMessage, translateToChichewa } from "~/lib/translate";
 
 const client = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY ?? "",
@@ -222,7 +223,11 @@ async function generateResponse(
   phoneNumber: string,
 ): Promise<string> {
   const history = conversationHistory.get(phoneNumber) ?? [];
-  history.push({ role: "user", content: userMessage });
+
+  // Detect language and translate to English if Chichewa
+  const { englishMessage, isChichewa } = await processMessage(userMessage);
+
+  history.push({ role: "user", content: englishMessage });
   const recentHistory = history.slice(-10);
 
   try {
@@ -241,10 +246,18 @@ async function generateResponse(
     history.push({ role: "assistant", content: assistantMessage });
     conversationHistory.set(phoneNumber, history.slice(-20));
 
+    // If user wrote in Chichewa, translate response back to Chichewa
+    if (isChichewa) {
+      const chichewaResponse = await translateToChichewa(assistantMessage);
+      return chichewaResponse;
+    }
+
     return assistantMessage;
   } catch (error) {
     console.error("Claude API error:", error);
-    return "Sorry, I am having trouble right now. Please try again in a moment.";
+    return isChichewa
+      ? "Pepani, pali vuto. Yesaninso patapita nthawi yochepa."
+      : "Sorry, I am having trouble right now. Please try again in a moment.";
   }
 }
 
