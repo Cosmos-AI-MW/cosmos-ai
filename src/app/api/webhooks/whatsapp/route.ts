@@ -1,7 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { db } from "~/server/db";
-import { processMessage, translateToChichewa } from "~/lib/translate";
 
 const client = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY ?? "",
@@ -41,6 +40,13 @@ Everyone. A university professor writing a formal proposal. A market vendor need
 - If someone writes informally, still give a professional result
 - Never truncate a response — always complete it fully
 
+## Language Detection and Response
+- If the user writes in Chichewa, respond entirely in Chichewa
+- If the user writes in English, respond in English
+- If the user mixes Chichewa and English, respond in the dominant language
+- When responding in Chichewa, produce complete professional documents in Chichewa where possible
+- When a formal document is requested in Chichewa, you may produce the document in English with a Chichewa introduction explaining what the document is
+
 ## Guided Mode
 If the user sends *help* or *menu*, respond with exactly this:
 
@@ -71,9 +77,12 @@ async function getOrCreateWhatsAppUser(phoneNumber: string) {
 
   if (!user) {
     const now = new Date();
+    // Reset at midnight CAT (UTC+2)
     const tomorrow = new Date(now);
     tomorrow.setDate(tomorrow.getDate() + 1);
     tomorrow.setHours(0, 0, 0, 0);
+    // Adjust for CAT (UTC+2) — subtract 2 hours to get UTC midnight CAT
+    tomorrow.setTime(tomorrow.getTime() - 2 * 60 * 60 * 1000);
 
     user = await db.whatsAppUser.create({
       data: {
@@ -99,9 +108,12 @@ async function checkAndResetLimits(phoneNumber: string) {
 
   // Reset daily count if past midnight
   if (user.dailyResetAt && now >= user.dailyResetAt) {
+    // Reset at midnight CAT (UTC+2)
     const tomorrow = new Date(now);
     tomorrow.setDate(tomorrow.getDate() + 1);
     tomorrow.setHours(0, 0, 0, 0);
+    // Adjust for CAT (UTC+2) — subtract 2 hours to get UTC midnight CAT
+    tomorrow.setTime(tomorrow.getTime() - 2 * 60 * 60 * 1000);
 
     await db.whatsAppUser.update({
       where: { phoneNumber },
@@ -223,11 +235,7 @@ async function generateResponse(
   phoneNumber: string,
 ): Promise<string> {
   const history = conversationHistory.get(phoneNumber) ?? [];
-
-  // Detect language and translate to English if Chichewa
-  const { englishMessage, isChichewa } = await processMessage(userMessage);
-
-  history.push({ role: "user", content: englishMessage });
+  history.push({ role: "user", content: userMessage });
   const recentHistory = history.slice(-10);
 
   try {
@@ -246,18 +254,10 @@ async function generateResponse(
     history.push({ role: "assistant", content: assistantMessage });
     conversationHistory.set(phoneNumber, history.slice(-20));
 
-    // If user wrote in Chichewa, translate response back to Chichewa
-    if (isChichewa) {
-      const chichewaResponse = await translateToChichewa(assistantMessage);
-      return chichewaResponse;
-    }
-
     return assistantMessage;
   } catch (error) {
     console.error("Claude API error:", error);
-    return isChichewa
-      ? "Pepani, pali vuto. Yesaninso patapita nthawi yochepa."
-      : "Sorry, I am having trouble right now. Please try again in a moment.";
+    return "Sorry, I am having trouble right now. Please try again in a moment.\n\nPepani, pali vuto. Yesaninso patapita nthawi.";
   }
 }
 
