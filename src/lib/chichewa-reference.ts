@@ -98,8 +98,12 @@ GREETINGS AND POLITENESS:
 
 COMMON PHRASES:
 - I need help = Ndikufuna thandizo
-- I want to write = Ndikufuna kulemba
 - Can you help me = Mungandithandize
+- To help someone = Kuthandiza (active — doing the helping)
+- To be helped = Kuthandizika (passive — receiving help)
+- I can help you = Ndingakuthandize
+- I need to be helped = Ndikufuna kuthandizika
+- I want to write = Ndikufuna kulemba
 - How much = Ndalama zingati
 - I do not understand = Sindikumvetsa
 - My name is = Dzina langa ndi
@@ -110,7 +114,14 @@ COMMON PHRASES:
 - I have sent = Nditumiza
 - Please confirm = Chonde tsimikizani
 - I agree = Ndavomera / Chabwino
-- I do not agree = Sindavomera
+- I do not agree = Sindikuvomera
+
+COMMON ERRORS TO AVOID:
+- WRONG: kuthandiza when meaning "to be helped" — use kuthandizika
+- WRONG: ndingandikhale — this word does not exist in Chichewa
+- CORRECT: kuti ndingakhale (so that I can be/stay)
+- CORRECT: ndingapange zokusangalatsa (I can do something pleasing/satisfying)
+- WRONG: mixing verb forms incorrectly — always check active vs passive
 
 ### Writing Style Guide for Malawian Chichewa
 - Use formal Chichewa for professional documents
@@ -131,4 +142,14 @@ Complaint letter: "Ndikulemba kalata iyi kukudziwiitsani za..."
 Formal closing: "Ndikuyembekezera mwaulemu kuyankha kwanu mwamsanga."
 Thank you closing: "Zikomo kwambiri."
 Respectful closing: "Ndatha ine wanu"
+
+### VERIFIED CORRECTIONS (from native speaker review)
+These corrections override anything Claude might generate:
+- "kuthandiza" = to help someone (you are the helper)
+- "kuthandizika" = to be helped (you are receiving help)
+- "kuti ndingakhale" = so that I can be/stay (not "ndingandikhale")
+- "ndingapange zokusangalatsa" = I can do something pleasing
+- Always check active vs passive verb forms in Chichewa
+- The prefix "ku-" + verb root + "-ika" suffix = passive form
+
 `;

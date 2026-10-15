@@ -282,7 +282,7 @@ async function generateResponse(
   const history = conversationHistory.get(phoneNumber) ?? [];
   const chichewa = isChichewa(userMessage);
   const systemPrompt = chichewa
-    ? `${SYSTEM_PROMPT}\n\n${CHICHEWA_REFERENCE}\n\nThe user is writing in Chichewa. Respond entirely in Malawian Chichewa using the vocabulary and style guide above.`
+    ? `${SYSTEM_PROMPT}\n\n${CHICHEWA_REFERENCE}\n\nThe user is writing in Chichewa. Respond entirely in Malawian Chichewa using the vocabulary and style guide above. Pay special attention to active vs passive verb forms — "kuthandiza" means to help someone, "kuthandizika" means to be helped. Never invent words that do not exist in Chichewa. When unsure of a word, use a simpler known word instead.`
     : SYSTEM_PROMPT;
 
   history.push({ role: "user", content: userMessage });
