@@ -64,7 +64,7 @@ I can help you with many things. Just tell me what you need in your own words �
 7. Write something for work or school
 8. I need help with something else
 
-You can also just describe what you need in plain English or Chichewa — I will understand.
+You can also just describe what you need in plain English — I will understand.
 
 Reply *balance* to check your remaining prompts.
 
