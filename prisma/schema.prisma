@@ -83,6 +83,18 @@ model WhatsAppUser {
     @@index([phoneNumber])
 }
 
+// ── WHATSAPP CONVERSATIONS ───────────────────────────────────────
+model WhatsAppMessage {
+    id          String   @id @default(cuid())
+    phoneNumber String
+    role        String
+    content     String
+    createdAt   DateTime @default(now())
+
+    @@index([phoneNumber])
+    @@index([createdAt])
+}
+
 // ── SERVICES ─────────────────────────────────────────────────────
 model Service {
     id          String   @id @default(cuid())

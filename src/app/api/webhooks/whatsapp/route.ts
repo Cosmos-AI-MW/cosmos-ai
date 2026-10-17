@@ -225,39 +225,53 @@ async function getBalanceMessage(phoneNumber: string): Promise<string> {
   }
 }
 
-// Conversation history per phone number
-const conversationHistory = new Map<
-  string,
-  { role: "user" | "assistant"; content: string }[]
->();
-
 async function generateResponse(
   userMessage: string,
   phoneNumber: string,
 ): Promise<string> {
-  const history = conversationHistory.get(phoneNumber) ?? [];
-  history.push({ role: "user", content: userMessage });
-  const recentHistory = history.slice(-10);
+  // Load last 10 messages from database for context
+  const history = await db.whatsAppMessage.findMany({
+    where: { phoneNumber },
+    orderBy: { createdAt: "desc" },
+    take: 10,
+  });
+
+  // Reverse to get chronological order
+  const messages = history.reverse().map((m) => ({
+    role: m.role as "user" | "assistant",
+    content: m.content,
+  }));
+
+  // Add current user message
+  messages.push({ role: "user", content: userMessage });
 
   try {
     const response = await client.messages.create({
       model: "claude-haiku-4-5-20251001",
       max_tokens: 1024,
       system: SYSTEM_PROMPT,
-      messages: recentHistory,
+      messages,
     });
+
     const assistantMessage = response.content
       .filter((block) => block.type === "text")
       .map((block) => (block as { type: "text"; text: string }).text)
       .join("\n");
 
-    history.push({ role: "assistant", content: assistantMessage });
-    conversationHistory.set(phoneNumber, history.slice(-20));
+    // Save both messages to database — fire and forget
+    void Promise.all([
+      db.whatsAppMessage.create({
+        data: { phoneNumber, role: "user", content: userMessage },
+      }),
+      db.whatsAppMessage.create({
+        data: { phoneNumber, role: "assistant", content: assistantMessage },
+      }),
+    ]).catch((err) => console.error("Failed to save WhatsApp message:", err));
 
     return assistantMessage;
   } catch (error) {
     console.error("Claude API error:", error);
-    return "Sorry, I am having trouble right now. Please try again in a moment.\n\nPepani, pali vuto. Yesaninso patapita nthawi.";
+    return "Sorry, I am having trouble right now. Please try again in a moment.";
   }
 }
 
