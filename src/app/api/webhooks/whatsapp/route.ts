@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { db } from "~/server/db";
-import { CHICHEWA_REFERENCE } from "~/lib/chichewa-reference";
+// import { CHICHEWA_REFERENCE } from "~/lib/chichewa-reference";
 
 const client = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY ?? "",
@@ -231,60 +231,11 @@ const conversationHistory = new Map<
   { role: "user" | "assistant"; content: string }[]
 >();
 
-// Simple Chichewa detection based on common words
-function isChichewa(text: string): boolean {
-  const lower = text.toLowerCase();
-  const indicators = [
-    "ndine",
-    "ndiri",
-    "ndi",
-    "ine",
-    "iwe",
-    "ife",
-    "ndikufuna",
-    "ndikuya",
-    "ndikuenda",
-    "chonde",
-    "zikomo",
-    "moni",
-    "bwanji",
-    "chabwino",
-    "kodi",
-    "koma",
-    "ndipo",
-    "mulungu",
-    "amayi",
-    "abambo",
-    "mwana",
-    "anthu",
-    "ndikudziwa",
-    "sindikudziwa",
-    "thandizani",
-    "thandizo",
-    "ndalama",
-    "pano",
-    "pomwepo",
-    "pamodzi",
-    "lero",
-    "mawa",
-    "bwana",
-    "ndikupempha",
-    "pepani",
-  ];
-  const count = indicators.filter((w) => lower.includes(w)).length;
-  return count >= 2;
-}
-
 async function generateResponse(
   userMessage: string,
   phoneNumber: string,
 ): Promise<string> {
   const history = conversationHistory.get(phoneNumber) ?? [];
-  const chichewa = isChichewa(userMessage);
-  const systemPrompt = chichewa
-    ? `${SYSTEM_PROMPT}\n\n${CHICHEWA_REFERENCE}\n\nThe user is writing in Chichewa. Respond entirely in Malawian Chichewa using the vocabulary and style guide above. Pay special attention to active vs passive verb forms — "kuthandiza" means to help someone, "kuthandizika" means to be helped. Never invent words that do not exist in Chichewa. When unsure of a word, use a simpler known word instead.`
-    : SYSTEM_PROMPT;
-
   history.push({ role: "user", content: userMessage });
   const recentHistory = history.slice(-10);
 
@@ -292,10 +243,9 @@ async function generateResponse(
     const response = await client.messages.create({
       model: "claude-haiku-4-5-20251001",
       max_tokens: 1024,
-      system: systemPrompt,
+      system: SYSTEM_PROMPT,
       messages: recentHistory,
     });
-
     const assistantMessage = response.content
       .filter((block) => block.type === "text")
       .map((block) => (block as { type: "text"; text: string }).text)
