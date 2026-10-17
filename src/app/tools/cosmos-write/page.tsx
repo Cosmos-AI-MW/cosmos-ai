@@ -142,15 +142,34 @@ export default function CosmosWritePage() {
     setSessionId(getSessionId());
   }, []);
 
+  const prevStatusRef = useRef<string>("loading");
+
   useEffect(() => {
     if (status === "loading") return;
+
+    // If user just signed out — clear chat for privacy
+    if (
+      prevStatusRef.current === "authenticated" &&
+      status === "unauthenticated"
+    ) {
+      setMessages([]);
+      setActiveConvId(null);
+      setLimitReached(false);
+      window.history.replaceState({}, "", "/tools/cosmos-write");
+    }
+
+    prevStatusRef.current = status;
+
     if (isLoggedIn) {
       const limit =
         (session?.user as { generationsLimit?: number })?.generationsLimit ??
         10;
       const used =
         (session?.user as { generationsUsed?: number })?.generationsUsed ?? 0;
-      setRemaining(Math.max(0, limit - used));
+      const tier = (session?.user as { tier?: string })?.tier ?? "free";
+      setRemaining(
+        tier === "professional" ? 999999 : Math.max(0, limit - used),
+      );
     } else {
       const anon = getAnonymousRemaining();
       setRemaining(anon);
