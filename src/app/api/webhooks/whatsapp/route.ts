@@ -7,9 +7,19 @@ const client = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY ?? "",
 });
 
-const SYSTEM_PROMPT =
-  process.env.WHATSAPP_PROMPT ??
-  `You are Cosmos AI, an AI assistant created by Cosmos AI — a Malawian artificial intelligence company.`;
+async function getWhatsAppPrompt(): Promise<string> {
+  try {
+    const prompt = await db.systemPrompt.findUnique({
+      where: { name: "whatsapp" },
+    });
+    return (
+      prompt?.content ??
+      "You are Cosmos AI, an AI assistant created by Cosmos AI — a Malawian artificial intelligence company based in Lilongwe, Malawi."
+    );
+  } catch {
+    return "You are Cosmos AI, an AI assistant created by Cosmos AI — a Malawian artificial intelligence company based in Lilongwe, Malawi.";
+  }
+}
 
 // Get or create WhatsApp user record
 async function getOrCreateWhatsAppUser(phoneNumber: string) {
@@ -187,10 +197,12 @@ async function generateResponse(
   messages.push({ role: "user", content: userMessage });
 
   try {
+    const systemPrompt = await getWhatsAppPrompt();
+
     const response = await client.messages.create({
       model: "claude-haiku-4-5-20251001",
       max_tokens: 1024,
-      system: SYSTEM_PROMPT,
+      system: systemPrompt,
       messages,
     });
 

@@ -124,4 +124,21 @@ export const contentRouter = createTRPCRouter({
 
       return { success: true };
     }),
+
+  // ── SYSTEM PROMPTS ───────────────────────────────────────────────
+  updatePrompt: protectedProcedure
+    .input(
+      z.object({
+        name: z.string(),
+        content: z.string().min(1),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db.systemPrompt.upsert({
+        where: { name: input.name },
+        update: { content: input.content },
+        create: { name: input.name, content: input.content },
+      });
+      return { success: true };
+    }),
 });

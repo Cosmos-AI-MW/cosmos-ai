@@ -6,14 +6,25 @@ import {
   protectedProcedure,
 } from "~/server/api/trpc";
 import { env } from "~/env";
+import { db } from "~/server/db";
 
 const client = new Anthropic({
   apiKey: env.ANTHROPIC_API_KEY ?? "",
 });
 
-const SYSTEM_PROMPT =
-  process.env.COSMOS_WRITE_PROMPT ??
-  `You are Cosmos Write, an AI business writing assistant created by Cosmos AI.`;
+async function getSystemPrompt(): Promise<string> {
+  try {
+    const prompt = await db.systemPrompt.findUnique({
+      where: { name: "cosmos-write" },
+    });
+    return (
+      prompt?.content ??
+      "You are Cosmos Write, an AI business writing assistant created by Cosmos AI — a Malawian artificial intelligence company."
+    );
+  } catch {
+    return "You are Cosmos Write, an AI business writing assistant created by Cosmos AI — a Malawian artificial intelligence company.";
+  }
+}
 
 export const writeRouter = createTRPCRouter({
   generate: publicProcedure
@@ -63,10 +74,12 @@ export const writeRouter = createTRPCRouter({
         { role: "user", content: userMessage },
       ];
 
+      const systemPrompt = await getSystemPrompt();
+
       const response = await client.messages.create({
         model: "claude-haiku-4-5-20251001",
         max_tokens: 2048,
-        system: SYSTEM_PROMPT,
+        system: systemPrompt,
         messages,
       });
 

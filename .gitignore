@@ -49,3 +49,6 @@ yarn-error.log*
 ARCHITECTURE.md
 DEVELOPMENT_BIBLE.md
 src/lib/chichewa-reference.ts
+prisma/seed-prompts.ts
+.vercel
+.env*
