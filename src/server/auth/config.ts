@@ -28,13 +28,21 @@ export const authConfig = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        if (
-          credentials?.email === process.env.ADMIN_EMAIL &&
-          credentials?.password === process.env.ADMIN_PASSWORD
-        ) {
+        const email = credentials?.email as string;
+        const password = credentials?.password as string;
+
+        const adminEmails = [
+          process.env.ADMIN_EMAIL,
+          process.env.ADMIN_EMAIL_2,
+        ].filter(Boolean) as string[];
+
+        const isValidEmail = adminEmails.includes(email);
+        const isValidPassword = password === process.env.ADMIN_PASSWORD;
+
+        if (isValidEmail && isValidPassword) {
           return {
             id: "admin",
-            email: process.env.ADMIN_EMAIL ?? "",
+            email,
             name: "Cosmos AI Admin",
             isAdmin: true,
           };
