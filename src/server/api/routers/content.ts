@@ -141,4 +141,37 @@ export const contentRouter = createTRPCRouter({
       });
       return { success: true };
     }),
+
+  // ── CREATE SERVICE ───────────────────────────────────────────────
+  createService: protectedProcedure
+    .input(
+      z.object({
+        title: z.string().min(1),
+        tagline: z.string().min(1),
+        description: z.string().min(1),
+        deliverables: z.array(z.string()),
+        pricing: z.string().min(1),
+        ideal: z.string().min(1),
+        published: z.boolean(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const count = await ctx.db.service.count();
+      const number = String(count + 1).padStart(2, "0");
+      return ctx.db.service.create({
+        data: {
+          ...input,
+          number,
+          order: count + 1,
+        },
+      });
+    }),
+
+  // ── DELETE SERVICE ───────────────────────────────────────────────
+  deleteService: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db.service.delete({ where: { id: input.id } });
+      return { success: true };
+    }),
 });
