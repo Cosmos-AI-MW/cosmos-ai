@@ -1,11 +1,24 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "~/server/auth";
+import { db } from "~/server/db";
 import AdminNavbar from "~/components/admin/AdminNavbar";
+
+export const dynamic = "force-dynamic";
 
 export default async function ContentPage() {
   const session = await auth();
   if (!session?.user) redirect("/admin/login");
+
+  const [serviceCount, valueCount] = await Promise.all([
+    db.service.count(),
+    db.value.count(),
+  ]);
+
+  const serviceLabel =
+    serviceCount > 0
+      ? `01–${String(serviceCount).padStart(2, "0")}`
+      : "No services";
 
   return (
     <main className="bg-cosmos-night min-h-screen font-sans">
@@ -32,7 +45,7 @@ export default async function ContentPage() {
               className="border-cosmos-forest bg-cosmos-forest/30 hover:border-cosmos-teal rounded-2xl border p-8 transition-colors"
             >
               <div className="text-cosmos-teal mb-3 text-3xl font-bold">
-                01–05
+                {serviceLabel}
               </div>
               <h2 className="font-display mb-2 text-2xl font-semibold text-white">
                 Services
@@ -59,12 +72,14 @@ export default async function ContentPage() {
               href="/admin/content/values"
               className="border-cosmos-forest bg-cosmos-forest/30 hover:border-cosmos-teal rounded-2xl border p-8 transition-colors"
             >
-              <div className="text-cosmos-teal mb-3 text-3xl font-bold">6</div>
+              <div className="text-cosmos-teal mb-3 text-3xl font-bold">
+                {valueCount}
+              </div>
               <h2 className="font-display mb-2 text-2xl font-semibold text-white">
                 Values
               </h2>
               <p className="text-cosmos-sage text-base font-light">
-                Edit the six company values shown on the about page.
+                Edit the {valueCount} company values shown on the about page.
               </p>
             </Link>
           </div>
