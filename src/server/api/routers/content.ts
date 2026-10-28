@@ -259,9 +259,6 @@ export const contentRouter = createTRPCRouter({
         data?: { checkout_url?: string };
       };
 
-      console.log("Paychangu response status:", response.status);
-      console.log("Paychangu response data:", JSON.stringify(data));
-
       if (!response.ok || data.status !== "success") {
         throw new Error(
           typeof data.message === "string"
