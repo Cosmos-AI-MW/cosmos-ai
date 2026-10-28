@@ -113,6 +113,21 @@ model Payment {
     @@index([status])
 }
 
+// ── WHATSAPP PAYMENTS ────────────────────────────────────────────
+model WhatsAppPayment {
+    id          String   @id @default(cuid())
+    phoneNumber String
+    chargeId    String   @unique
+    amount      Int
+    status      String   @default("pending")
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+
+    @@index([phoneNumber])
+    @@index([chargeId])
+    @@index([status])
+}
+
 // ── SYSTEM PROMPTS ───────────────────────────────────────────────
 model SystemPrompt {
     id        String   @id @default(cuid())

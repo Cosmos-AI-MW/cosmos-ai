@@ -102,3 +102,131 @@ export async function verifyTransaction(txRef: string) {
 
   return data;
 }
+
+// Detect mobile money network from Malawian number prefix
+export function detectNetwork(mobile: string): "airtel" | "tnm" | null {
+  // Remove country code if present
+  const clean = mobile.replace(/^\+265/, "0").replace(/^265/, "0");
+
+  // Airtel prefixes: 099x, 098x, 077x
+  if (/^(099|098|077)/.test(clean)) return "airtel";
+
+  // TNM prefixes: 088x, 089x
+  if (/^(088|089)/.test(clean)) return "tnm";
+
+  return null;
+}
+
+// Get mobile money operators from Paychangu
+export async function getMobileMoneyOperators() {
+  const response = await fetch(`${PAYCHANGU_BASE_URL}/mobile-money`, {
+    headers: {
+      Authorization: `Bearer ${SECRET_KEY}`,
+      Accept: "application/json",
+    },
+  });
+
+  const data = (await response.json()) as {
+    status: string;
+    data?: Array<{
+      id: number;
+      ref_id: string;
+      name: string;
+      shortCode: string;
+    }>;
+  };
+
+  return data.data ?? [];
+}
+
+// Initiate WhatsApp direct charge mobile money
+export async function initiateWhatsAppPayment({
+  mobile,
+  chargeId,
+  amount,
+}: {
+  mobile: string;
+  chargeId: string;
+  amount: number;
+}) {
+  // Get operators and find the right one
+  const operators = await getMobileMoneyOperators();
+  const network = detectNetwork(mobile);
+
+  if (!network) {
+    throw new Error(
+      "Unrecognised mobile number. Please use an Airtel or TNM number.",
+    );
+  }
+
+  // Find operator ref_id
+  const operator = operators.find(
+    (op) =>
+      op.shortCode?.toLowerCase().includes(network) ||
+      op.name?.toLowerCase().includes(network === "airtel" ? "airtel" : "tnm"),
+  );
+
+  if (!operator) {
+    throw new Error(
+      "Mobile money operator not available. Please try again later.",
+    );
+  }
+
+  // Clean mobile number — ensure it has country code
+  const cleanMobile = mobile.replace(/^0/, "+265");
+
+  const response = await fetch(
+    `${PAYCHANGU_BASE_URL}/mobile-money/payments/initialize`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${SECRET_KEY}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        mobile: cleanMobile,
+        mobile_money_operator_ref_id: operator.ref_id,
+        amount: amount.toString(),
+        charge_id: chargeId,
+      }),
+    },
+  );
+
+  const data = (await response.json()) as {
+    status: string;
+    message: string;
+    data?: { chargeId: string };
+  };
+
+  if (!response.ok || data.status !== "success") {
+    throw new Error(data.message ?? "Payment request failed");
+  }
+
+  return data;
+}
+
+// Verify WhatsApp direct charge
+export async function verifyWhatsAppPayment(chargeId: string) {
+  const response = await fetch(
+    `${PAYCHANGU_BASE_URL}/mobile-money/payments/${chargeId}/verify`,
+    {
+      headers: {
+        Authorization: `Bearer ${SECRET_KEY}`,
+        Accept: "application/json",
+      },
+    },
+  );
+
+  const data = (await response.json()) as {
+    status: string;
+    message: string;
+    data?: {
+      status: string;
+      charge_id: string;
+      amount: number;
+    };
+  };
+
+  return data;
+}

@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
+import { detectNetwork, initiateWhatsAppPayment } from "~/lib/paychangu";
 import { db } from "~/server/db";
 // import { CHICHEWA_REFERENCE } from "~/lib/chichewa-reference";
 
@@ -114,7 +115,7 @@ async function canGenerate(phoneNumber: string): Promise<{
         allowed: false,
         remaining: 0,
         isPaid: true,
-        message: `You have used all ${user.monthlyLimit} of your prompts this month.\n\nTo get 50 more prompts, send MWK 500 via:\n• Airtel Money: [NUMBER]\n• TNM Mpamba: [NUMBER]\n\nSend payment reference here to activate.`,
+        message: `You have used all ${user.monthlyLimit} of your prompts this month.\n\nTo get 50 more prompts for MWK 500, reply with your Airtel Money or TNM Mpamba number.\nExample: 0991234567`,
       };
     }
     return { allowed: true, remaining, isPaid: true };
@@ -125,7 +126,7 @@ async function canGenerate(phoneNumber: string): Promise<{
         allowed: false,
         remaining: 0,
         isPaid: false,
-        message: `You have used your 5 free prompts for today.\n\nYour free prompts reset at midnight.\n\nOr get 50 prompts for MWK 500 — valid for one month:\n• Airtel Money: [NUMBER]\n• TNM Mpamba: [NUMBER]\n\nSend payment reference here to activate.`,
+        message: `You have used your 5 free prompts for today.\n\nYour free prompts reset at midnight.\n\nOr get 50 prompts for MWK 500 — valid for one month.\n\nTo pay, reply with your Airtel Money or TNM Mpamba number.\nExample: 0991234567`,
       };
     }
     return { allowed: true, remaining, isPaid: false };
@@ -173,6 +174,50 @@ async function getBalanceMessage(phoneNumber: string): Promise<string> {
         })
       : "midnight";
     return `Your Cosmos AI balance ✴\n\nPlan: Free (5 prompts/day)\nUsed today: ${user.dailyCount}\nRemaining today: ${remaining}\nResets at: ${resetTime}\n\nGet 50 prompts for MWK 500 — lasts one month.\nReply *help* to see what I can help with.`;
+  }
+}
+
+// Track users awaiting payment number input
+const awaitingPaymentNumber = new Set<string>();
+
+async function handlePaymentNumber(
+  phoneNumber: string,
+  mobileNumber: string,
+): Promise<string> {
+  const network = detectNetwork(mobileNumber);
+
+  if (!network) {
+    return `That does not look like a valid Malawian mobile number.\n\nPlease send your Airtel Money or TNM Mpamba number.\nExample: 0991234567`;
+  }
+
+  const networkName = network === "airtel" ? "Airtel Money" : "TNM Mpamba";
+  const chargeId = `WA-${phoneNumber.slice(-9)}-${Date.now()}`;
+
+  try {
+    await initiateWhatsAppPayment({
+      mobile: mobileNumber,
+      chargeId,
+      amount: 500,
+    });
+
+    // Save pending payment to database
+    await db.whatsAppPayment.create({
+      data: {
+        phoneNumber,
+        chargeId,
+        amount: 500,
+        status: "pending",
+      },
+    });
+
+    awaitingPaymentNumber.delete(phoneNumber);
+
+    return `A payment request of MWK 500 has been sent to ${mobileNumber} via ${networkName}.\n\nCheck your phone for a prompt and enter your PIN to confirm.\n\nYour 50 prompts will be activated automatically once payment is confirmed.`;
+  } catch (error) {
+    awaitingPaymentNumber.delete(phoneNumber);
+    const message =
+      error instanceof Error ? error.message : "Payment request failed";
+    return `Sorry, the payment request failed.\n\n${message}\n\nPlease try again or contact us at hello@cosmosai.mw`;
   }
 }
 
@@ -304,6 +349,32 @@ export async function POST(request: NextRequest) {
           const userMessage = message.text.body.trim().toLowerCase();
 
           // Handle commands
+          // Check if user is in payment flow
+          if (awaitingPaymentNumber.has(phoneNumber)) {
+            const response = await handlePaymentNumber(
+              phoneNumber,
+              message.text.body.trim(),
+            );
+            await sendWhatsAppMessage(phoneNumber, response);
+            continue;
+          }
+
+          // Detect if user sent a mobile number (payment intent)
+          const mobileNumberPattern = /^(\+?265|0)(99|98|77|88|89)\d{7}$/;
+          if (
+            mobileNumberPattern.test(
+              message.text.body.trim().replace(/\s/g, ""),
+            )
+          ) {
+            const response = await handlePaymentNumber(
+              phoneNumber,
+              message.text.body.trim(),
+            );
+            await sendWhatsAppMessage(phoneNumber, response);
+            continue;
+          }
+
+          // Handle commands
           if (userMessage === "*balance*" || userMessage === "balance") {
             const balanceMsg = await getBalanceMessage(phoneNumber);
             await sendWhatsAppMessage(phoneNumber, balanceMsg);
@@ -327,6 +398,7 @@ export async function POST(request: NextRequest) {
           // Check limits
           const limitCheck = await canGenerate(phoneNumber);
           if (!limitCheck.allowed) {
+            awaitingPaymentNumber.add(phoneNumber);
             await sendWhatsAppMessage(phoneNumber, limitCheck.message!);
             continue;
           }
