@@ -13,7 +13,13 @@ export const metadata: Metadata = {
   title: "My Account — Cosmos AI",
 };
 
-export default async function AccountPage() {
+export default async function AccountPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ payment?: string }>;
+}) {
+  const params = await searchParams;
+  const paymentStatus = params.payment;
   const session = await auth();
 
   if (!session?.user) redirect("/auth/login");
@@ -56,6 +62,18 @@ export default async function AccountPage() {
       <Navbar />
       {!freshUser.emailVerified && (
         <VerificationBanner email={freshUser.email} />
+      )}
+
+      {paymentStatus === "success" && (
+        <div className="bg-cosmos-teal px-6 py-3 text-center text-sm font-medium text-white">
+          ✓ Payment successful — your plan has been upgraded. Sign out and sign
+          back in to see your new limits.
+        </div>
+      )}
+      {paymentStatus === "cancelled" && (
+        <div className="bg-cosmos-forest-light text-cosmos-sage px-6 py-3 text-center text-sm font-medium">
+          Payment was cancelled. Your plan has not changed.
+        </div>
       )}
 
       {/* HERO */}
@@ -143,9 +161,9 @@ export default async function AccountPage() {
               >
                 Open Cosmos Write
               </Link>
-              {user.tier === "free" && (
+              {user.tier !== "professional" && (
                 <Link
-                  href="/contact"
+                  href="/account/upgrade"
                   className="border-cosmos-forest text-cosmos-forest hover:bg-cosmos-forest rounded-full border px-8 py-3 text-center text-base font-medium transition-colors hover:text-white"
                 >
                   Upgrade Plan

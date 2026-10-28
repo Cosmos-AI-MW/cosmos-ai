@@ -95,6 +95,24 @@ model WhatsAppMessage {
     @@index([createdAt])
 }
 
+// ── PAYMENTS ─────────────────────────────────────────────────────
+model Payment {
+    id          String   @id @default(cuid())
+    userId      String
+    user        User     @relation(fields: [userId], references: [id])
+    txRef       String   @unique
+    amount      Int
+    currency    String   @default("MWK")
+    tier        String
+    status      String   @default("pending")
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+
+    @@index([userId])
+    @@index([txRef])
+    @@index([status])
+}
+
 // ── SYSTEM PROMPTS ───────────────────────────────────────────────
 model SystemPrompt {
     id        String   @id @default(cuid())
@@ -185,6 +203,7 @@ model User {
     sessions           Session[]
     generations        WriteGeneration[]
     conversations      Conversation[]
+    payments           Payment[]
 
     @@index([email])
 }

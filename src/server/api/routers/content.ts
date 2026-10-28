@@ -174,4 +174,53 @@ export const contentRouter = createTRPCRouter({
       await ctx.db.service.delete({ where: { id: input.id } });
       return { success: true };
     }),
+
+  // ── PAYMENTS ─────────────────────────────────────────────────────
+  initiatePayment: protectedProcedure
+    .input(
+      z.object({
+        plan: z.enum(["starter", "professional"]),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const userId = ctx.session.user.id;
+      const email = ctx.session.user.email;
+      const isAdmin = (ctx.session.user as { isAdmin?: boolean }).isAdmin;
+
+      if (isAdmin) throw new Error("Admin cannot purchase plans");
+
+      const user = await ctx.db.user.findUnique({
+        where: { id: userId },
+      });
+
+      if (!user) throw new Error("User not found");
+
+      // Generate unique transaction reference
+      const txRef = `COSMOS-${userId.slice(0, 8)}-${Date.now()}`;
+
+      // Create pending payment record
+      const { PLANS, initiatePayment } = await import("~/lib/paychangu");
+      const plan = PLANS[input.plan];
+
+      await ctx.db.payment.create({
+        data: {
+          userId,
+          txRef,
+          amount: plan.amount,
+          currency: plan.currency,
+          tier: input.plan,
+          status: "pending",
+        },
+      });
+
+      // Initiate Paychangu hosted checkout
+      const checkoutUrl = await initiatePayment({
+        txRef,
+        plan: input.plan,
+        email: email ?? "",
+        firstName: email?.split("@")[0] ?? "Customer",
+      });
+
+      return { checkoutUrl };
+    }),
 });
