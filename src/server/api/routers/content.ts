@@ -249,7 +249,7 @@ export const contentRouter = createTRPCRouter({
             title: `Cosmos AI — ${plan.name} Plan`,
             description: plan.description,
           },
-          meta: JSON.stringify({ plan: input.plan }),
+          meta: [{ plan: input.plan }],
         }),
       });
 
