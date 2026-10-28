@@ -184,7 +184,7 @@ export const contentRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.session.user.id;
-      const email = ctx.session.user.email;
+      const email = ctx.session.user.email ?? "";
       const isAdmin = (ctx.session.user as { isAdmin?: boolean }).isAdmin;
 
       if (isAdmin) throw new Error("Admin cannot purchase plans");
@@ -195,13 +195,28 @@ export const contentRouter = createTRPCRouter({
 
       if (!user) throw new Error("User not found");
 
-      // Generate unique transaction reference
+      const plans = {
+        starter: {
+          name: "Starter",
+          amount: 5000,
+          currency: "MWK",
+          generationsLimit: 50,
+          description: "Cosmos AI Starter Plan — 50 generations per month",
+        },
+        professional: {
+          name: "Professional",
+          amount: 15000,
+          currency: "MWK",
+          generationsLimit: 999999,
+          description: "Cosmos AI Professional Plan — Unlimited generations",
+        },
+      };
+
+      const plan = plans[input.plan];
       const txRef = `COSMOS-${userId.slice(0, 8)}-${Date.now()}`;
+      const baseUrl = process.env.NEXTAUTH_URL ?? "https://cosmosai.mw";
 
       // Create pending payment record
-      const { PLANS, initiatePayment } = await import("~/lib/paychangu");
-      const plan = PLANS[input.plan];
-
       await ctx.db.payment.create({
         data: {
           userId,
@@ -214,13 +229,42 @@ export const contentRouter = createTRPCRouter({
       });
 
       // Initiate Paychangu hosted checkout
-      const checkoutUrl = await initiatePayment({
-        txRef,
-        plan: input.plan,
-        email: email ?? "",
-        firstName: email?.split("@")[0] ?? "Customer",
+      const response = await fetch("https://api.paychangu.com/payment", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${process.env.PAYCHANGU_SECRET_KEY ?? ""}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          amount: plan.amount.toString(),
+          currency: plan.currency,
+          tx_ref: txRef,
+          first_name: email.split("@")[0] ?? "Customer",
+          last_name: "",
+          email,
+          callback_url: `${baseUrl}/api/webhooks/paychangu`,
+          return_url: `${baseUrl}/account?payment=cancelled`,
+          customization: {
+            title: `Cosmos AI — ${plan.name} Plan`,
+            description: plan.description,
+          },
+          meta: JSON.stringify({ plan: input.plan }),
+        }),
       });
 
-      return { checkoutUrl };
+      const data = (await response.json()) as {
+        status: string;
+        message: string;
+        data?: { checkout_url?: string };
+      };
+
+      if (!response.ok || data.status !== "success") {
+        throw new Error(
+          data.message ?? "Payment initiation failed. Please try again.",
+        );
+      }
+
+      return { checkoutUrl: data.data?.checkout_url ?? "" };
     }),
 });
