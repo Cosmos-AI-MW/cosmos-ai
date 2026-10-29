@@ -16,16 +16,15 @@ export async function POST(request: NextRequest) {
       event_type?: string;
       event?: string;
       status?: string;
+      type?: string;
+      charge_id?: string;
+      tx_ref?: string;
+      amount?: number;
       data?: {
         tx_ref?: string;
         charge_id?: string;
         status?: string;
         amount?: number;
-        type?: string;
-      };
-      charge?: {
-        charge_id?: string;
-        status?: string;
         type?: string;
       };
     };
@@ -36,15 +35,15 @@ export async function POST(request: NextRequest) {
     const eventType = body.event_type ?? body.event ?? "";
     const isDirectCharge =
       eventType === "api.charge.payment" ||
-      body.data?.type === "Direct API Payment" ||
-      body.status === "successful";
+      body.type === "Direct API Payment" ||
+      body.data?.type === "Direct API Payment";
 
     console.log("Event type:", eventType);
     console.log("Is direct charge:", isDirectCharge);
 
     // Handle Direct Charge (WhatsApp mobile money)
     if (isDirectCharge) {
-      const chargeId = body.data?.charge_id ?? body.charge?.charge_id;
+      const chargeId = body.charge_id ?? body.data?.charge_id;
       console.log("Charge ID:", chargeId);
 
       if (!chargeId) {
@@ -133,7 +132,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Handle Hosted Checkout (web payments)
-    const txRef = body.data?.tx_ref;
+    const txRef = body.tx_ref ?? body.data?.tx_ref;
     console.log("TX Ref:", txRef);
 
     if (!txRef) {
