@@ -172,8 +172,20 @@ export async function initiateWhatsAppPayment({
     );
   }
 
-  // Clean mobile number — ensure it has country code
-  const cleanMobile = mobile.replace(/^0/, "+265");
+  // Clean mobile number — Paychangu expects 9 digits without country code
+  // Remove +265, 265, or leading 0 to get 9 digit number
+  const cleanMobile = mobile
+    .replace(/\s/g, "")
+    .replace(/^\+265/, "")
+    .replace(/^265/, "")
+    .replace(/^0/, "");
+
+  // Validate 9 digits
+  if (!/^\d{9}$/.test(cleanMobile)) {
+    throw new Error(
+      "Please send a valid 9-digit Malawian mobile number. Example: 0991234567",
+    );
+  }
 
   const response = await fetch(
     `${PAYCHANGU_BASE_URL}/mobile-money/payments/initialize`,
@@ -198,8 +210,6 @@ export async function initiateWhatsAppPayment({
     message: string;
     data?: { chargeId: string };
   };
-
-  console.log("WhatsApp payment response:", JSON.stringify(data));
 
   if (!response.ok || data.status !== "success") {
     const message =
