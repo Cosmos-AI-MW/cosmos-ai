@@ -3,6 +3,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { detectNetwork, initiateWhatsAppPayment } from "~/lib/paychangu";
 import { db } from "~/server/db";
 // import { CHICHEWA_REFERENCE } from "~/lib/chichewa-reference";
+import { activateWhatsAppPayment } from "~/lib/whatsapp-payments";
 
 const client = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY ?? "",
@@ -186,6 +187,17 @@ async function handlePaymentNumber(
 ): Promise<string> {
   const network = detectNetwork(mobileNumber);
 
+  const recent = await db.whatsAppPayment.findFirst({
+    where: {
+      phoneNumber,
+      status: "pending",
+      createdAt: { gte: new Date(Date.now() - 10 * 60 * 1000) },
+    },
+  });
+  if (recent) {
+    return "You already have a payment request waiting for approval.\n\nPlease check your phone and enter your PIN, or wait a few minutes before trying again.";
+  }
+
   if (!network) {
     return `That does not look like a valid Malawian mobile number.\n\nPlease send your Airtel Money or TNM Mpamba number.\nExample: 0991234567`;
   }
@@ -347,6 +359,32 @@ export async function POST(request: NextRequest) {
 
           const phoneNumber = message.from;
           const userMessage = message.text.body.trim().toLowerCase();
+
+          // Fallback: verify ALL recent pending payments for this number
+          const pendingPayments = await db.whatsAppPayment.findMany({
+            where: {
+              phoneNumber,
+              status: "pending",
+              createdAt: {
+                gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+              },
+            },
+            orderBy: { createdAt: "asc" },
+          });
+
+          let activatedCount = 0;
+          for (const p of pendingPayments) {
+            const result = await activateWhatsAppPayment(p.chargeId);
+            if (result === "activated") activatedCount++;
+          }
+
+          if (activatedCount > 0) {
+            await sendWhatsAppMessage(
+              phoneNumber,
+              `Payment confirmed ✴\n\n${activatedCount} payment(s) received. Your prompts are now active for 30 days.\n\nReply balance to check your prompts, then send your request.`,
+            );
+            continue;
+          }
 
           // Handle commands
           // Check if user is in payment flow

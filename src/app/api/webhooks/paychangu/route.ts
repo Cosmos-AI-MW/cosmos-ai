@@ -6,6 +6,7 @@ import {
   verifyTransaction,
   verifyWhatsAppPayment,
 } from "~/lib/paychangu";
+import { activateWhatsAppPayment } from "~/lib/whatsapp-payments";
 
 export async function POST(request: NextRequest) {
   try {
@@ -44,91 +45,12 @@ export async function POST(request: NextRequest) {
     // Handle Direct Charge (WhatsApp mobile money)
     if (isDirectCharge) {
       const chargeId = body.charge_id ?? body.data?.charge_id;
-      console.log("Charge ID:", chargeId);
-
       if (!chargeId) {
-        console.log("No charge_id found in payload");
         return NextResponse.json({ status: "no charge_id" }, { status: 200 });
       }
-
-      const whatsappPayment = await db.whatsAppPayment.findUnique({
-        where: { chargeId },
-      });
-
-      console.log("WhatsApp payment found:", JSON.stringify(whatsappPayment));
-
-      if (!whatsappPayment) {
-        // Check if it is a web payment charge
-        const webPayment = await db.payment.findFirst({
-          where: { txRef: chargeId },
-        });
-        console.log("Web payment found:", JSON.stringify(webPayment));
-        return NextResponse.json(
-          { status: "not a whatsapp payment" },
-          { status: 200 },
-        );
-      }
-
-      if (whatsappPayment.status === "completed") {
-        return NextResponse.json(
-          { status: "already processed" },
-          { status: 200 },
-        );
-      }
-
-      // Verify with Paychangu
-      const verification = await verifyWhatsAppPayment(chargeId);
-      console.log("Verification result:", JSON.stringify(verification));
-
-      if (
-        verification.status !== "success" ||
-        verification.data?.status !== "success"
-      ) {
-        await db.whatsAppPayment.update({
-          where: { chargeId },
-          data: { status: "failed" },
-        });
-        return NextResponse.json(
-          { status: "verification failed" },
-          { status: 200 },
-        );
-      }
-
-      // Unlock 50 prompts for 30 days
-      const now = new Date();
-      const resetDate = new Date(now);
-      resetDate.setDate(resetDate.getDate() + 30);
-
-      await db.whatsAppUser.upsert({
-        where: { phoneNumber: whatsappPayment.phoneNumber },
-        update: {
-          isPaid: true,
-          monthlyCount: 0,
-          monthlyLimit: 50,
-          monthlyResetAt: resetDate,
-          dailyLimit: 50,
-        },
-        create: {
-          phoneNumber: whatsappPayment.phoneNumber,
-          isPaid: true,
-          dailyCount: 0,
-          dailyLimit: 50,
-          dailyResetAt: new Date(),
-          monthlyCount: 0,
-          monthlyLimit: 50,
-          monthlyResetAt: resetDate,
-        },
-      });
-
-      await db.whatsAppPayment.update({
-        where: { chargeId },
-        data: { status: "completed" },
-      });
-
-      console.log(
-        `WhatsApp user ${whatsappPayment.phoneNumber} unlocked 50 prompts`,
-      );
-      return NextResponse.json({ status: "ok" }, { status: 200 });
+      const result = await activateWhatsAppPayment(chargeId);
+      console.log(`Direct charge ${chargeId}: ${result}`);
+      return NextResponse.json({ status: result }, { status: 200 });
     }
 
     // Handle Hosted Checkout (web payments)
