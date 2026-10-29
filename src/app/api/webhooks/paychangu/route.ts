@@ -9,9 +9,13 @@ import {
 
 export async function POST(request: NextRequest) {
   try {
-    const body = (await request.json()) as {
+    const rawBody = await request.text();
+    console.log("Paychangu webhook received:", rawBody);
+
+    const body = JSON.parse(rawBody) as {
       event_type?: string;
       event?: string;
+      status?: string;
       data?: {
         tx_ref?: string;
         charge_id?: string;
@@ -26,27 +30,40 @@ export async function POST(request: NextRequest) {
       };
     };
 
+    console.log("Parsed webhook body:", JSON.stringify(body));
+
     // Determine event type
     const eventType = body.event_type ?? body.event ?? "";
     const isDirectCharge =
       eventType === "api.charge.payment" ||
-      body.data?.type === "Direct API Payment";
-    const isHostedCheckout = !isDirectCharge;
+      body.data?.type === "Direct API Payment" ||
+      body.status === "successful";
+
+    console.log("Event type:", eventType);
+    console.log("Is direct charge:", isDirectCharge);
 
     // Handle Direct Charge (WhatsApp mobile money)
     if (isDirectCharge) {
       const chargeId = body.data?.charge_id ?? body.charge?.charge_id;
+      console.log("Charge ID:", chargeId);
 
       if (!chargeId) {
+        console.log("No charge_id found in payload");
         return NextResponse.json({ status: "no charge_id" }, { status: 200 });
       }
 
-      // Find WhatsApp payment record
       const whatsappPayment = await db.whatsAppPayment.findUnique({
         where: { chargeId },
       });
 
+      console.log("WhatsApp payment found:", JSON.stringify(whatsappPayment));
+
       if (!whatsappPayment) {
+        // Check if it is a web payment charge
+        const webPayment = await db.payment.findFirst({
+          where: { txRef: chargeId },
+        });
+        console.log("Web payment found:", JSON.stringify(webPayment));
         return NextResponse.json(
           { status: "not a whatsapp payment" },
           { status: 200 },
@@ -62,6 +79,7 @@ export async function POST(request: NextRequest) {
 
       // Verify with Paychangu
       const verification = await verifyWhatsAppPayment(chargeId);
+      console.log("Verification result:", JSON.stringify(verification));
 
       if (
         verification.status !== "success" ||
@@ -103,7 +121,6 @@ export async function POST(request: NextRequest) {
         },
       });
 
-      // Mark payment completed
       await db.whatsAppPayment.update({
         where: { chargeId },
         data: { status: "completed" },
@@ -116,65 +133,61 @@ export async function POST(request: NextRequest) {
     }
 
     // Handle Hosted Checkout (web payments)
-    if (isHostedCheckout) {
-      const txRef = body.data?.tx_ref;
+    const txRef = body.data?.tx_ref;
+    console.log("TX Ref:", txRef);
 
-      if (!txRef) {
-        return NextResponse.json({ status: "no tx_ref" }, { status: 200 });
-      }
-
-      const payment = await db.payment.findUnique({ where: { txRef } });
-
-      if (!payment || payment.status === "completed") {
-        return NextResponse.json({ status: "ignored" }, { status: 200 });
-      }
-
-      // Verify with Paychangu
-      const verification = await verifyTransaction(txRef);
-
-      if (
-        verification.status !== "success" ||
-        verification.data?.status !== "successful"
-      ) {
-        await db.payment.update({
-          where: { txRef },
-          data: { status: "failed" },
-        });
-        return NextResponse.json(
-          { status: "verification failed" },
-          { status: 200 },
-        );
-      }
-
-      const planKey = payment.tier as PlanKey;
-      const plan = PLANS[planKey];
-
-      if (!plan) {
-        return NextResponse.json({ status: "unknown plan" }, { status: 200 });
-      }
-
-      await db.user.update({
-        where: { id: payment.userId },
-        data: {
-          tier: planKey,
-          generationsLimit: plan.generationsLimit,
-          generationsUsed: 0,
-          tierResetDate: new Date(),
-        },
-      });
-
-      await db.payment.update({
-        where: { txRef },
-        data: { status: "completed" },
-      });
-
-      console.log(
-        `User ${payment.userId} upgraded to ${planKey} via Paychangu`,
-      );
-      return NextResponse.json({ status: "ok" }, { status: 200 });
+    if (!txRef) {
+      return NextResponse.json({ status: "no tx_ref" }, { status: 200 });
     }
 
-    return NextResponse.json({ status: "ignored" }, { status: 200 });
+    const payment = await db.payment.findUnique({ where: { txRef } });
+    console.log("Web payment found:", JSON.stringify(payment));
+
+    if (!payment || payment.status === "completed") {
+      return NextResponse.json({ status: "ignored" }, { status: 200 });
+    }
+
+    const verification = await verifyTransaction(txRef);
+    console.log("Web verification:", JSON.stringify(verification));
+
+    if (
+      verification.status !== "success" ||
+      verification.data?.status !== "successful"
+    ) {
+      await db.payment.update({
+        where: { txRef },
+        data: { status: "failed" },
+      });
+      return NextResponse.json(
+        { status: "verification failed" },
+        { status: 200 },
+      );
+    }
+
+    const planKey = payment.tier as PlanKey;
+    const plan = PLANS[planKey];
+
+    if (!plan) {
+      return NextResponse.json({ status: "unknown plan" }, { status: 200 });
+    }
+
+    await db.user.update({
+      where: { id: payment.userId },
+      data: {
+        tier: planKey,
+        generationsLimit: plan.generationsLimit,
+        generationsUsed: 0,
+        tierResetDate: new Date(),
+      },
+    });
+
+    await db.payment.update({
+      where: { txRef },
+      data: { status: "completed" },
+    });
+
+    console.log(`User ${payment.userId} upgraded to ${planKey}`);
+    return NextResponse.json({ status: "ok" }, { status: 200 });
   } catch (error) {
     console.error("Paychangu webhook error:", error);
     return NextResponse.json({ status: "error" }, { status: 200 });
