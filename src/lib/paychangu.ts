@@ -199,8 +199,14 @@ export async function initiateWhatsAppPayment({
     data?: { chargeId: string };
   };
 
+  console.log("WhatsApp payment response:", JSON.stringify(data));
+
   if (!response.ok || data.status !== "success") {
-    throw new Error(data.message ?? "Payment request failed");
+    const message =
+      typeof data.message === "string"
+        ? data.message
+        : JSON.stringify(data.message);
+    throw new Error(message ?? "Payment request failed");
   }
 
   return data;
