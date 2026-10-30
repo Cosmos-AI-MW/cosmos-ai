@@ -1,11 +1,72 @@
 import Link from "next/link";
+import { db } from "~/server/db";
 import Navbar from "~/components/layout/Navbar";
 import Footer from "~/components/layout/Footer";
+import Reveal from "~/components/ui/Reveal";
+import { rotateDaily } from "~/lib/rotate";
 
-export default function Home() {
+export const dynamic = "force-dynamic";
+
+const sectors = [
+  {
+    name: "Large Corporates & Banks",
+    note: "Strategy, automation and AI readiness",
+  },
+  {
+    name: "Government & Public Sector",
+    note: "Ministries, agencies and districts",
+  },
+  {
+    name: "SMEs & Growing Businesses",
+    note: "Practical AI that pays for itself",
+  },
+  {
+    name: "NGOs & Nonprofits",
+    note: "Reporting, proposals and programme data",
+  },
+  { name: "Individual Professionals", note: "Write, plan and work faster" },
+  {
+    name: "Agriculture & Farming",
+    note: "Cooperatives, agro-dealers and farmers",
+  },
+  {
+    name: "Health & Hospitals",
+    note: "Clinics, facilities and health workers",
+  },
+  { name: "Education & Schools", note: "Schools, colleges and universities" },
+  {
+    name: "Traders & Market Vendors",
+    note: "Simple tools for everyday business",
+  },
+];
+
+const moreSectors = [
+  "Legal & Compliance",
+  "Construction & Engineering",
+  "Hospitality & Tourism",
+  "Faith-Based Organisations",
+  "Technology & Startups",
+];
+
+async function getServices() {
+  try {
+    const all = await db.service.findMany({
+      where: { published: true },
+      orderBy: { order: "asc" },
+      select: { id: true, title: true, tagline: true },
+    });
+    return rotateDaily(all).slice(0, 5);
+  } catch (error) {
+    console.error("Homepage services failed to load:", error);
+    return [];
+  }
+}
+
+export default async function Home() {
+  const services = await getServices();
+
   return (
     <main className="bg-cosmos-chalk min-h-screen font-sans">
-      {/* ── NAVBAR ─────────────────────────────────────────── */}
       <Navbar active="/" />
 
       {/* ── HERO ───────────────────────────────────────────── */}
@@ -47,82 +108,47 @@ export default function Home() {
               What We Do
             </div>
             <h2 className="font-display text-cosmos-forest text-4xl font-semibold">
-              Five Ways We Deliver Value
+              Ways We Deliver Value
             </h2>
           </div>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {[
-              {
-                number: "01",
-                title: "AI Consulting & Advisory",
-                description:
-                  "Strategy, readiness assessments, and AI roadmaps — clarity before commitment.",
-              },
-              {
-                number: "02",
-                title: "Custom AI Development",
-                description:
-                  "Bespoke AI systems built for your specific problem and Malawian infrastructure.",
-              },
-              {
-                number: "03",
-                title: "AI Product Distribution",
-                description:
-                  "World-class AI tools with local support, MWK billing, and onboarding.",
-              },
-              {
-                number: "04",
-                title: "Training & Workshops",
-                description:
-                  "Building AI-capable teams at every level — executive to technical.",
-              },
-              {
-                number: "05",
-                title: "Data Analytics & Automation",
-                description:
-                  "Unlock the value in your existing data and automate repetitive processes.",
-              },
-              {
-                number: "→",
-                title: "View All Services",
-                description:
-                  "See full service descriptions, deliverables, and pricing for every offering.",
-                isLink: true,
-              },
-            ].map((service) =>
-              service.isLink ? (
-                <Link
-                  key={service.number}
-                  href="/services"
-                  className="group border-cosmos-silver hover:border-cosmos-teal hover:bg-cosmos-mist flex flex-col rounded-2xl border-2 border-dashed bg-white p-8 transition-colors"
-                >
+            {services.map((service, index) => (
+              <Reveal
+                key={service.id}
+                delay={(index % 3) * 90}
+                className="h-full"
+              >
+                <div className="border-cosmos-silver hover:border-cosmos-teal flex h-full flex-col rounded-2xl border bg-white p-8 transition-colors hover:shadow-sm">
                   <div className="text-cosmos-teal mb-4 text-3xl font-bold">
-                    {service.number}
-                  </div>
-                  <h3 className="font-display text-cosmos-forest mb-3 text-2xl font-semibold">
-                    {service.title}
-                  </h3>
-                  <p className="text-cosmos-forest-light text-base leading-relaxed font-light">
-                    {service.description}
-                  </p>
-                </Link>
-              ) : (
-                <div
-                  key={service.number}
-                  className="border-cosmos-silver hover:border-cosmos-teal flex flex-col rounded-2xl border bg-white p-8 transition-colors hover:shadow-sm"
-                >
-                  <div className="text-cosmos-teal mb-4 text-3xl font-bold">
-                    {service.number}
+                    {String(index + 1).padStart(2, "0")}
                   </div>
                   <h3 className="font-display text-cosmos-forest mb-3 text-2xl font-semibold">
                     {service.title}
                   </h3>
                   <p className="text-cosmos-forest text-base leading-relaxed font-light">
-                    {service.description}
+                    {service.tagline}
                   </p>
                 </div>
-              ),
-            )}
+              </Reveal>
+            ))}
+
+            <Reveal delay={(services.length % 3) * 90} className="h-full">
+              <Link
+                href="/services"
+                className="group border-cosmos-silver hover:border-cosmos-teal hover:bg-cosmos-mist flex h-full flex-col rounded-2xl border-2 border-dashed bg-white p-8 transition-colors"
+              >
+                <div className="text-cosmos-teal mb-4 text-3xl font-bold">
+                  →
+                </div>
+                <h3 className="font-display text-cosmos-forest mb-3 text-2xl font-semibold">
+                  View All Services
+                </h3>
+                <p className="text-cosmos-forest-light text-base leading-relaxed font-light">
+                  See full service descriptions, deliverables, and pricing for
+                  every offering.
+                </p>
+              </Link>
+            </Reveal>
           </div>
         </div>
       </section>
@@ -138,22 +164,40 @@ export default function Home() {
               Built for Every Sector
             </h2>
           </div>
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
-            {[
-              "Large Corporates & Banks",
-              "Government & Public Sector",
-              "SMEs & Growing Businesses",
-              "NGOs & Nonprofits",
-              "Individual Professionals",
-            ].map((segment) => (
-              <div
-                key={segment}
-                className="border-cosmos-forest-light bg-cosmos-forest-light/30 text-cosmos-sage rounded-xl border px-4 py-6 text-center text-base font-medium"
+
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {sectors.map((sector, index) => (
+              <Reveal
+                key={sector.name}
+                delay={(index % 3) * 90}
+                className="h-full"
               >
-                {segment}
-              </div>
+                <div className="border-cosmos-forest-light bg-cosmos-forest-light/30 hover:border-cosmos-teal h-full rounded-xl border px-6 py-6 transition-colors">
+                  <span className="sector-line bg-cosmos-teal mb-4 block h-px w-10" />
+                  <div className="text-cosmos-teal mb-2 text-sm">✴</div>
+                  <h3 className="font-display text-cosmos-sage mb-1 text-lg font-semibold">
+                    {sector.name}
+                  </h3>
+                  <p className="text-cosmos-sage/70 text-sm font-light">
+                    {sector.note}
+                  </p>
+                </div>
+              </Reveal>
             ))}
           </div>
+
+          <Reveal delay={200}>
+            <div className="mt-8 flex flex-wrap justify-center gap-3">
+              {moreSectors.map((name) => (
+                <span
+                  key={name}
+                  className="border-cosmos-forest-light text-cosmos-sage/80 rounded-full border px-4 py-1.5 text-sm font-light"
+                >
+                  {name}
+                </span>
+              ))}
+            </div>
+          </Reveal>
         </div>
       </section>
 
@@ -207,7 +251,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── FOOTER ─────────────────────────────────────────── */}
       <Footer />
     </main>
   );

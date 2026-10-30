@@ -2,6 +2,8 @@ import Link from "next/link";
 import { db } from "~/server/db";
 import Navbar from "~/components/layout/Navbar";
 import Footer from "~/components/layout/Footer";
+import Reveal from "~/components/ui/Reveal";
+import ConstellationBackground from "~/components/ui/ConstellationBackground";
 import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
@@ -27,8 +29,9 @@ export default async function AboutPage() {
       <Navbar active="/about" />
 
       {/* HERO */}
-      <section className="bg-cosmos-forest px-6 py-20">
-        <div className="mx-auto max-w-4xl text-center">
+      <section className="bg-cosmos-forest relative overflow-hidden px-6 py-20">
+        <ConstellationBackground />
+        <div className="relative mx-auto max-w-4xl text-center">
           <div className="text-cosmos-teal mb-3 text-sm font-medium tracking-widest uppercase">
             Who We Are
           </div>
@@ -68,28 +71,32 @@ export default async function AboutPage() {
       <section className="bg-cosmos-forest px-6 py-20">
         <div className="mx-auto max-w-5xl">
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-            <div className="border-cosmos-forest-light bg-cosmos-forest-light/30 rounded-2xl border p-8">
-              <div className="text-cosmos-teal mb-3 text-sm font-medium tracking-widest uppercase">
-                Vision
+            <Reveal className="h-full">
+              <div className="border-cosmos-forest-light bg-cosmos-forest-light/30 h-full rounded-2xl border p-8">
+                <div className="text-cosmos-teal mb-3 text-sm font-medium tracking-widest uppercase">
+                  Vision
+                </div>
+                <h3 className="font-display mb-4 text-2xl font-semibold text-white">
+                  Where We Are Going
+                </h3>
+                <p className="text-cosmos-mist text-base leading-relaxed font-light">
+                  {content.vision}
+                </p>
               </div>
-              <h3 className="font-display mb-4 text-2xl font-semibold text-white">
-                Where We Are Going
-              </h3>
-              <p className="text-cosmos-mist text-base leading-relaxed font-light">
-                {content.vision}
-              </p>
-            </div>
-            <div className="border-cosmos-forest-light bg-cosmos-forest-light/30 rounded-2xl border p-8">
-              <div className="text-cosmos-teal mb-3 text-sm font-medium tracking-widest uppercase">
-                Mission
+            </Reveal>
+            <Reveal delay={120} className="h-full">
+              <div className="border-cosmos-forest-light bg-cosmos-forest-light/30 h-full rounded-2xl border p-8">
+                <div className="text-cosmos-teal mb-3 text-sm font-medium tracking-widest uppercase">
+                  Mission
+                </div>
+                <h3 className="font-display mb-4 text-2xl font-semibold text-white">
+                  What We Do Every Day
+                </h3>
+                <p className="text-cosmos-mist text-base leading-relaxed font-light">
+                  {content.mission}
+                </p>
               </div>
-              <h3 className="font-display mb-4 text-2xl font-semibold text-white">
-                What We Do Every Day
-              </h3>
-              <p className="text-cosmos-mist text-base leading-relaxed font-light">
-                {content.mission}
-              </p>
-            </div>
+            </Reveal>
           </div>
         </div>
       </section>
@@ -106,18 +113,17 @@ export default async function AboutPage() {
             </h2>
           </div>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {values.map((value) => (
-              <div
-                key={value.id}
-                className="border-cosmos-silver rounded-2xl border bg-white p-6"
-              >
-                <h3 className="font-display text-cosmos-forest mb-3 text-xl font-semibold">
-                  {value.title}
-                </h3>
-                <p className="text-cosmos-forest text-base leading-relaxed font-light">
-                  {value.description}
-                </p>
-              </div>
+            {values.map((value, i) => (
+              <Reveal key={value.id} delay={(i % 3) * 90} className="h-full">
+                <div className="border-cosmos-silver h-full rounded-2xl border bg-white p-6">
+                  <h3 className="font-display text-cosmos-forest mb-3 text-xl font-semibold">
+                    {value.title}
+                  </h3>
+                  <p className="text-cosmos-forest text-base leading-relaxed font-light">
+                    {value.description}
+                  </p>
+                </div>
+              </Reveal>
             ))}
           </div>
         </div>

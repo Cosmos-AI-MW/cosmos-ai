@@ -2,6 +2,7 @@ import Link from "next/link";
 import { db } from "~/server/db";
 import Navbar from "~/components/layout/Navbar";
 import Footer from "~/components/layout/Footer";
+import { rotateDaily } from "~/lib/rotate";
 import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
@@ -9,14 +10,15 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Services — Cosmos AI",
   description:
-    "Five integrated AI service lines for Malawian businesses and institutions. Consulting, custom development, product distribution, training, and data analytics.",
+    "AI services for Malawian businesses and institutions. Consulting, custom development, product distribution, training, data analytics, and sector-specific solutions.",
 };
 
 export default async function ServicesPage() {
-  const services = await db.service.findMany({
+  const allServices = await db.service.findMany({
     where: { published: true },
     orderBy: { order: "asc" },
   });
+  const services = rotateDaily(allServices);
 
   return (
     <main className="bg-cosmos-chalk min-h-screen font-sans">
@@ -32,9 +34,9 @@ export default async function ServicesPage() {
             Our Services
           </h1>
           <p className="text-cosmos-mist mx-auto max-w-2xl text-xl leading-relaxed font-light">
-            Five ways we work with organisations across Malawi. Whether you are
-            just starting out with AI or ready to build something custom — we
-            have the right fit.
+            {services.length} ways we work with organisations across Malawi.
+            Whether you are just starting out with AI or ready to build
+            something custom — we have the right fit.
           </p>
         </div>
       </section>
@@ -42,14 +44,14 @@ export default async function ServicesPage() {
       {/* SERVICE LIST */}
       <section className="px-6 py-20">
         <div className="mx-auto max-w-5xl space-y-16">
-          {services.map((service) => (
+          {services.map((service, index) => (
             <div
               key={service.id}
               className="border-cosmos-silver rounded-2xl border bg-white p-8 md:p-12"
             >
               <div className="mb-8 flex items-start gap-6">
                 <div className="text-cosmos-teal text-4xl font-bold">
-                  {service.number}
+                  {String(index + 1).padStart(2, "0")}
                 </div>
                 <div>
                   <h2 className="font-display text-cosmos-forest text-3xl font-semibold">

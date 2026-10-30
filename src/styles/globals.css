@@ -18,3 +18,101 @@
   --color-cosmos-night: #041e17;
   --color-cosmos-accent: #2e7d5e;
 }
+
+/* ── Scroll reveal ─────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.7s ease,
+    transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.reveal-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* Sector card accent line draws in when revealed */
+.sector-line {
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.9s ease 0.35s;
+}
+.reveal-in .sector-line {
+  transform: scaleX(1);
+}
+
+/* ── Constellation (About hero) ────────────────── */
+.const-line {
+  stroke-dasharray: 400;
+  stroke-dashoffset: 400;
+  animation: const-draw 2.4s ease forwards;
+}
+.const-dot {
+  animation: const-twinkle 4s ease-in-out infinite;
+}
+.const-drift {
+  animation: const-drift 40s ease-in-out infinite alternate;
+}
+.const-paused * {
+  animation-play-state: paused !important;
+}
+@keyframes const-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes const-twinkle {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+@keyframes const-drift {
+  from {
+    transform: translate3d(-12px, -6px, 0);
+  }
+  to {
+    transform: translate3d(12px, 6px, 0);
+  }
+}
+
+/* Visitors without JavaScript still see everything */
+@media (scripting: none) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+  .sector-line {
+    transform: none;
+  }
+}
+
+/* Respect "reduce motion" settings */
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .reveal-in {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .sector-line {
+    transform: none;
+    transition: none;
+  }
+  .const-line {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+  .const-dot {
+    animation: none;
+    opacity: 0.7;
+  }
+  .const-drift {
+    animation: none;
+  }
+}
