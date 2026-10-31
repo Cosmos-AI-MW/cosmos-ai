@@ -166,6 +166,17 @@ export const writeRouter = createTRPCRouter({
       return { output, remaining, conversationId };
     }),
 
+  getUsage: publicProcedure.query(async ({ ctx }) => {
+    const userId = ctx.session?.user?.id;
+    const isAdmin = (ctx.session?.user as { isAdmin?: boolean })?.isAdmin;
+    if (!userId || isAdmin) return null;
+
+    return ctx.db.user.findUnique({
+      where: { id: userId },
+      select: { tier: true, generationsUsed: true, generationsLimit: true },
+    });
+  }),
+
   getStats: protectedProcedure.query(async ({ ctx }) => {
     const [total, byType, recent] = await Promise.all([
       ctx.db.writeGeneration.count(),

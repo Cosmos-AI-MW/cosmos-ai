@@ -127,6 +127,11 @@ export default function CosmosWritePage() {
     !!session?.user &&
     !(session.user as { isAdmin?: boolean }).isAdmin;
 
+  const usage = api.write.getUsage.useQuery(undefined, {
+    enabled: isLoggedIn,
+    refetchOnWindowFocus: true,
+  });
+
   const [sessionId, setSessionId] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -161,21 +166,24 @@ export default function CosmosWritePage() {
     prevStatusRef.current = status;
 
     if (isLoggedIn) {
-      const limit =
-        (session?.user as { generationsLimit?: number })?.generationsLimit ??
-        10;
-      const used =
-        (session?.user as { generationsUsed?: number })?.generationsUsed ?? 0;
-      const tier = (session?.user as { tier?: string })?.tier ?? "free";
-      setRemaining(
-        tier === "professional" ? 999999 : Math.max(0, limit - used),
-      );
+      // Plan details come from the database, not the login session
+      if (usage.data) {
+        const left =
+          usage.data.tier === "professional"
+            ? 999999
+            : Math.max(
+                0,
+                usage.data.generationsLimit - usage.data.generationsUsed,
+              );
+        setRemaining(left);
+        if (left > 0) setLimitReached(false);
+      }
     } else {
       const anon = getAnonymousRemaining();
       setRemaining(anon);
       if (anon <= 0) setLimitReached(true);
     }
-  }, [status, isLoggedIn, session]);
+  }, [status, isLoggedIn, usage.data]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -256,7 +264,8 @@ export default function CosmosWritePage() {
     }
   }
 
-  const tier = (session?.user as { tier?: string })?.tier ?? "free";
+  const tier =
+    usage.data?.tier ?? (session?.user as { tier?: string })?.tier ?? "free";
 
   return (
     <main className="bg-cosmos-chalk flex min-h-screen flex-col font-sans">
@@ -310,9 +319,8 @@ export default function CosmosWritePage() {
               )}
               {isLoggedIn && remaining === null && (
                 <div className="border-cosmos-teal text-cosmos-teal rounded-full border px-4 py-1 text-sm font-medium">
-                  {(session?.user as { generationsLimit?: number })
-                    ?.generationsLimit ?? 10}{" "}
-                  generations available this month
+                  {usage.data?.generationsLimit ?? 10} generations available
+                  this month
                 </div>
               )}
             </div>
@@ -330,10 +338,8 @@ export default function CosmosWritePage() {
                   Monthly limit reached
                 </h2>
                 <p className="text-cosmos-forest mb-2 text-lg font-light">
-                  You have used all{" "}
-                  {(session?.user as { generationsLimit?: number })
-                    ?.generationsLimit ?? 10}{" "}
-                  of your free generations this month.
+                  You have used all {usage.data?.generationsLimit ?? 10} of your
+                  free generations this month.
                 </p>
                 <p className="text-cosmos-forest/60 mb-8 text-base font-light">
                   Upgrade to Starter for 50 generations per month or
