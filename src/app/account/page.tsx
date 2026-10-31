@@ -25,6 +25,7 @@ export default async function AccountPage({
 
   if (!session?.user) redirect("/auth/login");
   if (session.user.isAdmin) redirect("/admin");
+  if (!session.user.id) redirect("/auth/login");
   // Safety net: re-check any recent pending payments before reading the plan
   const pendingPayments = await db.payment.findMany({
     where: {

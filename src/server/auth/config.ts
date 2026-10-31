@@ -115,6 +115,7 @@ export const authConfig = {
 
   callbacks: {
     async jwt({ token, user, trigger }) {
+      if (!token.id && token.sub) token.id = token.sub;
       if (user) {
         token.id = user.id;
         token.tier = (user as { tier?: string }).tier ?? "free";
@@ -142,7 +143,7 @@ export const authConfig = {
       ) {
         try {
           const fresh = await db.user.findUnique({
-            where: { id: token.id },
+            where: { id: (token.id ?? token.sub) as string },
             select: {
               tier: true,
               generationsUsed: true,
