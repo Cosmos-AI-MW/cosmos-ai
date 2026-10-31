@@ -84,8 +84,7 @@ export default async function AccountPage({
 
       {paymentStatus === "success" && (
         <div className="bg-cosmos-teal px-6 py-3 text-center text-sm font-medium text-white">
-          ✓ Payment successful — your plan has been upgraded. Sign out and sign
-          back in to see your new limits.
+          ✓ Payment successful — your plan has been upgraded.
         </div>
       )}
       {paymentStatus === "cancelled" && (
