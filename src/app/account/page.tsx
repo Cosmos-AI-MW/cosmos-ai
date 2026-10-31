@@ -5,6 +5,7 @@ import { db } from "~/server/db";
 import Navbar from "~/components/layout/Navbar";
 import Footer from "~/components/layout/Footer";
 import VerificationBanner from "~/components/ui/VerificationBanner";
+import { activateWebPayment } from "~/lib/web-payments";
 import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
@@ -24,7 +25,23 @@ export default async function AccountPage({
 
   if (!session?.user) redirect("/auth/login");
   if (session.user.isAdmin) redirect("/admin");
-
+  // Safety net: re-check any recent pending payments before reading the plan
+  const pendingPayments = await db.payment.findMany({
+    where: {
+      userId: session.user.id,
+      status: "pending",
+      createdAt: { gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) },
+    },
+    orderBy: { createdAt: "desc" },
+    take: 5,
+  });
+  for (const p of pendingPayments) {
+    try {
+      await activateWebPayment(p.txRef);
+    } catch (error) {
+      console.error("Pending payment check failed:", error);
+    }
+  }
   // Always fetch fresh data from database — session token can be stale
   const freshUser = await db.user.findUnique({
     where: { id: session.user.id },
@@ -73,6 +90,19 @@ export default async function AccountPage({
       {paymentStatus === "cancelled" && (
         <div className="bg-cosmos-forest-light text-cosmos-sage px-6 py-3 text-center text-sm font-medium">
           Payment was cancelled. Your plan has not changed.
+        </div>
+      )}
+
+      {paymentStatus === "pending" && (
+        <div className="bg-cosmos-forest-light text-cosmos-sage px-6 py-3 text-center text-sm font-medium">
+          Your payment is still being confirmed. Refresh this page in a minute —
+          your plan will activate automatically.
+        </div>
+      )}
+      {paymentStatus === "failed" && (
+        <div className="bg-red-600 px-6 py-3 text-center text-sm font-medium text-white">
+          Your payment could not be confirmed. If money was deducted, contact
+          hello@cosmosai.mw with your payment details.
         </div>
       )}
 
