@@ -114,7 +114,7 @@ export const authConfig = {
   },
 
   callbacks: {
-    jwt({ token, user }) {
+    async jwt({ token, user, trigger }) {
       if (user) {
         token.id = user.id;
         token.tier = (user as { tier?: string }).tier ?? "free";
@@ -125,22 +125,44 @@ export const authConfig = {
         token.isAdmin = (user as { isAdmin?: boolean }).isAdmin ?? false;
         token.emailVerified =
           (user as { emailVerified?: Date | null }).emailVerified ?? null;
+        token.refreshedAt = Date.now();
+        return token;
       }
+
+      // Refresh plan details from the database at most once a minute
+      const isAdmin = token.isAdmin === true;
+      const lastRefresh =
+        typeof token.refreshedAt === "number" ? token.refreshedAt : 0;
+      const stale = Date.now() - lastRefresh > 60_000;
+
+      if (
+        !isAdmin &&
+        typeof token.id === "string" &&
+        (stale || trigger === "update")
+      ) {
+        try {
+          const fresh = await db.user.findUnique({
+            where: { id: token.id },
+            select: {
+              tier: true,
+              generationsUsed: true,
+              generationsLimit: true,
+              emailVerified: true,
+            },
+          });
+          if (fresh) {
+            token.tier = fresh.tier;
+            token.generationsUsed = fresh.generationsUsed;
+            token.generationsLimit = fresh.generationsLimit;
+            token.emailVerified = fresh.emailVerified;
+          }
+          token.refreshedAt = Date.now();
+        } catch (error) {
+          console.error("Session refresh failed:", error);
+        }
+      }
+
       return token;
-    },
-    session({ session, token }) {
-      return {
-        ...session,
-        user: {
-          ...session.user,
-          id: token.id as string,
-          tier: token.tier as string,
-          generationsUsed: token.generationsUsed as number,
-          generationsLimit: token.generationsLimit as number,
-          isAdmin: token.isAdmin as boolean,
-          emailVerified: token.emailVerified as Date | null,
-        },
-      };
     },
   },
 } satisfies NextAuthConfig;
