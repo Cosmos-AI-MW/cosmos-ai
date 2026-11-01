@@ -339,11 +339,12 @@ export default function CosmosWritePage() {
                 </h2>
                 <p className="text-cosmos-forest mb-2 text-lg font-light">
                   You have used all {usage.data?.generationsLimit ?? 10} of your
-                  free generations this month.
+                  generations this month.
                 </p>
                 <p className="text-cosmos-forest/60 mb-8 text-base font-light">
-                  Upgrade to Starter for 50 generations per month or
-                  Professional for unlimited access.
+                  {tier === "starter"
+                    ? "Upgrade to Professional for unlimited access."
+                    : "Upgrade to Starter for 50 generations per month or Professional for unlimited access."}
                 </p>
                 <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div className="border-cosmos-silver rounded-2xl border p-4 text-left">
@@ -371,7 +372,7 @@ export default function CosmosWritePage() {
                 </div>
                 <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
                   <Link
-                    href="/contact"
+                    href="/account/upgrade"
                     className="bg-cosmos-accent hover:bg-cosmos-forest-light rounded-full px-8 py-3 text-base font-medium text-white transition-colors"
                   >
                     Upgrade My Plan

@@ -6,6 +6,7 @@ import Navbar from "~/components/layout/Navbar";
 import Footer from "~/components/layout/Footer";
 import VerificationBanner from "~/components/ui/VerificationBanner";
 import { activateWebPayment } from "~/lib/web-payments";
+import { resetMonthlyIfDue } from "~/server/usage";
 import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
@@ -44,9 +45,7 @@ export default async function AccountPage({
     }
   }
   // Always fetch fresh data from database — session token can be stale
-  const freshUser = await db.user.findUnique({
-    where: { id: session.user.id },
-  });
+  const freshUser = await resetMonthlyIfDue(session.user.id);
 
   if (!freshUser) redirect("/auth/login");
 
@@ -253,18 +252,6 @@ export default async function AccountPage({
                 </div>
               ))}
             </div>
-            {user.tier === "free" && (
-              <p className="text-cosmos-forest/60 mt-6 text-sm font-light">
-                To upgrade your plan contact us at{" "}
-                <Link
-                  href="/contact"
-                  className="text-cosmos-teal hover:underline"
-                >
-                  cosmosai.mw/contact
-                </Link>{" "}
-                — Paychangu payment integration coming soon.
-              </p>
-            )}
           </div>
 
           {/* Account details */}

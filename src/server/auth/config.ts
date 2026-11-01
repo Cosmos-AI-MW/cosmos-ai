@@ -3,6 +3,7 @@ import { type DefaultSession, type NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { db } from "~/server/db";
+import { resetMonthlyIfDue } from "~/server/usage";
 
 declare module "next-auth" {
   interface Session extends DefaultSession {
@@ -75,30 +76,16 @@ export const authConfig = {
 
         if (!valid) return null;
 
-        // Reset monthly generations if needed
-        const now = new Date();
-        const resetDate = new Date(user.tierResetDate);
-        const monthPassed =
-          now.getMonth() !== resetDate.getMonth() ||
-          now.getFullYear() !== resetDate.getFullYear();
-
-        if (monthPassed) {
-          await db.user.update({
-            where: { id: user.id },
-            data: {
-              generationsUsed: 0,
-              tierResetDate: now,
-            },
-          });
-        }
+        // Reset monthly usage if the month is up
+        const current = (await resetMonthlyIfDue(user.id)) ?? user;
 
         return {
           id: user.id,
           email: user.email,
           name: user.email,
-          tier: user.tier,
-          generationsUsed: monthPassed ? 0 : user.generationsUsed,
-          generationsLimit: user.generationsLimit,
+          tier: current.tier,
+          generationsUsed: current.generationsUsed,
+          generationsLimit: current.generationsLimit,
           emailVerified: user.emailVerified,
           isAdmin: false,
         };

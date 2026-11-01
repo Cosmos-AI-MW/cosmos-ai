@@ -36,47 +36,57 @@ export async function activateWhatsAppPayment(
   });
   if (claimed.count === 0) return "already";
 
-  const now = new Date();
-  const resetDate = new Date(now);
-  resetDate.setDate(resetDate.getDate() + 30);
+  try {
+    const now = new Date();
+    const resetDate = new Date(now);
+    resetDate.setDate(resetDate.getDate() + 30);
 
-  const existing = await db.whatsAppUser.findUnique({
-    where: { phoneNumber: payment.phoneNumber },
-  });
-  const stillActive =
-    existing?.isPaid &&
-    existing.monthlyResetAt &&
-    existing.monthlyResetAt > now;
+    const existing = await db.whatsAppUser.findUnique({
+      where: { phoneNumber: payment.phoneNumber },
+    });
+    const stillActive =
+      existing?.isPaid &&
+      existing.monthlyResetAt &&
+      existing.monthlyResetAt > now;
 
-  if (existing && stillActive) {
-    // Stack: add 50 more prompts and extend the period
-    await db.whatsAppUser.update({
-      where: { phoneNumber: payment.phoneNumber },
-      data: {
-        monthlyLimit: { increment: 50 },
-        monthlyResetAt: resetDate,
-      },
+    if (existing && stillActive) {
+      // Stack: add 50 more prompts and extend the period
+      await db.whatsAppUser.update({
+        where: { phoneNumber: payment.phoneNumber },
+        data: {
+          monthlyLimit: { increment: 50 },
+          monthlyResetAt: resetDate,
+        },
+      });
+    } else {
+      await db.whatsAppUser.upsert({
+        where: { phoneNumber: payment.phoneNumber },
+        update: {
+          isPaid: true,
+          monthlyCount: 0,
+          monthlyLimit: 50,
+          monthlyResetAt: resetDate,
+        },
+        create: {
+          phoneNumber: payment.phoneNumber,
+          isPaid: true,
+          dailyCount: 0,
+          dailyLimit: 5,
+          dailyResetAt: now,
+          monthlyCount: 0,
+          monthlyLimit: 50,
+          monthlyResetAt: resetDate,
+        },
+      });
+    }
+  } catch (error) {
+    // Crediting failed: release the claim so the next check can retry
+    console.error(`Crediting failed for ${chargeId}:`, error);
+    await db.whatsAppPayment.update({
+      where: { chargeId },
+      data: { status: "pending" },
     });
-  } else {
-    await db.whatsAppUser.upsert({
-      where: { phoneNumber: payment.phoneNumber },
-      update: {
-        isPaid: true,
-        monthlyCount: 0,
-        monthlyLimit: 50,
-        monthlyResetAt: resetDate,
-      },
-      create: {
-        phoneNumber: payment.phoneNumber,
-        isPaid: true,
-        dailyCount: 0,
-        dailyLimit: 5,
-        dailyResetAt: now,
-        monthlyCount: 0,
-        monthlyLimit: 50,
-        monthlyResetAt: resetDate,
-      },
-    });
+    throw error;
   }
 
   return "activated";

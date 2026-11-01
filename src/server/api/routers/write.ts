@@ -7,6 +7,7 @@ import {
 } from "~/server/api/trpc";
 import { env } from "~/env";
 import { db } from "~/server/db";
+import { resetMonthlyIfDue } from "~/server/usage";
 
 const client = new Anthropic({
   apiKey: env.ANTHROPIC_API_KEY ?? "",
@@ -43,9 +44,7 @@ export const writeRouter = createTRPCRouter({
       if (isAdmin) {
         // Admin bypasses all limits
       } else if (userId) {
-        const user = await ctx.db.user.findUnique({
-          where: { id: userId },
-        });
+        const user = await resetMonthlyIfDue(userId);
         if (!user) throw new Error("User not found");
         if (user.generationsUsed >= user.generationsLimit) {
           throw new Error("ACCOUNT_LIMIT_REACHED");
@@ -171,10 +170,13 @@ export const writeRouter = createTRPCRouter({
     const isAdmin = (ctx.session?.user as { isAdmin?: boolean })?.isAdmin;
     if (!userId || isAdmin) return null;
 
-    return ctx.db.user.findUnique({
-      where: { id: userId },
-      select: { tier: true, generationsUsed: true, generationsLimit: true },
-    });
+    const user = await resetMonthlyIfDue(userId);
+    if (!user) return null;
+    return {
+      tier: user.tier,
+      generationsUsed: user.generationsUsed,
+      generationsLimit: user.generationsLimit,
+    };
   }),
 
   getStats: protectedProcedure.query(async ({ ctx }) => {
