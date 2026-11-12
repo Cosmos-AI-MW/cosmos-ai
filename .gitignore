@@ -46,9 +46,16 @@ yarn-error.log*
 # idea files
 .idea
 
+/generated
+
+# Private documents and work
 ARCHITECTURE.md
 DEVELOPMENT_BIBLE.md
 src/lib/chichewa-reference.ts
 prisma/seed-prompts.ts
+
+# Original stock photos (large) — only the processed ones in public/ are committed
+photos-original/
+
 .vercel
 .env*

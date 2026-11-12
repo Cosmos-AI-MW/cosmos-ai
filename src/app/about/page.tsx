@@ -4,6 +4,7 @@ import Navbar from "~/components/layout/Navbar";
 import Footer from "~/components/layout/Footer";
 import Reveal from "~/components/ui/Reveal";
 import ConstellationBackground from "~/components/ui/ConstellationBackground";
+import Ridgeline from "~/components/ui/Ridgeline";
 import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
@@ -29,8 +30,9 @@ export default async function AboutPage() {
       <Navbar active="/about" />
 
       {/* HERO */}
-      <section className="bg-cosmos-forest relative overflow-hidden px-6 py-20">
+      <section className="bg-cosmos-forest relative overflow-hidden px-6 pt-20 pb-36">
         <ConstellationBackground />
+        <Ridgeline />
         <div className="relative mx-auto max-w-4xl text-center">
           <div className="text-cosmos-teal mb-3 text-sm font-medium tracking-widest uppercase">
             Who We Are

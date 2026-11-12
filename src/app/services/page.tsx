@@ -2,6 +2,11 @@ import Link from "next/link";
 import { db } from "~/server/db";
 import Navbar from "~/components/layout/Navbar";
 import Footer from "~/components/layout/Footer";
+import ScrollThread from "~/components/ui/ScrollThread";
+import ServiceFigure from "~/components/ui/ServiceFigure";
+import ConstellationField from "~/components/ui/ConstellationField";
+import Ridgeline from "~/components/ui/Ridgeline";
+import { SERVICES_POINTS, SERVICES_EDGES } from "~/lib/constellations";
 import { rotateDaily } from "~/lib/rotate";
 import type { Metadata } from "next";
 
@@ -25,8 +30,10 @@ export default async function ServicesPage() {
       <Navbar active="/services" />
 
       {/* HERO */}
-      <section className="bg-cosmos-forest px-6 py-20">
-        <div className="mx-auto max-w-4xl text-center">
+      <section className="bg-cosmos-forest relative overflow-hidden px-6 pt-20 pb-36">
+        <ConstellationField points={SERVICES_POINTS} edges={SERVICES_EDGES} />
+        <Ridgeline />
+        <div className="relative mx-auto max-w-4xl text-center">
           <div className="text-cosmos-teal mb-3 text-sm font-medium tracking-widest uppercase">
             What We Offer
           </div>
@@ -43,7 +50,7 @@ export default async function ServicesPage() {
 
       {/* SERVICE LIST */}
       <section className="px-6 py-20">
-        <div className="mx-auto max-w-5xl space-y-16">
+        <ScrollThread className="mx-auto max-w-5xl space-y-16">
           {services.map((service, index) => (
             <div
               key={service.id}
@@ -61,6 +68,10 @@ export default async function ServicesPage() {
                     {service.tagline}
                   </p>
                 </div>
+                <ServiceFigure
+                  title={service.title}
+                  className="ml-auto hidden h-16 w-16 shrink-0 sm:block"
+                />
               </div>
 
               <p className="text-cosmos-forest mb-8 text-lg leading-relaxed font-light">
@@ -104,7 +115,7 @@ export default async function ServicesPage() {
               </div>
             </div>
           ))}
-        </div>
+        </ScrollThread>
       </section>
 
       {/* ENGAGEMENT MODELS */}

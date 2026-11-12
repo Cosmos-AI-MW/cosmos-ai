@@ -21,6 +21,12 @@ export default function Footer() {
             >
               Services
             </Link>
+            <Link
+              href="/where-we-work"
+              className="transition-colors hover:text-white"
+            >
+              Where We Work
+            </Link>
             <Link href="/about" className="transition-colors hover:text-white">
               About
             </Link>
