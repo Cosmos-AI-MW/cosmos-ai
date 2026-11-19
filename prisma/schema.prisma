@@ -17,6 +17,9 @@ model ContactSubmission {
     email        String
     phone        String?
     service      String?
+    summary      String?
+    priority     String?
+    category     String?
     message      String
     read         Boolean  @default(false)
     createdAt    DateTime @default(now())

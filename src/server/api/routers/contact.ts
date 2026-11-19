@@ -1,26 +1,27 @@
 import { z } from "zod";
+import { after } from "next/server";
 import {
   createTRPCRouter,
   protectedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
-import { sendContactNotification } from "~/lib/email";
+import { processContactSubmission } from "~/lib/contact-process";
 
 export const contactRouter = createTRPCRouter({
   submit: publicProcedure
     .input(
       z.object({
-        name: z.string().min(1, "Name is required"),
-        organisation: z.string().optional(),
-        email: z.string().email("Valid email required"),
-        phone: z.string().optional(),
-        service: z.string().optional(),
-        message: z.string().min(1, "Message is required"),
+        name: z.string().trim().min(1, "Name is required").max(120),
+        organisation: z.string().trim().max(160).optional(),
+        email: z.string().trim().email("Valid email required").max(254),
+        phone: z.string().trim().max(40).optional(),
+        service: z.string().trim().max(120).optional(),
+        message: z.string().trim().min(1, "Message is required").max(5000),
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      // Save to database first — always
-      await ctx.db.contactSubmission.create({
+      // Save first, always.
+      const submission = await ctx.db.contactSubmission.create({
         data: {
           name: input.name,
           organisation: input.organisation,
@@ -31,18 +32,16 @@ export const contactRouter = createTRPCRouter({
         },
       });
 
-      // Send email notification — fire and forget
-      // Does not block form submission if email fails
-      void sendContactNotification({
-        name: input.name,
-        organisation: input.organisation,
-        email: input.email,
-        phone: input.phone,
-        service: input.service,
-        message: input.message,
-      }).catch((err) =>
-        console.error("Contact notification email failed:", err),
-      );
+      // Summary, priority and the admin email happen after the response.
+      const work = () =>
+        processContactSubmission(submission.id).catch((err) =>
+          console.error("Contact processing failed:", err),
+        );
+      try {
+        after(work);
+      } catch {
+        void work();
+      }
 
       return { success: true };
     }),

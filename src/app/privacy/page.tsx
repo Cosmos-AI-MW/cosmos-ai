@@ -21,7 +21,7 @@ export default function PrivacyPage() {
             Privacy Policy
           </h1>
           <p className="text-cosmos-mist mt-3 text-base font-light">
-            Last updated: October 5, 2026
+            Last updated: November 16, 2026
           </p>
         </div>
       </section>
@@ -133,7 +133,7 @@ export default function PrivacyPage() {
                     </p>
                     <ul className="space-y-2 pl-4">
                       {[
-                        "Anthropic — our AI provider processes message content solely to generate responses on our behalf.",
+                        "Anthropic — our AI provider processes message content solely to generate responses and enquiry summaries on our behalf.",
                         "Resend — our email provider delivers transactional emails such as verification and notifications.",
                         "Meta Platforms (WhatsApp) — which delivers messages through the WhatsApp Business Platform under its own terms and privacy policy.",
                         "Neon — our database host stores your account and usage data under confidentiality obligations.",
@@ -154,14 +154,26 @@ export default function PrivacyPage() {
               {
                 title: "4. AI Processing",
                 content: (
-                  <p className="text-cosmos-forest/80 text-base font-light">
-                    Our tools use artificial intelligence to understand requests
-                    and generate professional documents. Message and prompt
-                    content is processed by Anthropic solely to generate
-                    responses. We do not use your content to train AI models.
-                    Generated documents are stored to provide your conversation
-                    history and may be deleted at your request.
-                  </p>
+                  <>
+                    <p className="text-cosmos-forest/80 mb-3 text-base font-light">
+                      Our tools use artificial intelligence to understand
+                      requests and generate professional documents. Message and
+                      prompt content is processed by Anthropic solely to
+                      generate responses. We do not use your content to train AI
+                      models. Generated documents are stored to provide your
+                      conversation history and may be deleted at your request.
+                    </p>
+                    <p className="text-cosmos-forest/80 text-base font-light">
+                      When you send us a message through the contact form, we
+                      also use AI to summarise it and rate its priority so that
+                      we can respond promptly. For this we send only the text of
+                      your message, your organisation name and the service you
+                      selected. We do not send your name, email address or phone
+                      number. The summary and priority are stored with your
+                      enquiry. They are an aid for our team, who read your
+                      original message.
+                    </p>
+                  </>
                 ),
               },
               {
