@@ -71,7 +71,7 @@ const sectors = [
 export default function WhereWeWorkPage() {
   return (
     <main className="bg-cosmos-chalk min-h-screen font-sans">
-      <Navbar />
+      <Navbar active="/where-we-work" />
 
       {/* HERO */}
       <section className="bg-cosmos-forest relative overflow-hidden px-6 pt-20 pb-36">

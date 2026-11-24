@@ -36,6 +36,7 @@ export default function Navbar({ active }: { active?: string }) {
 
   const links = [
     { href: "/services", label: "Services" },
+    { href: "/where-we-work", label: "Where We Work" },
     { href: "/about", label: "About" },
   ];
 
