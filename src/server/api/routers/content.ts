@@ -1,13 +1,17 @@
 import { z } from "zod";
-import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import {
+  adminProcedure,
+  createTRPCRouter,
+  protectedProcedure,
+} from "~/server/api/trpc";
 
 export const contentRouter = createTRPCRouter({
   // ── SERVICES ─────────────────────────────────────────────────
-  getServices: protectedProcedure.query(async ({ ctx }) => {
+  getServices: adminProcedure.query(async ({ ctx }) => {
     return ctx.db.service.findMany({ orderBy: { order: "asc" } });
   }),
 
-  updateService: protectedProcedure
+  updateService: adminProcedure
     .input(
       z.object({
         id: z.string(),
@@ -26,11 +30,11 @@ export const contentRouter = createTRPCRouter({
     }),
 
   // ── ABOUT CONTENT ────────────────────────────────────────────
-  getAboutContent: protectedProcedure.query(async ({ ctx }) => {
+  getAboutContent: adminProcedure.query(async ({ ctx }) => {
     return ctx.db.aboutContent.findMany();
   }),
 
-  updateAboutContent: protectedProcedure
+  updateAboutContent: adminProcedure
     .input(
       z.object({
         key: z.string(),
@@ -45,11 +49,11 @@ export const contentRouter = createTRPCRouter({
     }),
 
   // ── VALUES ───────────────────────────────────────────────────
-  getValues: protectedProcedure.query(async ({ ctx }) => {
+  getValues: adminProcedure.query(async ({ ctx }) => {
     return ctx.db.value.findMany({ orderBy: { order: "asc" } });
   }),
 
-  updateValue: protectedProcedure
+  updateValue: adminProcedure
     .input(
       z.object({
         id: z.string(),
@@ -98,7 +102,7 @@ export const contentRouter = createTRPCRouter({
     }),
 
   // ── USER TIER MANAGEMENT ─────────────────────────────────────
-  upgradeUser: protectedProcedure
+  upgradeUser: adminProcedure
     .input(
       z.object({
         userId: z.string(),
@@ -126,7 +130,7 @@ export const contentRouter = createTRPCRouter({
     }),
 
   // ── SYSTEM PROMPTS ───────────────────────────────────────────────
-  updatePrompt: protectedProcedure
+  updatePrompt: adminProcedure
     .input(
       z.object({
         name: z.string(),
@@ -143,7 +147,7 @@ export const contentRouter = createTRPCRouter({
     }),
 
   // ── CREATE SERVICE ───────────────────────────────────────────────
-  createService: protectedProcedure
+  createService: adminProcedure
     .input(
       z.object({
         title: z.string().min(1),
@@ -168,7 +172,7 @@ export const contentRouter = createTRPCRouter({
     }),
 
   // ── DELETE SERVICE ───────────────────────────────────────────────
-  deleteService: protectedProcedure
+  deleteService: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       await ctx.db.service.delete({ where: { id: input.id } });

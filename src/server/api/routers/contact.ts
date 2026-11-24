@@ -1,8 +1,8 @@
 import { z } from "zod";
 import { after } from "next/server";
 import {
+  adminProcedure,
   createTRPCRouter,
-  protectedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
 import { processContactSubmission } from "~/lib/contact-process";
@@ -46,7 +46,7 @@ export const contactRouter = createTRPCRouter({
       return { success: true };
     }),
 
-  markRead: protectedProcedure
+  markRead: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       await ctx.db.contactSubmission.update({
@@ -56,7 +56,7 @@ export const contactRouter = createTRPCRouter({
       return { success: true };
     }),
 
-  getAll: protectedProcedure.query(async ({ ctx }) => {
+  getAll: adminProcedure.query(async ({ ctx }) => {
     return ctx.db.contactSubmission.findMany({
       orderBy: { createdAt: "desc" },
     });

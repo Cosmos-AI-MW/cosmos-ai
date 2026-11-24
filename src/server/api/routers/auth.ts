@@ -9,7 +9,10 @@ export const authRouter = createTRPCRouter({
     .input(
       z.object({
         email: z.string().email("Valid email required"),
-        password: z.string().min(8, "Password must be at least 8 characters"),
+        password: z
+          .string()
+          .min(8, "Password must be at least 8 characters")
+          .max(72, "Password must be 72 characters or fewer"),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -87,6 +90,17 @@ export const authRouter = createTRPCRouter({
       });
 
       if (!user || user.emailVerified) return { success: true };
+
+      // One resend per minute per address. Tokens expire 24h after creation,
+      // so creation time = expires minus 24h.
+      const DAY_MS = 24 * 60 * 60 * 1000;
+      const latest = await ctx.db.emailVerificationToken.findFirst({
+        where: { email: input.email },
+        orderBy: { expires: "desc" },
+      });
+      if (latest && latest.expires.getTime() - DAY_MS > Date.now() - 60_000) {
+        return { success: true };
+      }
 
       // Delete any existing token
       await ctx.db.emailVerificationToken.deleteMany({

@@ -37,7 +37,7 @@ export const conversationRouter = createTRPCRouter({
 
   // Create a new conversation
   create: protectedProcedure
-    .input(z.object({ title: z.string().default("New Conversation") }))
+    .input(z.object({ title: z.string().max(120).default("New Conversation") }))
     .mutation(async ({ ctx, input }) => {
       return ctx.db.conversation.create({
         data: {
@@ -53,7 +53,7 @@ export const conversationRouter = createTRPCRouter({
       z.object({
         conversationId: z.string(),
         role: z.enum(["user", "assistant"]),
-        content: z.string(),
+        content: z.string().max(20000),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -106,12 +106,15 @@ export const conversationRouter = createTRPCRouter({
 
   // Update conversation title
   updateTitle: protectedProcedure
-    .input(z.object({ id: z.string(), title: z.string().min(1) }))
+    .input(
+      z.object({ id: z.string(), title: z.string().trim().min(1).max(120) }),
+    )
     .mutation(async ({ ctx, input }) => {
-      await ctx.db.conversation.update({
-        where: { id: input.id },
+      const result = await ctx.db.conversation.updateMany({
+        where: { id: input.id, userId: ctx.session.user.id },
         data: { title: input.title },
       });
+      if (result.count === 0) throw new Error("Conversation not found");
       return { success: true };
     }),
 });

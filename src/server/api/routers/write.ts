@@ -3,7 +3,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import {
   createTRPCRouter,
   publicProcedure,
-  protectedProcedure,
+  adminProcedure,
 } from "~/server/api/trpc";
 import { env } from "~/env";
 import { db } from "~/server/db";
@@ -179,7 +179,7 @@ export const writeRouter = createTRPCRouter({
     };
   }),
 
-  getStats: protectedProcedure.query(async ({ ctx }) => {
+  getStats: adminProcedure.query(async ({ ctx }) => {
     const [total, byType, recent] = await Promise.all([
       ctx.db.writeGeneration.count(),
       ctx.db.writeGeneration.groupBy({
