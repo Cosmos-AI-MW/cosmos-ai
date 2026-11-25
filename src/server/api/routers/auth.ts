@@ -37,7 +37,9 @@ export const authRouter = createTRPCRouter({
         },
       });
 
+      // Create a verification token and send the email
       const token = crypto.randomBytes(32).toString("hex");
+
       const expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
       await ctx.db.emailVerificationToken.create({
